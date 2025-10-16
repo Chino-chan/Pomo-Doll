@@ -1,0 +1,16 @@
+{
+  "name": "pomodoro-app",
+  "version": "1.0.0",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Pomodoro Timer Desktop App",
+  "devDependencies": {
+    "electron": "^38.3.0"
+  }
+}
