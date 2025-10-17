@@ -505,10 +505,18 @@
               <canvas id="weekly-trends-chart" width="800" height="300"></canvas>
             </div>
 
-            <!-- Monthly Summary Cards (MIDDLE) -->
+            <!-- Current Month Summary Cards -->
             <div style="margin-bottom: 32px;">
-              <h5 style="margin: 0 0 12px 0; font-size: 0.95rem; color: #666;">📈 Monthly Summary</h5>
+              <h5 id="current-month-title" style="margin: 0 0 12px 0; font-size: 0.95rem; color: #666;">📈 Monthly Summary</h5>
               <div class="summary-cards" id="monthly-summary-cards">
+                <!-- Cards will be rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Past Month Summary Cards -->
+            <div style="margin-bottom: 32px;">
+              <h5 id="past-month-title" style="margin: 0 0 12px 0; font-size: 0.95rem; color: #666;">📈 Past Month Summary</h5>
+              <div class="summary-cards" id="past-month-summary-cards">
                 <!-- Cards will be rendered by JS -->
               </div>
             </div>

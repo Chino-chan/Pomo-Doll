@@ -367,3 +367,44 @@ export function getMostProductiveMonth(stats) {
 
   return { monthName: maxMonthName, hours: maxMonthHours };
 }
+
+/**
+ * Calculate date range for a month given an offset from reference date
+ * @param {number} monthOffset - 0 for current month, -1 for previous month, etc.
+ * @param {Date} referenceDate - The reference date (defaults to now)
+ * @returns {Object} - { monthStart: Date, monthEnd: Date, targetMonth: Date }
+ */
+export function getMonthDateRange(monthOffset, referenceDate = new Date()) {
+  // Calculate target month (first day of the target month)
+  const targetMonth = new Date(referenceDate.getFullYear(), referenceDate.getMonth() + monthOffset, 1);
+
+  // Month always starts on the 1st
+  const monthStart = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), 1);
+
+  // For current month (offset 0), end at reference date
+  // For other months, end at last day of that month
+  let monthEnd;
+  if (monthOffset === 0) {
+    monthEnd = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
+  } else {
+    // Setting day to 0 gives last day of previous month, so month+1, day 0 = last day of current month
+    monthEnd = new Date(targetMonth.getFullYear(), targetMonth.getMonth() + 1, 0);
+  }
+
+  return { monthStart, monthEnd, targetMonth };
+}
+
+/**
+ * Count projects completed in a specific month
+ * @param {Array} projects - Array of project objects
+ * @param {Date} targetMonth - Date representing the target month (typically the 1st of the month)
+ * @returns {number} - Count of completed projects in that month
+ */
+export function countProjectsCompletedInMonth(projects, targetMonth) {
+  return projects.filter(p => {
+    if (!p.completed || !p.endDate) return false;
+    const endDate = new Date(p.endDate);
+    return endDate.getUTCMonth() === targetMonth.getMonth() &&
+           endDate.getUTCFullYear() === targetMonth.getFullYear();
+  }).length;
+}

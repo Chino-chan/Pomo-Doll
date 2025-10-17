@@ -15,7 +15,9 @@ import {
   getLongestStreak,
   getMostProductiveDay,
   getMostProductiveWeek,
-  getMostProductiveMonth
+  getMostProductiveMonth,
+  getMonthDateRange,
+  countProjectsCompletedInMonth
 } from '../utils.mjs';
 
 describe('Date Utilities', () => {
@@ -677,6 +679,121 @@ describe('Statistics Functions', () => {
       expect(result).toHaveProperty('hours');
       expect(result.hours).toBeGreaterThan(0);
       expect(typeof result.monthName).toBe('string');
+    });
+  });
+
+  describe('getMonthDateRange', () => {
+    it('should return correct range for current month', () => {
+      const referenceDate = new Date(2024, 9, 15); // October 15, 2024
+      const result = getMonthDateRange(0, referenceDate);
+
+      expect(result.monthStart).toEqual(new Date(2024, 9, 1));
+      expect(result.monthEnd).toEqual(new Date(2024, 9, 15));
+      expect(result.targetMonth).toEqual(new Date(2024, 9, 1));
+    });
+
+    it('should return correct range for previous month', () => {
+      const referenceDate = new Date(2024, 9, 15); // October 15, 2024
+      const result = getMonthDateRange(-1, referenceDate);
+
+      expect(result.monthStart).toEqual(new Date(2024, 8, 1)); // September 1
+      expect(result.monthEnd).toEqual(new Date(2024, 8, 30)); // September 30 (last day)
+      expect(result.targetMonth).toEqual(new Date(2024, 8, 1));
+    });
+
+    it('should handle month boundaries correctly', () => {
+      const referenceDate = new Date(2024, 0, 31); // January 31, 2024
+      const result = getMonthDateRange(-1, referenceDate);
+
+      expect(result.monthStart).toEqual(new Date(2023, 11, 1)); // December 1, 2023
+      expect(result.monthEnd).toEqual(new Date(2023, 11, 31)); // December 31, 2023
+      expect(result.targetMonth).toEqual(new Date(2023, 11, 1));
+    });
+
+    it('should handle leap year February correctly', () => {
+      const referenceDate = new Date(2024, 2, 15); // March 15, 2024
+      const result = getMonthDateRange(-1, referenceDate);
+
+      expect(result.monthStart).toEqual(new Date(2024, 1, 1)); // February 1, 2024
+      expect(result.monthEnd).toEqual(new Date(2024, 1, 29)); // February 29, 2024 (leap year)
+      expect(result.targetMonth).toEqual(new Date(2024, 1, 1));
+    });
+
+    it('should handle non-leap year February correctly', () => {
+      const referenceDate = new Date(2023, 2, 15); // March 15, 2023
+      const result = getMonthDateRange(-1, referenceDate);
+
+      expect(result.monthStart).toEqual(new Date(2023, 1, 1)); // February 1, 2023
+      expect(result.monthEnd).toEqual(new Date(2023, 1, 28)); // February 28, 2023 (non-leap year)
+      expect(result.targetMonth).toEqual(new Date(2023, 1, 1));
+    });
+
+    it('should work for two months back', () => {
+      const referenceDate = new Date(2024, 9, 15); // October 15, 2024
+      const result = getMonthDateRange(-2, referenceDate);
+
+      expect(result.monthStart).toEqual(new Date(2024, 7, 1)); // August 1
+      expect(result.monthEnd).toEqual(new Date(2024, 7, 31)); // August 31
+      expect(result.targetMonth).toEqual(new Date(2024, 7, 1));
+    });
+  });
+
+  describe('countProjectsCompletedInMonth', () => {
+    it('should return 0 for empty projects array', () => {
+      const targetMonth = new Date(2024, 9, 1); // October 2024
+      expect(countProjectsCompletedInMonth([], targetMonth)).toBe(0);
+    });
+
+    it('should count projects completed in target month', () => {
+      const projects = [
+        { name: 'P1', completed: true, endDate: '2024-10-15T10:00:00Z' },
+        { name: 'P2', completed: true, endDate: '2024-10-20T10:00:00Z' },
+        { name: 'P3', completed: true, endDate: '2024-09-15T10:00:00Z' },
+      ];
+      const targetMonth = new Date(2024, 9, 1); // October 2024
+
+      expect(countProjectsCompletedInMonth(projects, targetMonth)).toBe(2);
+    });
+
+    it('should not count incomplete projects', () => {
+      const projects = [
+        { name: 'P1', completed: true, endDate: '2024-10-15T10:00:00Z' },
+        { name: 'P2', completed: false, endDate: '2024-10-20T10:00:00Z' },
+        { name: 'P3', completed: true, endDate: null },
+      ];
+      const targetMonth = new Date(2024, 9, 1); // October 2024
+
+      expect(countProjectsCompletedInMonth(projects, targetMonth)).toBe(1);
+    });
+
+    it('should handle projects without endDate', () => {
+      const projects = [
+        { name: 'P1', completed: true, endDate: null },
+        { name: 'P2', completed: true, endDate: undefined },
+      ];
+      const targetMonth = new Date(2024, 9, 1); // October 2024
+
+      expect(countProjectsCompletedInMonth(projects, targetMonth)).toBe(0);
+    });
+
+    it('should correctly match year and month', () => {
+      const projects = [
+        { name: 'P1', completed: true, endDate: '2024-10-15T10:00:00Z' }, // October 2024
+        { name: 'P2', completed: true, endDate: '2023-10-15T10:00:00Z' }, // October 2023
+      ];
+      const targetMonth = new Date(2024, 9, 1); // October 2024
+
+      expect(countProjectsCompletedInMonth(projects, targetMonth)).toBe(1);
+    });
+
+    it('should handle end of month dates correctly', () => {
+      const projects = [
+        { name: 'P1', completed: true, endDate: '2024-10-01T00:00:00Z' }, // First day
+        { name: 'P2', completed: true, endDate: '2024-10-31T23:59:59Z' }, // Last day
+      ];
+      const targetMonth = new Date(2024, 9, 1); // October 2024
+
+      expect(countProjectsCompletedInMonth(projects, targetMonth)).toBe(2);
     });
   });
 });

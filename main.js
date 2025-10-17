@@ -1080,6 +1080,47 @@ function getMostProductiveMonth(stats) {
   return { monthName: maxMonthName, hours: maxMonthHours };
 }
 
+/**
+ * Calculate date range for a month given an offset from reference date
+ * @param {number} monthOffset - 0 for current month, -1 for previous month, etc.
+ * @param {Date} referenceDate - The reference date (defaults to now)
+ * @returns {Object} - { monthStart: Date, monthEnd: Date, targetMonth: Date }
+ */
+function getMonthDateRange(monthOffset, referenceDate = new Date()) {
+  // Calculate target month (first day of the target month)
+  const targetMonth = new Date(referenceDate.getFullYear(), referenceDate.getMonth() + monthOffset, 1);
+
+  // Month always starts on the 1st
+  const monthStart = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), 1);
+
+  // For current month (offset 0), end at reference date
+  // For other months, end at last day of that month
+  let monthEnd;
+  if (monthOffset === 0) {
+    monthEnd = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
+  } else {
+    // Setting day to 0 gives last day of previous month, so month+1, day 0 = last day of current month
+    monthEnd = new Date(targetMonth.getFullYear(), targetMonth.getMonth() + 1, 0);
+  }
+
+  return { monthStart, monthEnd, targetMonth };
+}
+
+/**
+ * Count projects completed in a specific month
+ * @param {Array} projects - Array of project objects
+ * @param {Date} targetMonth - Date representing the target month (typically the 1st of the month)
+ * @returns {number} - Count of completed projects in that month
+ */
+function countProjectsCompletedInMonth(projects, targetMonth) {
+  return projects.filter(p => {
+    if (!p.completed || !p.endDate) return false;
+    const endDate = new Date(p.endDate);
+    return endDate.getUTCMonth() === targetMonth.getMonth() &&
+           endDate.getUTCFullYear() === targetMonth.getFullYear();
+  }).length;
+}
+
 // --------------------
 // General Statistics - Rendering Functions
 // --------------------
@@ -1210,33 +1251,45 @@ function renderWeeklyTrendsChart() {
 }
 
 /**
- * Render monthly summary cards
+ * Render monthly summary cards for a specific month
+ * @param {number} monthOffset - 0 for current month, -1 for last month, etc.
+ * @param {string} containerId - ID of the container element
+ * @param {string} titleId - ID of the title element
  */
-function renderMonthlySummaryCards() {
-  const container = document.getElementById('monthly-summary-cards');
+function renderMonthlySummaryCardsForMonth(monthOffset, containerId, titleId) {
+  const container = document.getElementById(containerId);
+  const titleElement = document.getElementById(titleId);
   if (!container) return;
 
   const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
   const now = new Date();
 
-  // Calculate this month's hours
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const monthEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const thisMonthMinutes = getTotalStudyTimeInRange(monthStart, monthEnd);
-  const thisMonthHours = (thisMonthMinutes / 60).toFixed(1);
+  // Calculate date range for this month using extracted function
+  const { monthStart, monthEnd, targetMonth } = getMonthDateRange(monthOffset, now);
 
-  // Find best day of week
+  // Update title with month name
+  const monthName = targetMonth.toLocaleDateString('en', { month: 'long' });
+  if (titleElement) {
+    if (monthOffset === 0) {
+      titleElement.textContent = `📈 ${monthName} Summary`;
+    } else if (monthOffset === -1) {
+      titleElement.textContent = `📈 Past Month (${monthName})`;
+    }
+  }
+
+  // Calculate this month's hours
+  const monthMinutes = getTotalStudyTimeInRange(monthStart, monthEnd);
+  const monthHours = (monthMinutes / 60).toFixed(1);
+
+  // Find best day of week (using all-time data for consistency)
   const { dayName: bestDay, avgMinutes: bestAvg } = getBestDayOfWeek(stats);
   const bestDayHours = (bestAvg / 60).toFixed(1);
 
-  // Count completed projects this month
-  const completedThisMonth = projects.filter(p => {
-    if (!p.completed || !p.endDate) return false;
-    const endDate = new Date(p.endDate);
-    return endDate.getMonth() === now.getMonth() && endDate.getFullYear() === now.getFullYear();
-  }).length;
+  // Count completed projects this month using extracted function
+  const completedThisMonth = countProjectsCompletedInMonth(projects, targetMonth);
 
   // Render cards
+  const monthLabel = monthOffset === 0 ? 'This Month' : monthName;
   container.innerHTML = `
     <div class="summary-card">
       <div class="summary-card-label">Best Day</div>
@@ -1244,8 +1297,8 @@ function renderMonthlySummaryCards() {
       <div class="summary-card-subtitle">${bestDayHours}h average</div>
     </div>
     <div class="summary-card">
-      <div class="summary-card-label">This Month</div>
-      <div class="summary-card-value">${thisMonthHours}h</div>
+      <div class="summary-card-label">${monthLabel}</div>
+      <div class="summary-card-value">${monthHours}h</div>
       <div class="summary-card-subtitle">Total study time</div>
     </div>
     <div class="summary-card">
@@ -1254,6 +1307,16 @@ function renderMonthlySummaryCards() {
       <div class="summary-card-subtitle">Completed this month</div>
     </div>
   `;
+}
+
+/**
+ * Render monthly summary cards (wrapper for backwards compatibility)
+ */
+function renderMonthlySummaryCards() {
+  // Render current month
+  renderMonthlySummaryCardsForMonth(0, 'monthly-summary-cards', 'current-month-title');
+  // Render past month
+  renderMonthlySummaryCardsForMonth(-1, 'past-month-summary-cards', 'past-month-title');
 }
 
 /**
