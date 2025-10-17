@@ -193,6 +193,10 @@ const newProjectGoal = document.getElementById("new-project-goal");
 const addProjectBtn = document.getElementById("add-project-btn");
 let currentProjectIndex = null; // currently active project
 
+// Completed projects elements
+const completedProjectsFilter = document.getElementById("completed-projects-filter");
+const completedProjectsList = document.getElementById("completed-projects-list");
+
 //Tracking Activity
 const currentActivityEl = document.getElementById("current-activity-tracking");
 
@@ -376,6 +380,78 @@ addProjectBtn.onclick = () => {
 };
 
 // --------------------
+// Completed Projects Display
+// --------------------
+function filterCompletedProjects(period) {
+  const completedProjects = projects.filter(p => p.completed && p.endDate);
+  const now = new Date();
+  
+  return completedProjects.filter(p => {
+    const endDate = new Date(p.endDate);
+    const diffMs = now - endDate;
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    
+    switch(period) {
+      case 'this-month':
+        return endDate.getMonth() === now.getMonth() && endDate.getFullYear() === now.getFullYear();
+      case 'past-month':
+        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+        return endDate >= lastMonth && endDate <= lastMonthEnd;
+      case '6-months':
+        return diffDays <= 180;
+      case 'entire-year':
+        return endDate.getFullYear() === now.getFullYear();
+      default:
+        return false;
+    }
+  });
+}
+
+function formatDate(isoString) {
+  const date = new Date(isoString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  return `${day}/${month}`;
+}
+
+function calculateDaysBetween(startISO, endISO) {
+  const start = new Date(startISO);
+  const end = new Date(endISO);
+  const diffMs = end - start;
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+}
+
+function renderCompletedProjects() {
+  const period = completedProjectsFilter.value;
+  const filtered = filterCompletedProjects(period);
+  
+  if (filtered.length === 0) {
+    completedProjectsList.innerHTML = '<div class="chart-placeholder">No completed projects in this period</div>';
+    return;
+  }
+  
+  completedProjectsList.innerHTML = filtered.map(p => {
+    const hours = (p.endHours || 0).toFixed(2);
+    const goalText = p.goal ? ` / ${p.goal}h` : '';
+    const days = calculateDaysBetween(p.startDate, p.endDate);
+    const startDate = formatDate(p.startDate);
+    const endDate = formatDate(p.endDate);
+    
+    return `
+      <div style="padding: 12px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px;">
+        <strong>${p.name}</strong> - ${hours}h${goalText} - ${days} days - ${startDate} - ${endDate}
+      </div>
+    `;
+  }).join('');
+}
+
+// Event listener for filter dropdown
+if (completedProjectsFilter) {
+  completedProjectsFilter.addEventListener('change', renderCompletedProjects);
+}
+
+// --------------------
 // Timer logic with project hours
 // --------------------
 function startTimer() {
@@ -552,7 +628,13 @@ function renderHeatmap(year=currentHeatmapYear){
   });
 }
 
-function openStatsModal(){ renderHeatmap(); statsModal.style.display="flex"; statsModal.setAttribute("aria-hidden","false"); closeStats.focus(); }
+function openStatsModal(){ 
+  renderHeatmap(); 
+  renderCompletedProjects();
+  statsModal.style.display="flex"; 
+  statsModal.setAttribute("aria-hidden","false"); 
+  closeStats.focus(); 
+}
 function closeStatsModal(){ statsModal.style.display="none"; statsModal.setAttribute("aria-hidden","true"); }
 statsBtn.addEventListener("click",openStatsModal);
 closeStats.addEventListener("click",closeStatsModal);
