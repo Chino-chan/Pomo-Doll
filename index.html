@@ -278,6 +278,13 @@
       #config-form h4 {
         margin: 16px 0 4px 0;
         font-size: 1rem;
+        padding-top: 16px;
+        border-top: 1px solid #ccc;
+      }
+
+      /* Dark mode for config form h4 separator */
+      body.dark-mode #config-form h4 {
+        border-top-color: #555;
       }
 
       #add-project-btn {
@@ -658,39 +665,19 @@
         color: #ccc;
       }
 
-      /* Global theme toggle button (for main app) */
+      /* Theme toggle button in config modal */
       #app-theme-toggle {
-        position: fixed;
-        top: 16px;
-        right: 16px;
-        padding: 8px 16px;
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        cursor: pointer;
+        width: 100%;
+        padding: 10px 16px;
         font-size: 18px;
+        cursor: pointer;
         transition: all 0.3s;
-        z-index: 1000;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       }
 
-      body.dark-mode #app-theme-toggle {
-        background: rgba(45, 45, 45, 0.95);
-        border-color: #555;
-        color: #e0e0e0;
-      }
-
-      #app-theme-toggle:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      }
     </style>
   </head>
 
   <body>
-    <!-- Global theme toggle button -->
-    <button id="app-theme-toggle" title="Toggle dark/light mode">☀️</button>
-
     <div id="app">
       <div id="imgFront"><img src="img/Gx1RtClbsAE1qm4.jpeg" alt=""></div>
 
@@ -766,6 +753,23 @@
             </label>
 
             <button type="button" id="add-project-btn">Add Activity</button>
+
+            <!-- Dark Mode / Light Mode Section -->
+            <h4>Dark Mode / Light Mode</h4>
+            <button type="button" id="app-theme-toggle" title="Toggle dark/light mode">☀️</button>
+
+            <!-- Other Config Section -->
+            <h4>Other config</h4>
+
+            <!-- Border Color Toggle -->
+            <button type="button" id="toggle-border-colors-btn" style="width: 100%; padding: 10px 16px; font-size: 14px; font-weight: 500; cursor: pointer;">
+              🎨 Disable Border Colors
+            </button>
+
+            <!-- Streak Display Toggle -->
+            <button type="button" id="toggle-streak-display-btn" style="width: 100%; padding: 10px 16px; font-size: 14px; font-weight: 500; cursor: pointer;">
+              🔄 Swap to Current Streak
+            </button>
 
             <button type="submit">Save Configuration</button>
           </form>
@@ -956,22 +960,6 @@
               <button id="import-data-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
                 📥 Import Data
               </button>
-            </div>
-
-            <!-- Border Color Toggle -->
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-              <button id="toggle-border-colors-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
-                🎨 Disable Border Colors
-              </button>
-              <span id="border-colors-status" style="font-size: 12px; color: #666;">Border colors are currently enabled</span>
-            </div>
-
-            <!-- Streak Display Toggle -->
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <button id="toggle-streak-display-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
-                🔄 Swap to Current Streak
-              </button>
-              <span id="streak-display-status" style="font-size: 12px; color: #666;">Showing "Last time you studied"</span>
             </div>
 
             <!-- Hidden file input for import -->

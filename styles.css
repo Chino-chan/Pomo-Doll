@@ -439,8 +439,8 @@ body{
 
 /* Dark mode for work button */
 body.dark-mode .project-buttons .work-btn {
-  background-color: #4a6b5a;
-  color: #bbb;
+  background-color: #3d7a5c; /* Stronger green for dark mode */
+  color: #f0f0f0; /* Whiter text for dark mode */
 }
 
 /* Responsive text sizing */
@@ -465,6 +465,13 @@ body.dark-mode .project-buttons .work-btn {
 
 .work-btn.stop-tracking:hover {
   filter: brightness(1.1);
+}
+
+/* Dark mode for stop tracking button */
+body.dark-mode .work-btn.stop-tracking {
+  background-color: #8d4037; /* Softer red for dark mode */
+  color: #f0f0f0;
+  border-color: #6d2f28;
 }
 
 
