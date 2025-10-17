@@ -139,21 +139,59 @@
         outline-offset: 1px;
       }
 
-      /* Legend */
-      .heatmap-legend { 
-        display: flex; 
-        align-items: center; 
-        gap: 8px; 
-        font-size: 12px; 
-        color: #444; 
+      /* Legend & Stats Bar */
+      .heatmap-legend {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        font-size: 12px;
+        color: #444;
         margin-top: 12px;
-        justify-content: center;
+        padding: 12px 16px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        flex-wrap: wrap;
       }
-      .legend-swatch { 
-        width: 14px; 
-        height: 14px; 
-        border-radius: 3px; 
-        border: 1px solid rgba(0,0,0,0.05); 
+
+      .legend-section {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .legend-swatch {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+        border: 1px solid rgba(0,0,0,0.05);
+      }
+
+      .heatmap-stats {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .heatmap-stat-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .heatmap-stat-label {
+        font-size: 10px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .heatmap-stat-value {
+        font-size: 13px;
+        font-weight: bold;
+        color: #333;
       }
 
       /* Future charts section */
@@ -399,13 +437,36 @@
             </div>
 
             <div class="heatmap-legend">
-              <span>Less</span>
-              <div class="legend-swatch day-0"></div>
-              <div class="legend-swatch day-1"></div>
-              <div class="legend-swatch day-2"></div>
-              <div class="legend-swatch day-3"></div>
-              <div class="legend-swatch day-4"></div>
-              <span>More</span>
+              <!-- Legend on the left -->
+              <div class="legend-section">
+                <span style="font-size: 11px; color: #999;">Less</span>
+                <div class="legend-swatch day-0"></div>
+                <div class="legend-swatch day-1"></div>
+                <div class="legend-swatch day-2"></div>
+                <div class="legend-swatch day-3"></div>
+                <div class="legend-swatch day-4"></div>
+                <span style="font-size: 11px; color: #999;">More</span>
+              </div>
+
+              <!-- Stats on the right -->
+              <div class="heatmap-stats">
+                <div class="heatmap-stat-item">
+                  <div class="heatmap-stat-label">Current Streak</div>
+                  <div class="heatmap-stat-value" id="heatmap-current-streak">0 days</div>
+                </div>
+                <div class="heatmap-stat-item">
+                  <div class="heatmap-stat-label">Last Studied</div>
+                  <div class="heatmap-stat-value" id="heatmap-last-studied">Never</div>
+                </div>
+                <div class="heatmap-stat-item">
+                  <div class="heatmap-stat-label">Longest Streak</div>
+                  <div class="heatmap-stat-value" id="heatmap-longest-streak">0 days</div>
+                </div>
+                <div class="heatmap-stat-item">
+                  <div class="heatmap-stat-label">Weekly Avg</div>
+                  <div class="heatmap-stat-value" id="heatmap-weekly-avg">0h</div>
+                </div>
+              </div>
             </div>
           </div>
 

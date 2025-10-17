@@ -1238,8 +1238,76 @@ function renderPersonalRecords() {
   `;
 }
 
+/**
+ * Render heatmap statistics bar
+ */
+function renderHeatmapStats() {
+  const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+
+  // Current Streak
+  const currentStreak = calculateStreak();
+  document.getElementById('heatmap-current-streak').textContent =
+    currentStreak > 0 ? `${currentStreak} day${currentStreak !== 1 ? 's' : ''}` : 'None';
+
+  // Last Studied
+  const todayKey = getTodayKey();
+  const keys = Object.keys(stats).filter(k => stats[k].minutes > 0).sort((a,b) => new Date(b) - new Date(a));
+  let lastStudied = 'Never';
+  if (keys.length > 0) {
+    const lastDate = keys[0];
+    if (lastDate === todayKey) {
+      lastStudied = 'Today';
+    } else {
+      const diffMs = new Date(todayKey) - new Date(lastDate);
+      const diffDays = Math.floor(diffMs / (1000*60*60*24));
+      lastStudied = diffDays === 1 ? '1 day ago' : `${diffDays} days ago`;
+    }
+  }
+  document.getElementById('heatmap-last-studied').textContent = lastStudied;
+
+  // Longest Streak Ever
+  let longestStreak = 0;
+  let currentStreakCount = 0;
+  const allKeys = Object.keys(stats).sort();
+  for (let i = 0; i < allKeys.length; i++) {
+    const key = allKeys[i];
+    if (stats[key].minutes > 0) {
+      currentStreakCount++;
+      longestStreak = Math.max(longestStreak, currentStreakCount);
+    } else {
+      currentStreakCount = 0;
+    }
+  }
+  document.getElementById('heatmap-longest-streak').textContent =
+    longestStreak > 0 ? `${longestStreak} day${longestStreak !== 1 ? 's' : ''}` : 'None';
+
+  // Weekly Average (past 8 weeks)
+  const now = new Date();
+  const weeksToCheck = 8;
+  let totalMinutes = 0;
+  let totalWeeks = 0;
+
+  for (let weekOffset = 0; weekOffset < weeksToCheck; weekOffset++) {
+    const weekEnd = new Date(now);
+    weekEnd.setDate(now.getDate() - (weekOffset * 7));
+    const weekStart = new Date(weekEnd);
+    weekStart.setDate(weekEnd.getDate() - 6);
+
+    const weekMinutes = getTotalStudyTimeInRange(weekStart, weekEnd);
+    if (weekMinutes > 0) {
+      totalMinutes += weekMinutes;
+      totalWeeks++;
+    }
+  }
+
+  const weeklyAvg = totalWeeks > 0 ? totalMinutes / totalWeeks : 0;
+  const weeklyAvgHours = (weeklyAvg / 60).toFixed(1);
+  document.getElementById('heatmap-weekly-avg').textContent = `${weeklyAvgHours}h`;
+}
+
 function openStatsModal(){
   renderHeatmap();
+  renderHeatmapStats();
   renderCompletedProjects();
   renderProjectDistribution();
   renderWeeklyTrendsChart();
