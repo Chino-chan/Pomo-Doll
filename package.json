@@ -4,13 +4,21 @@
   "main": "electron-main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "Pomodoro Timer Desktop App",
   "devDependencies": {
-    "electron": "^38.3.0"
+    "@vitest/ui": "^3.2.4",
+    "electron": "^38.3.0",
+    "happy-dom": "^20.0.4",
+    "jsdom": "^27.0.0",
+    "vitest": "^3.2.4"
   }
 }

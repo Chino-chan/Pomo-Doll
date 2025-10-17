@@ -25,3 +25,10 @@ Thumbs.db
 # Env files
 .env
 .env.*
+
+# Testing
+coverage/
+.vitest/
+
+# AI tools
+.claude/
