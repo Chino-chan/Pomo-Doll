@@ -1599,6 +1599,11 @@ function renderMonthlySummaryCardsForMonth(monthOffset, containerId, titleId) {
   const monthMinutes = getTotalStudyTimeInRange(monthStart, monthEnd);
   const monthHours = (monthMinutes / 60).toFixed(1);
 
+  // Calculate daily and weekly averages for this period
+  const daysInRange = Math.ceil((monthEnd - monthStart) / (1000 * 60 * 60 * 24)) + 1;
+  const dailyAvgHours = (monthMinutes / 60 / daysInRange).toFixed(1);
+  const weeklyAvgHours = (dailyAvgHours * 7).toFixed(1);
+
   // Find best day of week (using all-time data for consistency)
   const { dayName: bestDay, avgMinutes: bestAvg } = getBestDayOfWeek(stats);
   const bestDayHours = (bestAvg / 60).toFixed(1);
@@ -1612,7 +1617,7 @@ function renderMonthlySummaryCardsForMonth(monthOffset, containerId, titleId) {
     <div class="summary-card">
       <div class="summary-card-label">Best Day</div>
       <div class="summary-card-value">${bestDay}</div>
-      <div class="summary-card-subtitle">${bestDayHours}h average</div>
+      <div class="summary-card-subtitle">${bestDayHours}h average on that day</div>
     </div>
     <div class="summary-card">
       <div class="summary-card-label">${monthLabel}</div>
@@ -1625,6 +1630,19 @@ function renderMonthlySummaryCardsForMonth(monthOffset, containerId, titleId) {
       <div class="summary-card-subtitle">Completed this month</div>
     </div>
   `;
+
+  // Add averages line as a sibling element after the container
+  const averagesLineId = `${containerId}-averages`;
+  let averagesLine = document.getElementById(averagesLineId);
+
+  if (!averagesLine) {
+    averagesLine = document.createElement('div');
+    averagesLine.id = averagesLineId;
+    averagesLine.style.cssText = 'text-align: center; margin-top: 12px; margin-bottom: 16px; font-size: 0.9rem;';
+    container.parentNode.insertBefore(averagesLine, container.nextSibling);
+  }
+
+  averagesLine.innerHTML = `<span style="color: #666;">Daily Average: <strong>${dailyAvgHours}h</strong> &nbsp;&nbsp;|&nbsp;&nbsp; Weekly Average: <strong>${weeklyAvgHours}h</strong></span>`;
 }
 
 /**
