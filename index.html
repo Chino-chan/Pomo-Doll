@@ -186,6 +186,21 @@
       .project-item button { margin-top: 4px; width: 36px; height: 28px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
       .project-buttons { display: flex; gap: 6px; margin-top: 4px; }
 
+      /* Pie chart canvas styling */
+      #project-pie-chart {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      /* Responsive pie chart layout */
+      @media (max-width: 768px) {
+        #project-pie-chart {
+          width: 240px !important;
+          height: 240px !important;
+        }
+      }
+
       @media (min-width: 900px) {
         .heatmap-week { gap: 8px; }
         .heatmap-day { width: 16px; height: 16px; }
@@ -305,12 +320,33 @@
             </div>
           </div>
 
-          <!-- Future Charts Section -->
+          <!-- Project Distribution Section -->
           <div class="charts-section">
-            <h4>📈 Additional Statistics</h4>
-            <div class="chart-placeholder">
-              Cake Chart - Coming Soon
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+              <h4 style="margin: 0;">📈 Project Time Distribution</h4>
+              <select id="project-distribution-filter" style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;">
+                <option value="past-30">Past 30 Days</option>
+                <option value="this-month">This Month</option>
+                <option value="last-month">Last Month</option>
+              </select>
             </div>
+
+            <div style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
+              <!-- Pie Chart Container -->
+              <div style="flex: 1; min-width: 280px; display: flex; justify-content: center;">
+                <canvas id="project-pie-chart" width="280" height="280"></canvas>
+              </div>
+
+              <!-- Project List Container -->
+              <div id="project-distribution-list" style="flex: 1; min-width: 280px;">
+                <div class="chart-placeholder">Select a time period to view project distribution</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weekly Trends Section -->
+          <div class="charts-section">
+            <h4>📊 Weekly Trends</h4>
             <div class="chart-placeholder">
               Weekly Trends - Coming Soon
             </div>

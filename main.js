@@ -452,6 +452,277 @@ if (completedProjectsFilter) {
 }
 
 // --------------------
+// Project Distribution (Pie Chart + List)
+// --------------------
+const projectDistributionFilter = document.getElementById("project-distribution-filter");
+const projectDistributionList = document.getElementById("project-distribution-list");
+const projectPieChart = document.getElementById("project-pie-chart");
+
+/**
+ * Calculate total study time from daily stats for a given date range
+ */
+function getTotalStudyTimeInRange(startDate, endDate) {
+  const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+  let totalMinutes = 0;
+
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    const key = getLocalDateKey(d);
+    if (stats[key]) {
+      totalMinutes += stats[key].minutes || 0;
+    }
+  }
+
+  return totalMinutes;
+}
+
+/**
+ * Get date range based on filter period
+ */
+function getDateRangeForFilter(period) {
+  const now = new Date();
+  let startDate, endDate;
+
+  switch(period) {
+    case 'past-30':
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      startDate = new Date(endDate);
+      startDate.setDate(startDate.getDate() - 29); // 30 days including today
+      break;
+    case 'this-month':
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
+    case 'last-month':
+      startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      endDate = new Date(now.getFullYear(), now.getMonth(), 0); // Last day of previous month
+      break;
+    default:
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      startDate = endDate;
+  }
+
+  return { startDate, endDate };
+}
+
+/**
+ * Calculate project time distribution for a given period
+ */
+function calculateProjectDistribution(period) {
+  const { startDate, endDate } = getDateRangeForFilter(period);
+
+  // Get total study time from daily stats
+  const totalStudyMinutes = getTotalStudyTimeInRange(startDate, endDate);
+
+  // Calculate project times
+  const projectTimes = [];
+  let totalProjectMinutes = 0;
+
+  projects.forEach(project => {
+    const projectStartDate = new Date(project.startDate);
+    const projectEndDate = project.completed && project.endDate ? new Date(project.endDate) : new Date();
+
+    // Check if project overlaps with the selected period
+    if (projectStartDate <= endDate && projectEndDate >= startDate) {
+      // Calculate minutes for this project in the time range
+      // Note: We're using a simple approximation here
+      // In reality, we'd need daily project tracking to be 100% accurate
+
+      let projectMinutes = 0;
+
+      // If project has daily tracking data (we'll add this support)
+      if (project.dailySeconds) {
+        // Sum up daily seconds within the range
+        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+          const key = getLocalDateKey(d);
+          if (project.dailySeconds[key]) {
+            projectMinutes += Math.floor(project.dailySeconds[key] / 60);
+          }
+        }
+      } else {
+        // Fallback: Only show if project has any time and was active in period
+        // This is less accurate but works with current data structure
+        const projectTotalSeconds = project.currentSeconds || project.endSeconds || 0;
+
+        // Simple heuristic: if project started before period end and ended after period start
+        if (projectTotalSeconds > 0) {
+          projectMinutes = Math.floor(projectTotalSeconds / 60);
+        }
+      }
+
+      if (projectMinutes > 0) {
+        projectTimes.push({
+          name: project.name,
+          minutes: projectMinutes,
+          goal: project.goal || null,
+          completed: project.completed || false
+        });
+        totalProjectMinutes += projectMinutes;
+      }
+    }
+  });
+
+  // Calculate unattributed time
+  const unattributedMinutes = Math.max(0, totalStudyMinutes - totalProjectMinutes);
+
+  return {
+    projectTimes,
+    unattributedMinutes,
+    totalStudyMinutes,
+    totalProjectMinutes
+  };
+}
+
+/**
+ * Draw pie chart on canvas
+ */
+function drawPieChart(distribution) {
+  const canvas = projectPieChart;
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = Math.min(centerX, centerY) - 20;
+
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const { projectTimes, unattributedMinutes, totalStudyMinutes } = distribution;
+
+  // If no study time at all, show a message
+  if (totalStudyMinutes === 0) {
+    ctx.fillStyle = '#ebedf0';
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = '#999';
+    ctx.font = '16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('No study time', centerX, centerY - 10);
+    ctx.fillText('in this period', centerX, centerY + 10);
+    return;
+  }
+
+  // Color palette for projects
+  const colors = [
+    '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6',
+    '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#27ae60'
+  ];
+
+  // Prepare data for pie chart
+  const slices = [];
+
+  projectTimes.forEach((project, index) => {
+    slices.push({
+      label: project.name,
+      value: project.minutes,
+      percentage: (project.minutes / totalStudyMinutes * 100).toFixed(1),
+      color: colors[index % colors.length]
+    });
+  });
+
+  if (unattributedMinutes > 0) {
+    slices.push({
+      label: 'No specific study',
+      value: unattributedMinutes,
+      percentage: (unattributedMinutes / totalStudyMinutes * 100).toFixed(1),
+      color: '#bdc3c7'
+    });
+  }
+
+  // Draw pie slices
+  let currentAngle = -Math.PI / 2; // Start at top
+
+  slices.forEach(slice => {
+    const sliceAngle = (slice.value / totalStudyMinutes) * 2 * Math.PI;
+
+    ctx.fillStyle = slice.color;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw slice border
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    currentAngle += sliceAngle;
+  });
+
+  // Draw center circle (donut hole)
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius * 0.5, 0, 2 * Math.PI);
+  ctx.fill();
+
+  // Draw total time in center
+  ctx.fillStyle = '#333';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const hours = (totalStudyMinutes / 60).toFixed(1);
+  ctx.fillText(`${hours}h`, centerX, centerY - 8);
+  ctx.font = '12px sans-serif';
+  ctx.fillStyle = '#666';
+  ctx.fillText('total', centerX, centerY + 10);
+}
+
+/**
+ * Render project distribution list
+ */
+function renderProjectDistribution() {
+  const period = projectDistributionFilter.value;
+  const distribution = calculateProjectDistribution(period);
+
+  // Draw pie chart
+  drawPieChart(distribution);
+
+  // Render project list
+  const { projectTimes, unattributedMinutes } = distribution;
+
+  if (projectTimes.length === 0 && unattributedMinutes === 0) {
+    projectDistributionList.innerHTML = '<div class="chart-placeholder">No activity in this period</div>';
+    return;
+  }
+
+  // Build list HTML
+  let listHTML = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+
+  projectTimes.forEach(project => {
+    const hours = (project.minutes / 60).toFixed(2);
+    const goalText = project.goal ? ` — Goal: ${project.goal}h` : '';
+    const statusBadge = project.completed ? ' ✓' : '';
+
+    listHTML += `
+      <div style="padding: 12px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px;">
+        <strong>${project.name}${statusBadge}</strong> — ${hours}h${goalText}
+      </div>
+    `;
+  });
+
+  if (unattributedMinutes > 0) {
+    const hours = (unattributedMinutes / 60).toFixed(2);
+    listHTML += `
+      <div style="padding: 12px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 6px;">
+        <strong>No specific study</strong> — ${hours}h
+      </div>
+    `;
+  }
+
+  listHTML += '</div>';
+  projectDistributionList.innerHTML = listHTML;
+}
+
+// Event listener for distribution filter
+if (projectDistributionFilter) {
+  projectDistributionFilter.addEventListener('change', renderProjectDistribution);
+}
+
+// --------------------
 // Timer logic with project hours
 // --------------------
 function startTimer() {
@@ -467,6 +738,14 @@ function startTimer() {
       // add time to current project
       if (currentProjectIndex !== null && projects[currentProjectIndex]) {
         projects[currentProjectIndex].currentSeconds = (projects[currentProjectIndex].currentSeconds || 0) + 1;
+
+        // Track daily project time
+        if (!projects[currentProjectIndex].dailySeconds) {
+          projects[currentProjectIndex].dailySeconds = {};
+        }
+        const todayKey = getTodayKey();
+        projects[currentProjectIndex].dailySeconds[todayKey] = (projects[currentProjectIndex].dailySeconds[todayKey] || 0) + 1;
+
         saveProjectsToStorage();
         renderProjectList();
       }
@@ -528,7 +807,7 @@ startPauseBtn.onclick=toggleTimer;
 
 resetBtn.onclick = () => {
     pauseTimer();
-    
+
     // Remove session-added seconds from Today and project
     totalStudySeconds -= sessionAddedSeconds;
     if (totalStudySeconds < 0) totalStudySeconds = 0;
@@ -536,6 +815,18 @@ resetBtn.onclick = () => {
     if (currentProjectIndex !== null && projects[currentProjectIndex]) {
         projects[currentProjectIndex].currentSeconds -= sessionAddedSeconds;
         if (projects[currentProjectIndex].currentSeconds < 0) projects[currentProjectIndex].currentSeconds = 0;
+
+        // Also remove from daily tracking
+        if (projects[currentProjectIndex].dailySeconds) {
+          const todayKey = getTodayKey();
+          if (projects[currentProjectIndex].dailySeconds[todayKey]) {
+            projects[currentProjectIndex].dailySeconds[todayKey] -= sessionAddedSeconds;
+            if (projects[currentProjectIndex].dailySeconds[todayKey] < 0) {
+              projects[currentProjectIndex].dailySeconds[todayKey] = 0;
+            }
+          }
+        }
+
         saveProjectsToStorage();
     }
 
@@ -628,12 +919,13 @@ function renderHeatmap(year=currentHeatmapYear){
   });
 }
 
-function openStatsModal(){ 
-  renderHeatmap(); 
+function openStatsModal(){
+  renderHeatmap();
   renderCompletedProjects();
-  statsModal.style.display="flex"; 
-  statsModal.setAttribute("aria-hidden","false"); 
-  closeStats.focus(); 
+  renderProjectDistribution();
+  statsModal.style.display="flex";
+  statsModal.setAttribute("aria-hidden","false");
+  closeStats.focus();
 }
 function closeStatsModal(){ statsModal.style.display="none"; statsModal.setAttribute("aria-hidden","true"); }
 statsBtn.addEventListener("click",openStatsModal);
