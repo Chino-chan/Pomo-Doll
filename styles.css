@@ -429,6 +429,26 @@ body{
   border-radius: 4px;
   cursor: pointer;
   background-color: #9de6c1;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: none;
+}
+
+/* Dark mode for work button */
+body.dark-mode .project-buttons .work-btn {
+  background-color: #4a6b5a;
+  color: #bbb;
+}
+
+/* Responsive text sizing */
+@media (max-width: 400px) {
+  .project-buttons .work-btn {
+    font-size: 0.7rem;
+    padding: 4px 6px;
+  }
 }
 
 

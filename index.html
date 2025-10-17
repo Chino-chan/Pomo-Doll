@@ -218,8 +218,74 @@
         margin-bottom: 16px;
       }
 
+      /* Config Modal Styling */
+      #config-modal .modal-content {
+        max-width: 500px;
+        width: 90%;
+      }
+
+      /* Discard Modal Styling */
+      #discard-modal .modal-content {
+        max-width: 450px;
+        width: 90%;
+      }
+
+      #discard-modal .modal-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      #discard-modal .modal-buttons button {
+        flex: 1;
+        max-width: 150px;
+        padding: 10px 16px;
+      }
+
+      #config-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      #config-form label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      #config-form input[type="number"],
+      #config-form input[type="text"] {
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+      }
+
+      #config-form button[type="submit"],
+      #config-form button[type="button"] {
+        margin-top: 8px;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      #config-form h4 {
+        margin: 16px 0 4px 0;
+        font-size: 1rem;
+      }
+
+      #add-project-btn {
+        margin-bottom: 16px !important;
+      }
+
       /* Projects in config */
-      .project-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+      .project-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; margin-bottom: 12px; }
       .project-item { display: flex; flex-direction: column; padding: 6px; border: 1px solid #ccc; border-radius: 6px; background: #f9f9f9; }
       .project-item button { margin-top: 4px; width: 36px; height: 28px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
       .project-buttons { display: flex; gap: 6px; margin-top: 4px; }
@@ -572,6 +638,10 @@
         border-color: #555;
       }
 
+      body.dark-mode #config-modal input::placeholder {
+        color: #888;
+      }
+
       body.dark-mode #config-modal label {
         color: #e0e0e0;
       }
@@ -661,19 +731,43 @@
           <span id="close-config" class="close">&times;</span>
           <h3>Configure Timers</h3>
           <form id="config-form">
-            <label>Pomo Study Time (minutes): <input type="number" id="config-study-time" min="1" value="25"></label><br>
-            <label>Short Break Time (minutes): <input type="number" id="config-short-break" min="1" value="5"></label><br>
-            <label>Long Break Time (minutes): <input type="number" id="config-long-break" min="1" value="15"></label><br>
-            <label>Pomos per cycle: <input type="number" id="config-cycle-count" min="1" value="4"></label><br>
+            <label>
+              Pomo Study Time (minutes):
+              <input type="number" id="config-study-time" min="1" value="25">
+            </label>
+
+            <label>
+              Short Break Time (minutes):
+              <input type="number" id="config-short-break" min="1" value="5">
+            </label>
+
+            <label>
+              Long Break Time (minutes):
+              <input type="number" id="config-long-break" min="1" value="15">
+            </label>
+
+            <label>
+              Pomos per cycle:
+              <input type="number" id="config-cycle-count" min="1" value="4">
+            </label>
 
             <!-- Project Tracking -->
             <h4>Activity Tracking (Optional)</h4>
             <div id="project-list" class="project-list"></div>
-            <label>Activity Name: <input type="text" id="new-project-name" placeholder="Project Name"></label><br>
-            <label>Goal (hours, optional): <input type="number" id="new-project-goal" min="1" placeholder="0"></label><br>
+
+            <label>
+              Activity Name:
+              <input type="text" id="new-project-name" placeholder="e.g., Math Homework">
+            </label>
+
+            <label>
+              Goal (hours, optional):
+              <input type="number" id="new-project-goal" min="1" placeholder="e.g., 10">
+            </label>
+
             <button type="button" id="add-project-btn">Add Activity</button>
 
-            <button type="submit">Save</button>
+            <button type="submit">Save Configuration</button>
           </form>
         </div>
       </div>
