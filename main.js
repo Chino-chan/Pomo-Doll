@@ -244,7 +244,20 @@ function updateModeLabel() {
   if (isLongBreak) modeLabelEl.textContent="Long Break";
   else if (isBreak) modeLabelEl.textContent="Break Time";
   else modeLabelEl.textContent="Study Time";
+
+  // Update mode label color
   modeLabelEl.style.color = isLongBreak ? "#27ae60" : isBreak ? "#2ecc71" : "#e74c3c";
+
+  // Update app border color based on mode (only if enabled)
+  const borderColorsEnabled = localStorage.getItem('borderColorsEnabled') !== 'false';
+  const appContainer = document.getElementById("app");
+  if (appContainer) {
+    if (borderColorsEnabled) {
+      appContainer.style.borderColor = isLongBreak ? "#27ae60" : isBreak ? "#2ecc71" : "#e74c3c";
+    } else {
+      appContainer.style.borderColor = "#888"; // Neutral gray when disabled
+    }
+  }
 }
 
 function updateDisplay() {
@@ -1470,15 +1483,14 @@ function openStatsModal(){
   renderMonthlySummaryCards();
   renderPersonalRecords();
 
-  // Apply saved theme preference
-  const savedTheme = localStorage.getItem('statsModalTheme') || 'light';
-  if (savedTheme === 'dark') {
+  // Sync stats modal theme with app theme
+  const isAppDarkMode = document.body.classList.contains('dark-mode');
+  if (isAppDarkMode) {
     statsModal.classList.add('dark-mode');
-    updateThemeToggleIcon();
   } else {
     statsModal.classList.remove('dark-mode');
-    updateThemeToggleIcon();
   }
+  updateThemeToggleIcon();
 
   statsModal.style.display="flex";
   statsModal.setAttribute("aria-hidden","false");
@@ -1583,17 +1595,20 @@ function updateThemeToggleIcon() {
 }
 
 /**
- * Toggle between light and dark themes
+ * Toggle between light and dark themes (synced with app theme)
  */
 function toggleTheme() {
+  // Toggle both stats modal and app theme
   statsModal.classList.toggle('dark-mode');
+  document.body.classList.toggle('dark-mode');
 
   // Save preference to localStorage
-  const isDarkMode = statsModal.classList.contains('dark-mode');
-  localStorage.setItem('statsModalTheme', isDarkMode ? 'dark' : 'light');
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  localStorage.setItem('appTheme', isDarkMode ? 'dark' : 'light');
 
-  // Update button icon
+  // Update both button icons
   updateThemeToggleIcon();
+  updateAppThemeToggleIcon();
 }
 
 // Event listener for theme toggle button
@@ -1771,3 +1786,104 @@ if (exportDataBtn) {
 if (importDataBtn) {
   importDataBtn.addEventListener('click', importData);
 }
+
+// --------------------
+// Global App Theme Toggle
+// --------------------
+const appThemeToggleBtn = document.getElementById("app-theme-toggle");
+
+/**
+ * Update global app theme toggle button icon based on current theme
+ */
+function updateAppThemeToggleIcon() {
+  if (appThemeToggleBtn) {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    appThemeToggleBtn.textContent = isDarkMode ? '🌙' : '☀️';
+    appThemeToggleBtn.title = isDarkMode ? 'Switch to light mode' : 'Switch to dark mode';
+  }
+}
+
+/**
+ * Toggle between light and dark themes for entire app
+ */
+function toggleAppTheme() {
+  document.body.classList.toggle('dark-mode');
+
+  // Save preference to localStorage
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  localStorage.setItem('appTheme', isDarkMode ? 'dark' : 'light');
+
+  // Update button icon
+  updateAppThemeToggleIcon();
+
+  // Also sync with stats modal theme if it's currently open
+  if (statsModal.style.display === 'flex') {
+    if (isDarkMode) {
+      statsModal.classList.add('dark-mode');
+    } else {
+      statsModal.classList.remove('dark-mode');
+    }
+    updateThemeToggleIcon();
+  }
+}
+
+// Event listener for global app theme toggle button
+if (appThemeToggleBtn) {
+  appThemeToggleBtn.addEventListener('click', toggleAppTheme);
+}
+
+// Apply saved theme preference on page load
+const savedAppTheme = localStorage.getItem('appTheme') || 'light';
+if (savedAppTheme === 'dark') {
+  document.body.classList.add('dark-mode');
+  updateAppThemeToggleIcon();
+}
+
+// --------------------
+// Border Colors Toggle
+// --------------------
+const toggleBorderColorsBtn = document.getElementById("toggle-border-colors-btn");
+const borderColorsStatus = document.getElementById("border-colors-status");
+
+/**
+ * Update border colors toggle button and status text
+ */
+function updateBorderColorsDisplay() {
+  const enabled = localStorage.getItem('borderColorsEnabled') !== 'false';
+
+  if (toggleBorderColorsBtn) {
+    toggleBorderColorsBtn.textContent = enabled ? '🎨 Disable Border Colors' : '🎨 Enable Border Colors';
+  }
+
+  if (borderColorsStatus) {
+    borderColorsStatus.textContent = enabled
+      ? 'Border colors are currently enabled'
+      : 'Border colors are currently disabled';
+  }
+}
+
+/**
+ * Toggle border colors on/off
+ */
+function toggleBorderColors() {
+  const currentlyEnabled = localStorage.getItem('borderColorsEnabled') !== 'false';
+  const newValue = !currentlyEnabled;
+
+  // Save preference
+  localStorage.setItem('borderColorsEnabled', newValue.toString());
+
+  // Update display
+  updateBorderColorsDisplay();
+
+  // Apply the change immediately
+  updateModeLabel();
+}
+
+// Event listener for border colors toggle button
+if (toggleBorderColorsBtn) {
+  toggleBorderColorsBtn.addEventListener('click', toggleBorderColors);
+}
+
+// Apply saved border colors preference on page load
+updateBorderColorsDisplay();
+updateModeLabel(); // Apply initial border color based on saved preference

@@ -126,7 +126,7 @@ button {
 
 #app{
   max-width: 500px;
-  border: #8af005 solid 2px;
+  border: #e74c3c solid 2px; /* Red for Study Time (default) */
   align-items: center;
 }
 

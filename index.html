@@ -445,10 +445,15 @@
       }
 
       .stats-modal.dark-mode #export-data-btn,
-      .stats-modal.dark-mode #import-data-btn {
+      .stats-modal.dark-mode #import-data-btn,
+      .stats-modal.dark-mode #toggle-border-colors-btn {
         background: #2d2d2d;
         color: #e0e0e0;
         border-color: #3d3d3d;
+      }
+
+      .stats-modal.dark-mode #border-colors-status {
+        color: #999;
       }
 
       /* Theme toggle button */
@@ -474,10 +479,140 @@
       .stats-modal.dark-mode #theme-toggle:hover {
         background: #2d2d2d;
       }
+
+      /* ============================================ */
+      /* GLOBAL DARK MODE FOR ENTIRE APP */
+      /* ============================================ */
+
+      /* Main app container dark mode */
+      body.dark-mode {
+        background-color: #1a1a1a;
+      }
+
+      body.dark-mode #app {
+        background: #2d2d2d;
+        /* border-color is set dynamically by updateModeLabel() based on study/break mode */
+      }
+
+      body.dark-mode #MainApp {
+        background: #2d2d2d;
+        color: #e0e0e0;
+      }
+
+      body.dark-mode h2 {
+        color: #e0e0e0;
+      }
+
+      /* Timer and mode label dark mode */
+      body.dark-mode #timer {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode #mode-label {
+        background: rgba(255, 255, 255, 0.1);
+        color: inherit; /* Keep the dynamic color (red/green) */
+      }
+
+      /* Streak section dark mode */
+      body.dark-mode #streak {
+        color: #e0e0e0;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      body.dark-mode #streak hr {
+        border-color: #444;
+      }
+
+      /* Buttons dark mode */
+      body.dark-mode button {
+        background-color: #3d3d3d;
+        color: #e0e0e0;
+        border-color: #555;
+      }
+
+      body.dark-mode button:hover {
+        border-color: #667eea;
+        background-color: #4d4d4d;
+      }
+
+      body.dark-mode button:active {
+        background-color: #353535;
+      }
+
+      /* Config Modal dark mode */
+      body.dark-mode #config-modal .modal-content,
+      body.dark-mode #discard-modal .modal-content {
+        background: #2d2d2d;
+        color: #e0e0e0;
+      }
+
+      body.dark-mode #config-modal h3,
+      body.dark-mode #config-modal h4,
+      body.dark-mode #discard-modal h2 {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode #config-modal .close,
+      body.dark-mode #discard-modal .close {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode #config-modal input,
+      body.dark-mode #config-modal select {
+        background: #3d3d3d;
+        color: #e0e0e0;
+        border-color: #555;
+      }
+
+      body.dark-mode #config-modal label {
+        color: #e0e0e0;
+      }
+
+      /* Project items in config dark mode */
+      body.dark-mode .project-item {
+        background: #3d3d3d;
+        border-color: #555;
+        color: #e0e0e0;
+      }
+
+      /* Discard modal dark mode */
+      body.dark-mode #discard-modal p {
+        color: #ccc;
+      }
+
+      /* Global theme toggle button (for main app) */
+      #app-theme-toggle {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s;
+        z-index: 1000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      body.dark-mode #app-theme-toggle {
+        background: rgba(45, 45, 45, 0.95);
+        border-color: #555;
+        color: #e0e0e0;
+      }
+
+      #app-theme-toggle:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
     </style>
   </head>
 
   <body>
+    <!-- Global theme toggle button -->
+    <button id="app-theme-toggle" title="Toggle dark/light mode">☀️</button>
+
     <div id="app">
       <div id="imgFront"><img src="img/Gx1RtClbsAE1qm4.jpeg" alt=""></div>
 
@@ -706,7 +841,7 @@
           <!-- Data Manipulation & Other Tools Section -->
           <div class="charts-section">
             <h4>🛠️ Data Manipulation & Other Tools</h4>
-            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px;">
               <!-- Left side: Clear Database -->
               <button id="clear-database-btn" style="padding: 8px 12px; background: #ffcccb; color: #c62828; border: 1px solid #ef9a9a; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
                 🗑️ Clear Database
@@ -720,6 +855,15 @@
                 📥 Import Data
               </button>
             </div>
+
+            <!-- Border Color Toggle -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button id="toggle-border-colors-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                🎨 Disable Border Colors
+              </button>
+              <span id="border-colors-status" style="font-size: 12px; color: #666;">Border colors are currently enabled</span>
+            </div>
+
             <!-- Hidden file input for import -->
             <input type="file" id="import-file-input" accept=".json" style="display: none;">
           </div>
