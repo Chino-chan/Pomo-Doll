@@ -1303,6 +1303,14 @@ function renderHeatmapStats() {
   const weeklyAvg = totalWeeks > 0 ? totalMinutes / totalWeeks : 0;
   const weeklyAvgHours = (weeklyAvg / 60).toFixed(1);
   document.getElementById('heatmap-weekly-avg').textContent = `${weeklyAvgHours}h`;
+
+  // Total Time Studied (all historical data)
+  let totalHistoricalMinutes = 0;
+  Object.keys(stats).forEach(key => {
+    totalHistoricalMinutes += stats[key].minutes || 0;
+  });
+  const totalHours = (totalHistoricalMinutes / 60).toFixed(1);
+  document.getElementById('heatmap-total-time').textContent = `${totalHours}h`;
 }
 
 function openStatsModal(){
