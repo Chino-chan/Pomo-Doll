@@ -167,6 +167,7 @@ const startPauseBtn = document.getElementById("start-pause");
 const resetBtn = document.getElementById("reset");
 const skipBtn = document.getElementById("skip");
 const modeLabelEl = document.getElementById("mode-label");
+const titleHeartEl = document.getElementById("title-heart");
 const configBtn = document.getElementById("config");
 const configModal = document.getElementById("config-modal");
 const closeConfig = document.getElementById("close-config");
@@ -299,6 +300,41 @@ function updateModeLabel() {
     } else {
       appContainer.style.borderColor = "#888"; // Neutral gray when disabled
     }
+  }
+
+  // Update title heart based on mode
+  updateTitleHeart();
+}
+
+/**
+ * Update the title heart emoji based on current mode
+ * ❤️ Red heart - Study mode (Pomo mode)
+ * ❤ Solid heart - If dynamic heart is disabled (static)
+ * 💜 Purple heart - Free Timer mode
+ * 💚 Green heart - Break mode
+ */
+function updateTitleHeart() {
+  if (!titleHeartEl) return;
+
+  // Check if dynamic heart is enabled
+  const dynamicHeartEnabled = localStorage.getItem('dynamicHeartEnabled') !== 'false';
+
+  if (!dynamicHeartEnabled) {
+    // If dynamic heart is disabled, always show solid heart
+    titleHeartEl.textContent = "❤";
+    return;
+  }
+
+  // Dynamic heart is enabled - change based on mode
+  if (isBreak || isLongBreak) {
+    // Green heart for breaks
+    titleHeartEl.textContent = "💚";
+  } else if (isFreeTimerMode) {
+    // Purple heart for Free Timer mode
+    titleHeartEl.textContent = "💜";
+  } else {
+    // Red heart for study mode (Pomo mode)
+    titleHeartEl.textContent = "❤️";
   }
 }
 
@@ -2375,6 +2411,47 @@ if (toggleBorderColorsBtn) {
 // Apply saved border colors preference on page load
 updateBorderColorsDisplay();
 updateModeLabel(); // Apply initial border color based on saved preference
+
+// --------------------
+// Dynamic Heart Toggle
+// --------------------
+const toggleDynamicHeartBtn = document.getElementById("toggle-dynamic-heart-btn");
+
+/**
+ * Update dynamic heart toggle button text
+ */
+function updateDynamicHeartDisplay() {
+  const enabled = localStorage.getItem('dynamicHeartEnabled') !== 'false';
+
+  if (toggleDynamicHeartBtn) {
+    toggleDynamicHeartBtn.textContent = enabled ? '❤️ Disable Dynamic Heart' : '❤️ Enable Dynamic Heart';
+  }
+}
+
+/**
+ * Toggle dynamic heart on/off
+ */
+function toggleDynamicHeart() {
+  const currentlyEnabled = localStorage.getItem('dynamicHeartEnabled') !== 'false';
+  const newValue = !currentlyEnabled;
+
+  // Save preference
+  localStorage.setItem('dynamicHeartEnabled', newValue.toString());
+
+  // Update display
+  updateDynamicHeartDisplay();
+
+  // Apply the change immediately
+  updateTitleHeart();
+}
+
+// Event listener for dynamic heart toggle button
+if (toggleDynamicHeartBtn) {
+  toggleDynamicHeartBtn.addEventListener('click', toggleDynamicHeart);
+}
+
+// Apply saved dynamic heart preference on page load
+updateDynamicHeartDisplay();
 
 // --------------------
 // Streak Display Toggle
