@@ -255,25 +255,17 @@
       }
 
       .summary-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: #f9f9f9;
+        color: #333;
         padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-radius: 8px;
+        border: 1px solid #ddd;
         text-align: center;
-      }
-
-      .summary-card:nth-child(2) {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      }
-
-      .summary-card:nth-child(3) {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
       }
 
       .summary-card-label {
         font-size: 0.85rem;
-        opacity: 0.9;
+        color: #666;
         margin-bottom: 8px;
         font-weight: 500;
       }
@@ -281,12 +273,13 @@
       .summary-card-value {
         font-size: 1.8rem;
         font-weight: bold;
+        color: #333;
         margin-bottom: 4px;
       }
 
       .summary-card-subtitle {
         font-size: 0.75rem;
-        opacity: 0.8;
+        color: #999;
       }
 
       /* Personal Records */
@@ -548,9 +541,22 @@
           <!-- Data Manipulation & Other Tools Section -->
           <div class="charts-section">
             <h4>🛠️ Data Manipulation & Other Tools</h4>
-            <div class="chart-placeholder">
-              Tools Coming Soon
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+              <!-- Left side: Clear Database -->
+              <button id="clear-database-btn" style="padding: 8px 12px; background: #ffcccb; color: #c62828; border: 1px solid #ef9a9a; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                🗑️ Clear Database
+              </button>
+
+              <!-- Right side: Export/Import -->
+              <button id="export-data-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                📤 Export Data
+              </button>
+              <button id="import-data-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                📥 Import Data
+              </button>
             </div>
+            <!-- Hidden file input for import -->
+            <input type="file" id="import-file-input" accept=".json" style="display: none;">
           </div>
         </div>
       </div>

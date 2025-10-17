@@ -242,3 +242,128 @@ export function computeColorBucket(minutes, thresholds) {
   if (minutes <= thresholds[2]) return 3;
   return 4;
 }
+
+/**
+ * Find the best day of the week based on average study time
+ */
+export function getBestDayOfWeek(stats) {
+  const dayMinutes = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+
+  Object.keys(stats).forEach(key => {
+    const date = new Date(key);
+    const dayOfWeek = date.getDay();
+    const minutes = stats[key].minutes || 0;
+    if (minutes > 0) {
+      dayMinutes[dayOfWeek].push(minutes);
+    }
+  });
+
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  let bestDay = 'N/A';
+  let bestAvg = 0;
+
+  Object.keys(dayMinutes).forEach(day => {
+    if (dayMinutes[day].length > 0) {
+      const avg = dayMinutes[day].reduce((a, b) => a + b, 0) / dayMinutes[day].length;
+      if (avg > bestAvg) {
+        bestAvg = avg;
+        bestDay = dayNames[day];
+      }
+    }
+  });
+
+  return { dayName: bestDay, avgMinutes: bestAvg };
+}
+
+/**
+ * Calculate the longest streak in the entire history
+ */
+export function getLongestStreak(stats) {
+  let longestStreak = 0;
+  let currentStreakCount = 0;
+  const allKeys = Object.keys(stats).filter(k => stats[k].minutes > 0).sort();
+
+  for (let i = 0; i < allKeys.length; i++) {
+    const currentDate = new Date(allKeys[i]);
+
+    if (i === 0) {
+      // First day with minutes
+      currentStreakCount = 1;
+    } else {
+      const prevDate = new Date(allKeys[i - 1]);
+      const diffDays = Math.round((currentDate - prevDate) / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        // Consecutive day
+        currentStreakCount++;
+      } else {
+        // Gap found, restart streak
+        currentStreakCount = 1;
+      }
+    }
+
+    longestStreak = Math.max(longestStreak, currentStreakCount);
+  }
+
+  return longestStreak;
+}
+
+/**
+ * Find the most productive single day ever
+ */
+export function getMostProductiveDay(stats) {
+  let maxDay = { date: 'N/A', minutes: 0 };
+
+  Object.keys(stats).forEach(key => {
+    if (stats[key].minutes > maxDay.minutes) {
+      maxDay = { date: key, minutes: stats[key].minutes };
+    }
+  });
+
+  return maxDay;
+}
+
+/**
+ * Find the most productive week (7-day rolling window) in the past year
+ */
+export function getMostProductiveWeek(stats) {
+  let maxWeekMinutes = 0;
+  const today = new Date();
+
+  for (let i = 0; i < 365; i++) {
+    const weekEnd = new Date(today);
+    weekEnd.setDate(today.getDate() - i);
+    const weekStart = new Date(weekEnd);
+    weekStart.setDate(weekEnd.getDate() - 6);
+
+    const weekMinutes = getTotalStudyTimeInRange(stats, weekStart, weekEnd);
+    maxWeekMinutes = Math.max(maxWeekMinutes, weekMinutes);
+  }
+
+  return maxWeekMinutes;
+}
+
+/**
+ * Find the most productive month in the past 12 months
+ */
+export function getMostProductiveMonth(stats) {
+  let maxMonthHours = 0;
+  let maxMonthName = 'N/A';
+  const today = new Date();
+
+  for (let monthOffset = 0; monthOffset < 12; monthOffset++) {
+    const checkDate = new Date(today.getFullYear(), today.getMonth() - monthOffset, 1);
+    const monthStart = new Date(checkDate.getFullYear(), checkDate.getMonth(), 1);
+    const monthEnd = new Date(checkDate.getFullYear(), checkDate.getMonth() + 1, 0);
+
+    const monthMinutes = getTotalStudyTimeInRange(stats, monthStart, monthEnd);
+    const monthHours = monthMinutes / 60;
+
+    if (monthHours > maxMonthHours) {
+      maxMonthHours = monthHours;
+      maxMonthName = checkDate.toLocaleDateString('en', { month: 'short', year: 'numeric' });
+    }
+  }
+
+  return { monthName: maxMonthName, hours: maxMonthHours };
+}

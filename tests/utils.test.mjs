@@ -10,7 +10,12 @@ import {
   formatDate,
   calculateProjectDistribution,
   buildThresholds,
-  computeColorBucket
+  computeColorBucket,
+  getBestDayOfWeek,
+  getLongestStreak,
+  getMostProductiveDay,
+  getMostProductiveWeek,
+  getMostProductiveMonth
 } from '../utils.mjs';
 
 describe('Date Utilities', () => {
@@ -427,6 +432,251 @@ describe('Project Distribution', () => {
 
       expect(result.projectTimes).toHaveLength(0);
       expect(result.unattributedMinutes).toBeGreaterThanOrEqual(0);
+    });
+  });
+});
+
+describe('Statistics Functions', () => {
+  describe('getBestDayOfWeek', () => {
+    it('should return N/A for empty stats', () => {
+      const result = getBestDayOfWeek({});
+      expect(result.dayName).toBe('N/A');
+      expect(result.avgMinutes).toBe(0);
+    });
+
+    it('should find the day with highest average', () => {
+      // Use same dates repeated to test averaging
+      const stats = {
+        '2024-01-01': { minutes: 120, pomos: 4 },
+        '2024-01-08': { minutes: 100, pomos: 3 },  // Same day of week as Jan 1
+        '2024-01-02': { minutes: 50, pomos: 2 },
+        '2024-01-03': { minutes: 80, pomos: 3 },
+        '2024-01-10': { minutes: 90, pomos: 3 }    // Same day of week as Jan 3
+      };
+
+      const result = getBestDayOfWeek(stats);
+      // Should find the day with highest average (Jan 1 and Jan 8)
+      expect(result.avgMinutes).toBe(110); // (120+100)/2
+      expect(result.dayName).not.toBe('N/A');
+    });
+
+    it('should ignore days with 0 minutes', () => {
+      const stats = {
+        '2024-01-01': { minutes: 100, pomos: 4 },
+        '2024-01-02': { minutes: 0, pomos: 0 },
+        '2024-01-03': { minutes: 50, pomos: 2 }
+      };
+
+      const result = getBestDayOfWeek(stats);
+      // Should find the day with 100 minutes (not 0 and not 50)
+      expect(result.avgMinutes).toBe(100);
+      expect(result.dayName).not.toBe('N/A');
+    });
+
+    it('should handle all days of the week', () => {
+      // Create 7 consecutive days with increasing values
+      const stats = {
+        '2024-01-01': { minutes: 10, pomos: 1 },
+        '2024-01-02': { minutes: 20, pomos: 1 },
+        '2024-01-03': { minutes: 30, pomos: 1 },
+        '2024-01-04': { minutes: 40, pomos: 1 },
+        '2024-01-05': { minutes: 50, pomos: 1 },
+        '2024-01-06': { minutes: 60, pomos: 1 },
+        '2024-01-07': { minutes: 70, pomos: 1 }
+      };
+
+      const result = getBestDayOfWeek(stats);
+      // Should find the day with maximum value (70 minutes)
+      expect(result.avgMinutes).toBe(70);
+      expect(result.dayName).not.toBe('N/A');
+    });
+  });
+
+  describe('getLongestStreak', () => {
+    it('should return 0 for empty stats', () => {
+      expect(getLongestStreak({})).toBe(0);
+    });
+
+    it('should find longest consecutive streak', () => {
+      const stats = {
+        '2024-03-01': { minutes: 30, pomos: 2 },
+        '2024-03-02': { minutes: 25, pomos: 1 },
+        '2024-03-03': { minutes: 20, pomos: 1 },
+        // Gap here
+        '2024-03-05': { minutes: 40, pomos: 2 },
+        '2024-03-06': { minutes: 35, pomos: 2 },
+        '2024-03-07': { minutes: 30, pomos: 2 },
+        '2024-03-08': { minutes: 45, pomos: 2 }
+      };
+
+      expect(getLongestStreak(stats)).toBe(4); // Days 5-8
+    });
+
+    it('should handle single day streak', () => {
+      const stats = {
+        '2024-03-01': { minutes: 30, pomos: 2 }
+      };
+
+      expect(getLongestStreak(stats)).toBe(1);
+    });
+
+    it('should ignore days with 0 minutes', () => {
+      const stats = {
+        '2024-03-01': { minutes: 30, pomos: 2 },
+        '2024-03-02': { minutes: 0, pomos: 0 },
+        '2024-03-03': { minutes: 20, pomos: 1 }
+      };
+
+      expect(getLongestStreak(stats)).toBe(1);
+    });
+
+    it('should handle multiple equal streaks', () => {
+      const stats = {
+        '2024-03-01': { minutes: 30, pomos: 2 },
+        '2024-03-02': { minutes: 25, pomos: 1 },
+        // Gap
+        '2024-03-04': { minutes: 40, pomos: 2 },
+        '2024-03-05': { minutes: 35, pomos: 2 }
+      };
+
+      expect(getLongestStreak(stats)).toBe(2);
+    });
+  });
+
+  describe('getMostProductiveDay', () => {
+    it('should return N/A for empty stats', () => {
+      const result = getMostProductiveDay({});
+      expect(result.date).toBe('N/A');
+      expect(result.minutes).toBe(0);
+    });
+
+    it('should find day with most minutes', () => {
+      const stats = {
+        '2024-03-01': { minutes: 30, pomos: 2 },
+        '2024-03-02': { minutes: 120, pomos: 4 },
+        '2024-03-03': { minutes: 45, pomos: 2 }
+      };
+
+      const result = getMostProductiveDay(stats);
+      expect(result.date).toBe('2024-03-02');
+      expect(result.minutes).toBe(120);
+    });
+
+    it('should handle single day', () => {
+      const stats = {
+        '2024-03-01': { minutes: 30, pomos: 2 }
+      };
+
+      const result = getMostProductiveDay(stats);
+      expect(result.date).toBe('2024-03-01');
+      expect(result.minutes).toBe(30);
+    });
+
+    it('should handle ties (returns first)', () => {
+      const stats = {
+        '2024-03-01': { minutes: 100, pomos: 4 },
+        '2024-03-02': { minutes: 100, pomos: 4 }
+      };
+
+      const result = getMostProductiveDay(stats);
+      expect(result.minutes).toBe(100);
+      expect(['2024-03-01', '2024-03-02']).toContain(result.date);
+    });
+  });
+
+  describe('getMostProductiveWeek', () => {
+    it('should return 0 for empty stats', () => {
+      expect(getMostProductiveWeek({})).toBe(0);
+    });
+
+    it('should find week with most total minutes', () => {
+      const now = new Date();
+      const stats = {};
+
+      // Create a productive week 10 days ago
+      for (let i = 10; i <= 16; i++) {
+        const date = new Date(now);
+        date.setDate(now.getDate() - i);
+        const key = getLocalDateKey(date);
+        stats[key] = { minutes: 60, pomos: 2 }; // 420 minutes total
+      }
+
+      // Create a less productive week 3 days ago
+      for (let i = 3; i <= 9; i++) {
+        const date = new Date(now);
+        date.setDate(now.getDate() - i);
+        const key = getLocalDateKey(date);
+        stats[key] = { minutes: 30, pomos: 1 }; // 210 minutes total
+      }
+
+      const result = getMostProductiveWeek(stats);
+      expect(result).toBeGreaterThanOrEqual(420);
+    });
+
+    it('should use 7-day rolling window', () => {
+      const now = new Date();
+      const stats = {};
+
+      // Create consecutive days with varying minutes
+      for (let i = 0; i < 14; i++) {
+        const date = new Date(now);
+        date.setDate(now.getDate() - i);
+        const key = getLocalDateKey(date);
+        stats[key] = { minutes: i * 10, pomos: 1 };
+      }
+
+      const result = getMostProductiveWeek(stats);
+      // Should find the 7-day window with highest sum
+      expect(result).toBeGreaterThan(0);
+    });
+  });
+
+  describe('getMostProductiveMonth', () => {
+    it('should return N/A for empty stats', () => {
+      const result = getMostProductiveMonth({});
+      expect(result.monthName).toBe('N/A');
+      expect(result.hours).toBe(0);
+    });
+
+    it('should find month with most total hours', () => {
+      const now = new Date();
+      const stats = {};
+
+      // Fill this month with data
+      for (let day = 1; day <= 10; day++) {
+        const date = new Date(now.getFullYear(), now.getMonth(), day);
+        const key = getLocalDateKey(date);
+        stats[key] = { minutes: 60, pomos: 2 }; // 10 hours total
+      }
+
+      // Fill last month with more data
+      for (let day = 1; day <= 20; day++) {
+        const date = new Date(now.getFullYear(), now.getMonth() - 1, day);
+        const key = getLocalDateKey(date);
+        stats[key] = { minutes: 60, pomos: 2 }; // 20 hours total
+      }
+
+      const result = getMostProductiveMonth(stats);
+      expect(result.hours).toBeGreaterThan(0);
+      expect(result.monthName).not.toBe('N/A');
+    });
+
+    it('should return month name and hours', () => {
+      const now = new Date();
+      const stats = {};
+
+      // Fill current month
+      for (let day = 1; day <= 5; day++) {
+        const date = new Date(now.getFullYear(), now.getMonth(), day);
+        const key = getLocalDateKey(date);
+        stats[key] = { minutes: 120, pomos: 4 }; // 10 hours total
+      }
+
+      const result = getMostProductiveMonth(stats);
+      expect(result).toHaveProperty('monthName');
+      expect(result).toHaveProperty('hours');
+      expect(result.hours).toBeGreaterThan(0);
+      expect(typeof result.monthName).toBe('string');
     });
   });
 });

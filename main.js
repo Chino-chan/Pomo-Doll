@@ -942,7 +942,146 @@ function renderHeatmap(year=currentHeatmapYear){
 }
 
 // --------------------
-// General Statistics
+// General Statistics - Pure Calculation Functions
+// --------------------
+
+/**
+ * Find the best day of the week based on average study time
+ * @param {Object} stats - Daily stats object
+ * @returns {Object} - { dayName: string, avgMinutes: number }
+ */
+function getBestDayOfWeek(stats) {
+  const dayMinutes = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+
+  Object.keys(stats).forEach(key => {
+    const date = new Date(key);
+    const dayOfWeek = date.getDay();
+    const minutes = stats[key].minutes || 0;
+    if (minutes > 0) {
+      dayMinutes[dayOfWeek].push(minutes);
+    }
+  });
+
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  let bestDay = 'N/A';
+  let bestAvg = 0;
+
+  Object.keys(dayMinutes).forEach(day => {
+    if (dayMinutes[day].length > 0) {
+      const avg = dayMinutes[day].reduce((a, b) => a + b, 0) / dayMinutes[day].length;
+      if (avg > bestAvg) {
+        bestAvg = avg;
+        bestDay = dayNames[day];
+      }
+    }
+  });
+
+  return { dayName: bestDay, avgMinutes: bestAvg };
+}
+
+/**
+ * Calculate the longest streak in the entire history
+ * @param {Object} stats - Daily stats object
+ * @returns {number} - Longest streak in days
+ */
+function getLongestStreak(stats) {
+  let longestStreak = 0;
+  let currentStreakCount = 0;
+  const allKeys = Object.keys(stats).filter(k => stats[k].minutes > 0).sort();
+
+  for (let i = 0; i < allKeys.length; i++) {
+    const currentDate = new Date(allKeys[i]);
+
+    if (i === 0) {
+      // First day with minutes
+      currentStreakCount = 1;
+    } else {
+      const prevDate = new Date(allKeys[i - 1]);
+      const diffDays = Math.round((currentDate - prevDate) / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        // Consecutive day
+        currentStreakCount++;
+      } else {
+        // Gap found, restart streak
+        currentStreakCount = 1;
+      }
+    }
+
+    longestStreak = Math.max(longestStreak, currentStreakCount);
+  }
+
+  return longestStreak;
+}
+
+/**
+ * Find the most productive single day ever
+ * @param {Object} stats - Daily stats object
+ * @returns {Object} - { date: string, minutes: number }
+ */
+function getMostProductiveDay(stats) {
+  let maxDay = { date: 'N/A', minutes: 0 };
+
+  Object.keys(stats).forEach(key => {
+    if (stats[key].minutes > maxDay.minutes) {
+      maxDay = { date: key, minutes: stats[key].minutes };
+    }
+  });
+
+  return maxDay;
+}
+
+/**
+ * Find the most productive week (7-day rolling window) in the past year
+ * @param {Object} stats - Daily stats object
+ * @returns {number} - Maximum weekly minutes
+ */
+function getMostProductiveWeek(stats) {
+  let maxWeekMinutes = 0;
+  const today = new Date();
+
+  for (let i = 0; i < 365; i++) {
+    const weekEnd = new Date(today);
+    weekEnd.setDate(today.getDate() - i);
+    const weekStart = new Date(weekEnd);
+    weekStart.setDate(weekEnd.getDate() - 6);
+
+    const weekMinutes = getTotalStudyTimeInRange(weekStart, weekEnd);
+    maxWeekMinutes = Math.max(maxWeekMinutes, weekMinutes);
+  }
+
+  return maxWeekMinutes;
+}
+
+/**
+ * Find the most productive month in the past 12 months
+ * @param {Object} stats - Daily stats object
+ * @returns {Object} - { monthName: string, hours: number }
+ */
+function getMostProductiveMonth(stats) {
+  let maxMonthHours = 0;
+  let maxMonthName = 'N/A';
+  const today = new Date();
+
+  for (let monthOffset = 0; monthOffset < 12; monthOffset++) {
+    const checkDate = new Date(today.getFullYear(), today.getMonth() - monthOffset, 1);
+    const monthStart = new Date(checkDate.getFullYear(), checkDate.getMonth(), 1);
+    const monthEnd = new Date(checkDate.getFullYear(), checkDate.getMonth() + 1, 0);
+
+    const monthMinutes = getTotalStudyTimeInRange(monthStart, monthEnd);
+    const monthHours = monthMinutes / 60;
+
+    if (monthHours > maxMonthHours) {
+      maxMonthHours = monthHours;
+      maxMonthName = checkDate.toLocaleDateString('en', { month: 'short', year: 'numeric' });
+    }
+  }
+
+  return { monthName: maxMonthName, hours: maxMonthHours };
+}
+
+// --------------------
+// General Statistics - Rendering Functions
 // --------------------
 
 /**
@@ -1087,30 +1226,7 @@ function renderMonthlySummaryCards() {
   const thisMonthHours = (thisMonthMinutes / 60).toFixed(1);
 
   // Find best day of week
-  const dayMinutes = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
-  Object.keys(stats).forEach(key => {
-    const date = new Date(key);
-    const dayOfWeek = date.getDay();
-    const minutes = stats[key].minutes || 0;
-    if (minutes > 0) {
-      dayMinutes[dayOfWeek].push(minutes);
-    }
-  });
-
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  let bestDay = 'N/A';
-  let bestAvg = 0;
-
-  Object.keys(dayMinutes).forEach(day => {
-    if (dayMinutes[day].length > 0) {
-      const avg = dayMinutes[day].reduce((a, b) => a + b, 0) / dayMinutes[day].length;
-      if (avg > bestAvg) {
-        bestAvg = avg;
-        bestDay = dayNames[day];
-      }
-    }
-  });
-
+  const { dayName: bestDay, avgMinutes: bestAvg } = getBestDayOfWeek(stats);
   const bestDayHours = (bestAvg / 60).toFixed(1);
 
   // Count completed projects this month
@@ -1123,14 +1239,14 @@ function renderMonthlySummaryCards() {
   // Render cards
   container.innerHTML = `
     <div class="summary-card">
-      <div class="summary-card-label">This Month</div>
-      <div class="summary-card-value">${thisMonthHours}h</div>
-      <div class="summary-card-subtitle">Total study time</div>
-    </div>
-    <div class="summary-card">
       <div class="summary-card-label">Best Day</div>
       <div class="summary-card-value">${bestDay}</div>
       <div class="summary-card-subtitle">${bestDayHours}h average</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-label">This Month</div>
+      <div class="summary-card-value">${thisMonthHours}h</div>
+      <div class="summary-card-subtitle">Total study time</div>
     </div>
     <div class="summary-card">
       <div class="summary-card-label">Projects Done</div>
@@ -1150,60 +1266,19 @@ function renderPersonalRecords() {
   const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
 
   // Longest streak ever
-  let longestStreak = 0;
-  let currentStreakCount = 0;
-  const allKeys = Object.keys(stats).sort();
-
-  for (let i = 0; i < allKeys.length; i++) {
-    const key = allKeys[i];
-    if (stats[key].minutes > 0) {
-      currentStreakCount++;
-      longestStreak = Math.max(longestStreak, currentStreakCount);
-    } else {
-      currentStreakCount = 0;
-    }
-  }
+  const longestStreak = getLongestStreak(stats);
 
   // Most productive day ever
-  let maxDay = { date: 'N/A', minutes: 0 };
-  Object.keys(stats).forEach(key => {
-    if (stats[key].minutes > maxDay.minutes) {
-      maxDay = { date: key, minutes: stats[key].minutes };
-    }
-  });
+  const maxDay = getMostProductiveDay(stats);
   const maxDayFormatted = maxDay.date !== 'N/A' ? formatDate(new Date(maxDay.date).toISOString()) : 'N/A';
   const maxDayHours = (maxDay.minutes / 60).toFixed(1);
 
   // Most productive week (7-day rolling window)
-  let maxWeekMinutes = 0;
-  const today = new Date();
-  for (let i = 0; i < 365; i++) {
-    const weekEnd = new Date(today);
-    weekEnd.setDate(today.getDate() - i);
-    const weekStart = new Date(weekEnd);
-    weekStart.setDate(weekEnd.getDate() - 6);
-
-    const weekMinutes = getTotalStudyTimeInRange(weekStart, weekEnd);
-    maxWeekMinutes = Math.max(maxWeekMinutes, weekMinutes);
-  }
+  const maxWeekMinutes = getMostProductiveWeek(stats);
   const maxWeekHours = (maxWeekMinutes / 60).toFixed(1);
 
   // Most productive month
-  let maxMonthHours = 0;
-  let maxMonthName = 'N/A';
-  for (let monthOffset = 0; monthOffset < 12; monthOffset++) {
-    const checkDate = new Date(today.getFullYear(), today.getMonth() - monthOffset, 1);
-    const monthStart = new Date(checkDate.getFullYear(), checkDate.getMonth(), 1);
-    const monthEnd = new Date(checkDate.getFullYear(), checkDate.getMonth() + 1, 0);
-
-    const monthMinutes = getTotalStudyTimeInRange(monthStart, monthEnd);
-    const monthHours = monthMinutes / 60;
-
-    if (monthHours > maxMonthHours) {
-      maxMonthHours = monthHours;
-      maxMonthName = checkDate.toLocaleDateString('en', { month: 'short', year: 'numeric' });
-    }
-  }
+  const { monthName: maxMonthName, hours: maxMonthHours } = getMostProductiveMonth(stats);
 
   // Render records
   container.innerHTML = `
@@ -1266,18 +1341,7 @@ function renderHeatmapStats() {
   document.getElementById('heatmap-last-studied').textContent = lastStudied;
 
   // Longest Streak Ever
-  let longestStreak = 0;
-  let currentStreakCount = 0;
-  const allKeys = Object.keys(stats).sort();
-  for (let i = 0; i < allKeys.length; i++) {
-    const key = allKeys[i];
-    if (stats[key].minutes > 0) {
-      currentStreakCount++;
-      longestStreak = Math.max(longestStreak, currentStreakCount);
-    } else {
-      currentStreakCount = 0;
-    }
-  }
+  const longestStreak = getLongestStreak(stats);
   document.getElementById('heatmap-longest-streak').textContent =
     longestStreak > 0 ? `${longestStreak} day${longestStreak !== 1 ? 's' : ''}` : 'None';
 
@@ -1357,3 +1421,153 @@ setInterval(() => {
     renderProjectList();
   }
 }, 60 * 1000);
+
+// --------------------
+// Data Manipulation Tools
+// --------------------
+
+/**
+ * Clear all database (localStorage)
+ */
+function clearAllData() {
+  if (confirm('⚠️ WARNING: This will permanently delete ALL your data including:\n\n• All study time history\n• All projects (active & completed)\n• All statistics\n• Timer configuration\n\nThis action CANNOT be undone!\n\nAre you absolutely sure?')) {
+    if (confirm('🚨 FINAL WARNING: This is your last chance. All data will be lost forever. Continue?')) {
+      // Clear all localStorage
+      localStorage.clear();
+
+      // Reset all in-memory variables
+      projects = [];
+      currentProjectIndex = null;
+      streak = 0;
+      totalStudySeconds = 0;
+      cycle = 0;
+      totalCycles = 0;
+
+      // Reset displays
+      streakEl.textContent = 0;
+      minutesEl.textContent = 0;
+      cycleEl.textContent = `0/${cyclesPerSet}`;
+      totalEl.textContent = 0;
+      currentActivityEl.textContent = "Not tracking anything";
+
+      // Update displays
+      updateLastStudyDisplay();
+      updateStreakDisplay();
+      renderProjectList();
+
+      // Close stats modal if open
+      closeStatsModal();
+
+      alert('✓ All data has been cleared successfully.');
+    }
+  }
+}
+
+/**
+ * Export all data to JSON file
+ */
+function exportData() {
+  try {
+    // Gather all localStorage data
+    const exportData = {
+      version: '1.0',
+      exportDate: new Date().toISOString(),
+      data: {
+        pomodoroDailyStats: JSON.parse(localStorage.getItem('pomodoroDailyStats') || '{}'),
+        pomodoroProjects: JSON.parse(localStorage.getItem('pomodoroProjects') || '[]'),
+        pomodoroConfig: JSON.parse(localStorage.getItem('pomodoroConfig') || 'null')
+      }
+    };
+
+    // Convert to JSON string
+    const jsonString = JSON.stringify(exportData, null, 2);
+
+    // Create blob and download
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `pomodoro-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    alert('✓ Data exported successfully! Check your downloads folder.');
+  } catch (error) {
+    alert('❌ Error exporting data: ' + error.message);
+    console.error('Export error:', error);
+  }
+}
+
+/**
+ * Import data from JSON file
+ */
+function importData() {
+  const fileInput = document.getElementById('import-file-input');
+  fileInput.click();
+}
+
+// Event listener for file input
+const importFileInput = document.getElementById('import-file-input');
+if (importFileInput) {
+  importFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const importedData = JSON.parse(event.target.result);
+
+        // Validate data structure
+        if (!importedData.data || !importedData.version) {
+          throw new Error('Invalid backup file format');
+        }
+
+        // Confirm before overwriting
+        if (confirm('⚠️ WARNING: Importing data will OVERWRITE all your current data!\n\nAre you sure you want to continue?')) {
+          // Restore data to localStorage
+          if (importedData.data.pomodoroDailyStats) {
+            localStorage.setItem('pomodoroDailyStats', JSON.stringify(importedData.data.pomodoroDailyStats));
+          }
+          if (importedData.data.pomodoroProjects) {
+            localStorage.setItem('pomodoroProjects', JSON.stringify(importedData.data.pomodoroProjects));
+          }
+          if (importedData.data.pomodoroConfig) {
+            localStorage.setItem('pomodoroConfig', JSON.stringify(importedData.data.pomodoroConfig));
+          }
+
+          // Reload page to apply changes
+          alert('✓ Data imported successfully! The page will reload now.');
+          location.reload();
+        }
+      } catch (error) {
+        alert('❌ Error importing data: ' + error.message + '\n\nPlease make sure you selected a valid backup file.');
+        console.error('Import error:', error);
+      }
+    };
+
+    reader.readAsText(file);
+
+    // Reset file input so the same file can be selected again
+    e.target.value = '';
+  });
+}
+
+// Event listeners for data manipulation buttons
+const clearDatabaseBtn = document.getElementById('clear-database-btn');
+const exportDataBtn = document.getElementById('export-data-btn');
+const importDataBtn = document.getElementById('import-data-btn');
+
+if (clearDatabaseBtn) {
+  clearDatabaseBtn.addEventListener('click', clearAllData);
+}
+
+if (exportDataBtn) {
+  exportDataBtn.addEventListener('click', exportData);
+}
+
+if (importDataBtn) {
+  importDataBtn.addEventListener('click', importData);
+}
