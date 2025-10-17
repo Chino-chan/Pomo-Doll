@@ -18,7 +18,9 @@ import {
   getMostProductiveMonth,
   getMonthDateRange,
   countProjectsCompletedInMonth,
-  getAvailableYears
+  getAvailableYears,
+  getProjectLastTrackedDate,
+  formatLastTracked
 } from '../utils.mjs';
 
 describe('Date Utilities', () => {
@@ -863,6 +865,143 @@ describe('Statistics Functions', () => {
       };
 
       expect(getAvailableYears(stats)).toEqual([2024]);
+    });
+  });
+});
+
+describe('Project Tracking', () => {
+  describe('getProjectLastTrackedDate', () => {
+    it('should return null for project without dailySeconds', () => {
+      const project = {
+        name: 'Test Project',
+        currentSeconds: 3600
+      };
+
+      expect(getProjectLastTrackedDate(project)).toBeNull();
+    });
+
+    it('should return null for project with empty dailySeconds', () => {
+      const project = {
+        name: 'Test Project',
+        dailySeconds: {}
+      };
+
+      expect(getProjectLastTrackedDate(project)).toBeNull();
+    });
+
+    it('should return last date when project was tracked', () => {
+      const project = {
+        name: 'Test Project',
+        dailySeconds: {
+          '2024-01-10': 3600,
+          '2024-01-12': 1800,
+          '2024-01-15': 7200
+        }
+      };
+
+      expect(getProjectLastTrackedDate(project)).toBe('2024-01-15');
+    });
+
+    it('should ignore days with 0 seconds', () => {
+      const project = {
+        name: 'Test Project',
+        dailySeconds: {
+          '2024-01-10': 3600,
+          '2024-01-12': 0,
+          '2024-01-13': 1800
+        }
+      };
+
+      expect(getProjectLastTrackedDate(project)).toBe('2024-01-13');
+    });
+
+    it('should handle single day tracking', () => {
+      const project = {
+        name: 'Test Project',
+        dailySeconds: {
+          '2024-01-15': 3600
+        }
+      };
+
+      expect(getProjectLastTrackedDate(project)).toBe('2024-01-15');
+    });
+
+    it('should return correct date when dates are not in order', () => {
+      const project = {
+        name: 'Test Project',
+        dailySeconds: {
+          '2024-01-20': 1800,
+          '2024-01-10': 3600,
+          '2024-01-15': 2400
+        }
+      };
+
+      expect(getProjectLastTrackedDate(project)).toBe('2024-01-20');
+    });
+  });
+
+  describe('formatLastTracked', () => {
+    it('should return "Never" for null date', () => {
+      expect(formatLastTracked(null)).toBe('Never');
+    });
+
+    it('should return "Never" for undefined date', () => {
+      expect(formatLastTracked(undefined)).toBe('Never');
+    });
+
+    it('should return "Today" for today\'s date', () => {
+      const today = new Date(2024, 0, 15); // January 15, 2024
+      const todayKey = getLocalDateKey(today);
+
+      expect(formatLastTracked(todayKey, today)).toBe('Today');
+    });
+
+    it('should return "Yesterday" for yesterday\'s date', () => {
+      const today = new Date(2024, 0, 15); // January 15, 2024
+      const yesterday = new Date(2024, 0, 14); // January 14, 2024
+      const yesterdayKey = getLocalDateKey(yesterday);
+
+      expect(formatLastTracked(yesterdayKey, today)).toBe('Yesterday');
+    });
+
+    it('should return "2 days ago" for date 2 days ago', () => {
+      const today = new Date(2024, 0, 15); // January 15, 2024
+      const twoDaysAgo = new Date(2024, 0, 13); // January 13, 2024
+      const twoDaysAgoKey = getLocalDateKey(twoDaysAgo);
+
+      expect(formatLastTracked(twoDaysAgoKey, today)).toBe('2 days ago');
+    });
+
+    it('should return "5 days ago" for date 5 days ago', () => {
+      const today = new Date(2024, 0, 15); // January 15, 2024
+      const fiveDaysAgo = new Date(2024, 0, 10); // January 10, 2024
+      const fiveDaysAgoKey = getLocalDateKey(fiveDaysAgo);
+
+      expect(formatLastTracked(fiveDaysAgoKey, today)).toBe('5 days ago');
+    });
+
+    it('should handle month boundaries correctly', () => {
+      const today = new Date(2024, 1, 5); // February 5, 2024
+      const lastMonth = new Date(2024, 0, 28); // January 28, 2024
+      const lastMonthKey = getLocalDateKey(lastMonth);
+
+      expect(formatLastTracked(lastMonthKey, today)).toBe('8 days ago');
+    });
+
+    it('should handle year boundaries correctly', () => {
+      const today = new Date(2024, 0, 5); // January 5, 2024
+      const lastYear = new Date(2023, 11, 30); // December 30, 2023
+      const lastYearKey = getLocalDateKey(lastYear);
+
+      expect(formatLastTracked(lastYearKey, today)).toBe('6 days ago');
+    });
+
+    it('should use current date when no reference date provided', () => {
+      const today = new Date();
+      const todayKey = getLocalDateKey(today);
+
+      // When called without reference date, it should recognize today
+      expect(formatLastTracked(todayKey)).toBe('Today');
     });
   });
 });

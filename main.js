@@ -275,6 +275,42 @@ function updateStudyTimeDisplay() { minutesEl.textContent = Math.floor(totalStud
 // --------------------
 let projects = JSON.parse(localStorage.getItem("pomodoroProjects")) || [];
 
+/**
+ * Get the last date when a project was tracked
+ * @param {Object} project - Project object with dailySeconds
+ * @returns {string|null} - Date key in YYYY-MM-DD format, or null if never tracked
+ */
+function getProjectLastTrackedDate(project) {
+  if (!project.dailySeconds) return null;
+
+  const dates = Object.keys(project.dailySeconds)
+    .filter(key => project.dailySeconds[key] > 0)
+    .sort();
+
+  return dates.length > 0 ? dates[dates.length - 1] : null;
+}
+
+/**
+ * Format last tracked date as human-readable text
+ * @param {string|null} lastDateKey - Date key in YYYY-MM-DD format
+ * @returns {string} - Human-readable text like "Today", "2 days ago", or "Never"
+ */
+function formatLastTracked(lastDateKey) {
+  if (!lastDateKey) return "Never";
+
+  const lastDate = new Date(lastDateKey);
+  const todayKey = getTodayKey();
+
+  if (lastDateKey === todayKey) return "Today";
+
+  const today = new Date(todayKey);
+  const diffMs = today - lastDate;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 1) return "Yesterday";
+  return `${diffDays} days ago`;
+}
+
 function renderProjectList() {
   projectListEl.innerHTML = "";
   projects.forEach((p, i) => {
@@ -302,9 +338,14 @@ function renderProjectList() {
       ? `${currentDisplay} / ${p.goal}h goal`
       : `${currentDisplay} tracked`;
 
+    // Get last tracked date
+    const lastTrackedDate = getProjectLastTrackedDate(p);
+    const lastTrackedText = formatLastTracked(lastTrackedDate);
+
     div.innerHTML = `
       <strong>${p.name}</strong><br>
-      — ${goalText}
+      — ${goalText}<br>
+      <span style="font-size: 0.85em; color: #888;">Last tracked: ${lastTrackedText}</span>
       <div class="project-buttons">
         <button data-index="${i}" class="complete-btn">✓</button>
         <button data-index="${i}" class="delete-btn">🗑️</button>

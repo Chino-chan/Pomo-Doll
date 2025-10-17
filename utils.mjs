@@ -427,3 +427,40 @@ export function getAvailableYears(stats) {
 
   return Array.from(years).sort((a, b) => a - b);
 }
+
+/**
+ * Get the last date when a project was tracked
+ * @param {Object} project - Project object with dailySeconds
+ * @returns {string|null} - Date key in YYYY-MM-DD format, or null if never tracked
+ */
+export function getProjectLastTrackedDate(project) {
+  if (!project.dailySeconds) return null;
+
+  const dates = Object.keys(project.dailySeconds)
+    .filter(key => project.dailySeconds[key] > 0)
+    .sort();
+
+  return dates.length > 0 ? dates[dates.length - 1] : null;
+}
+
+/**
+ * Format last tracked date as human-readable text
+ * @param {string|null} lastDateKey - Date key in YYYY-MM-DD format
+ * @param {Date} referenceDate - The reference date to calculate from (defaults to today)
+ * @returns {string} - Human-readable text like "Today", "2 days ago", or "Never"
+ */
+export function formatLastTracked(lastDateKey, referenceDate = new Date()) {
+  if (!lastDateKey) return "Never";
+
+  const lastDate = new Date(lastDateKey);
+  const todayKey = getLocalDateKey(referenceDate);
+
+  if (lastDateKey === todayKey) return "Today";
+
+  const today = new Date(todayKey);
+  const diffMs = today - lastDate;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 1) return "Yesterday";
+  return `${diffDays} days ago`;
+}
