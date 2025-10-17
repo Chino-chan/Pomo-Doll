@@ -1469,6 +1469,17 @@ function openStatsModal(){
   renderWeeklyTrendsChart();
   renderMonthlySummaryCards();
   renderPersonalRecords();
+
+  // Apply saved theme preference
+  const savedTheme = localStorage.getItem('statsModalTheme') || 'light';
+  if (savedTheme === 'dark') {
+    statsModal.classList.add('dark-mode');
+    updateThemeToggleIcon();
+  } else {
+    statsModal.classList.remove('dark-mode');
+    updateThemeToggleIcon();
+  }
+
   statsModal.style.display="flex";
   statsModal.setAttribute("aria-hidden","false");
   closeStats.focus();
@@ -1553,6 +1564,41 @@ if (heatmapNextYearBtn) {
       updateHeatmapYearDisplay();
     }
   };
+}
+
+// --------------------
+// Theme toggle
+// --------------------
+const themeToggleBtn = document.getElementById("theme-toggle");
+
+/**
+ * Update theme toggle button icon based on current theme
+ */
+function updateThemeToggleIcon() {
+  if (themeToggleBtn) {
+    const isDarkMode = statsModal.classList.contains('dark-mode');
+    themeToggleBtn.textContent = isDarkMode ? '🌙' : '☀️';
+    themeToggleBtn.title = isDarkMode ? 'Switch to light mode' : 'Switch to dark mode';
+  }
+}
+
+/**
+ * Toggle between light and dark themes
+ */
+function toggleTheme() {
+  statsModal.classList.toggle('dark-mode');
+
+  // Save preference to localStorage
+  const isDarkMode = statsModal.classList.contains('dark-mode');
+  localStorage.setItem('statsModalTheme', isDarkMode ? 'dark' : 'light');
+
+  // Update button icon
+  updateThemeToggleIcon();
+}
+
+// Event listener for theme toggle button
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', toggleTheme);
 }
 
 // --------------------

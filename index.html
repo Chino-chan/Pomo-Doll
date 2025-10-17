@@ -327,6 +327,153 @@
         display: block;
         margin: 0 auto;
       }
+
+      /* Dark Mode Styles */
+      .stats-modal.dark-mode .modal-content {
+        background: #1a1a1a;
+        color: #e0e0e0;
+      }
+
+      .stats-modal.dark-mode h3,
+      .stats-modal.dark-mode h4,
+      .stats-modal.dark-mode h5 {
+        color: #e0e0e0;
+      }
+
+      .stats-modal.dark-mode .close {
+        color: #e0e0e0;
+      }
+
+      .stats-modal.dark-mode .close:hover {
+        background: #2d2d2d;
+      }
+
+      /* Heatmap dark mode */
+      .stats-modal.dark-mode .weekday-labels {
+        color: #999;
+      }
+
+      .stats-modal.dark-mode .heatmap-month-container > div:first-child {
+        color: #999;
+      }
+
+      .stats-modal.dark-mode .day-0 {
+        background: #2d2d2d;
+        border-color: rgba(255,255,255,0.1);
+      }
+
+      .stats-modal.dark-mode .heatmap-legend {
+        background: #2d2d2d;
+        border-color: #3d3d3d;
+        color: #e0e0e0;
+      }
+
+      .stats-modal.dark-mode .heatmap-stat-label {
+        color: #999;
+      }
+
+      .stats-modal.dark-mode .heatmap-stat-value {
+        color: #e0e0e0;
+      }
+
+      .stats-modal.dark-mode .legend-section span {
+        color: #999;
+      }
+
+      /* Charts section dark mode */
+      .stats-modal.dark-mode .charts-section {
+        border-top-color: #3d3d3d;
+      }
+
+      .stats-modal.dark-mode .chart-placeholder {
+        background: #2d2d2d;
+        border-color: #444;
+        color: #999;
+      }
+
+      /* Summary cards dark mode */
+      .stats-modal.dark-mode .summary-card {
+        background: #2d2d2d;
+        border-color: #3d3d3d;
+        color: #e0e0e0;
+      }
+
+      .stats-modal.dark-mode .summary-card-label {
+        color: #999;
+      }
+
+      .stats-modal.dark-mode .summary-card-value {
+        color: #e0e0e0;
+      }
+
+      .stats-modal.dark-mode .summary-card-subtitle {
+        color: #777;
+      }
+
+      /* Personal records dark mode */
+      .stats-modal.dark-mode .record-item {
+        background: #2d2d2d;
+        border-color: #3d3d3d;
+      }
+
+      .stats-modal.dark-mode .record-label {
+        color: #999;
+      }
+
+      .stats-modal.dark-mode .record-value {
+        color: #e0e0e0;
+      }
+
+      /* Project distribution dark mode */
+      .stats-modal.dark-mode select {
+        background: #2d2d2d;
+        color: #e0e0e0;
+        border-color: #444;
+      }
+
+      .stats-modal.dark-mode #project-distribution-list > div,
+      .stats-modal.dark-mode #completed-projects-list > div {
+        background: #2d2d2d;
+        border-color: #3d3d3d;
+      }
+
+      /* Buttons dark mode */
+      .stats-modal.dark-mode #clear-database-btn {
+        background: #3d1f1f;
+        color: #ff6b6b;
+        border-color: #5d2f2f;
+      }
+
+      .stats-modal.dark-mode #export-data-btn,
+      .stats-modal.dark-mode #import-data-btn {
+        background: #2d2d2d;
+        color: #e0e0e0;
+        border-color: #3d3d3d;
+      }
+
+      /* Theme toggle button */
+      #theme-toggle {
+        padding: 4px 12px;
+        background: transparent;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s;
+      }
+
+      .stats-modal.dark-mode #theme-toggle {
+        border-color: #444;
+        color: #e0e0e0;
+      }
+
+      #theme-toggle:hover {
+        background: #f0f0f0;
+      }
+
+      .stats-modal.dark-mode #theme-toggle:hover {
+        background: #2d2d2d;
+      }
     </style>
   </head>
 
@@ -411,10 +558,16 @@
 
           <!-- Heatmap Section -->
           <div class="heatmap-section">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
-              <button id="heatmap-prev-year" style="padding: 2px 8px; background: transparent; border: none; cursor: pointer; font-size: 18px; color: #666;" title="Previous year">&lt;</button>
-              <h4 id="heatmap-year-title" style="margin: 0;">Activity Heatmap — 2025</h4>
-              <button id="heatmap-next-year" style="padding: 2px 8px; background: transparent; border: none; cursor: pointer; font-size: 18px; color: #666;" title="Next year">&gt;</button>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px;">
+              <div style="flex: 1;"></div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <button id="heatmap-prev-year" style="padding: 2px 8px; background: transparent; border: none; cursor: pointer; font-size: 18px; color: #666;" title="Previous year">&lt;</button>
+                <h4 id="heatmap-year-title" style="margin: 0;">Activity Heatmap — 2025</h4>
+                <button id="heatmap-next-year" style="padding: 2px 8px; background: transparent; border: none; cursor: pointer; font-size: 18px; color: #666;" title="Next year">&gt;</button>
+              </div>
+              <div style="flex: 1; display: flex; justify-content: flex-end;">
+                <button id="theme-toggle" title="Toggle dark/light mode">☀️</button>
+              </div>
             </div>
 
             <div class="heatmap-wrap">
