@@ -207,6 +207,95 @@
         .weekday-labels > div { height: 16px; }
         .weekday-labels { gap: 8px; }
       }
+
+      /* General Statistics - Summary Cards */
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .summary-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        text-align: center;
+      }
+
+      .summary-card:nth-child(2) {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+
+      .summary-card:nth-child(3) {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+
+      .summary-card-label {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      .summary-card-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+
+      .summary-card-subtitle {
+        font-size: 0.75rem;
+        opacity: 0.8;
+      }
+
+      /* Personal Records */
+      .records-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+      }
+
+      .record-item {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .record-icon {
+        font-size: 2rem;
+        flex-shrink: 0;
+      }
+
+      .record-content {
+        flex: 1;
+      }
+
+      .record-label {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 4px;
+      }
+
+      .record-value {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #333;
+      }
+
+      /* Weekly trends chart canvas */
+      #weekly-trends-chart {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+      }
     </style>
   </head>
 
@@ -344,11 +433,30 @@
             </div>
           </div>
 
-          <!-- Weekly Trends Section -->
+          <!-- General Statistics Section -->
           <div class="charts-section">
-            <h4>📊 Weekly Trends</h4>
-            <div class="chart-placeholder">
-              Weekly Trends - Coming Soon
+            <h4>📊 General Statistics</h4>
+
+            <!-- Weekly Trends Chart (TOP) -->
+            <div style="margin-bottom: 32px;">
+              <h5 style="margin: 0 0 12px 0; font-size: 0.95rem; color: #666;">📉 Weekly Trends</h5>
+              <canvas id="weekly-trends-chart" width="800" height="300"></canvas>
+            </div>
+
+            <!-- Monthly Summary Cards (MIDDLE) -->
+            <div style="margin-bottom: 32px;">
+              <h5 style="margin: 0 0 12px 0; font-size: 0.95rem; color: #666;">📈 Monthly Summary</h5>
+              <div class="summary-cards" id="monthly-summary-cards">
+                <!-- Cards will be rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Personal Records (BOTTOM) -->
+            <div>
+              <h5 style="margin: 0 0 12px 0; font-size: 0.95rem; color: #666;">🏆 Personal Records</h5>
+              <div class="records-grid" id="personal-records">
+                <!-- Records will be rendered by JS -->
+              </div>
             </div>
           </div>
 

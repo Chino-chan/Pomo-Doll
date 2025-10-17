@@ -941,10 +941,310 @@ function renderHeatmap(year=currentHeatmapYear){
   });
 }
 
+// --------------------
+// General Statistics
+// --------------------
+
+/**
+ * Draw weekly trends line chart
+ */
+function renderWeeklyTrendsChart() {
+  const canvas = document.getElementById('weekly-trends-chart');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+
+  // Get last 8 weeks of data
+  const now = new Date();
+  const daysToShow = 56; // 8 weeks
+  const dailyData = [];
+
+  for (let i = daysToShow - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const key = getLocalDateKey(d);
+    const minutes = stats[key]?.minutes || 0;
+    dailyData.push({
+      date: new Date(d),
+      minutes,
+      label: d.getDate() === 1 ? d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) : d.getDate().toString()
+    });
+  }
+
+  // Canvas dimensions
+  const padding = 40;
+  const width = canvas.width - padding * 2;
+  const height = canvas.height - padding * 2;
+
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Find max value for scaling
+  const maxMinutes = Math.max(...dailyData.map(d => d.minutes), 60); // At least 60 min scale
+
+  // Draw grid lines and Y-axis labels
+  ctx.strokeStyle = '#e0e0e0';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#999';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'right';
+
+  const gridLines = 5;
+  for (let i = 0; i <= gridLines; i++) {
+    const y = padding + height - (i / gridLines) * height;
+    const value = Math.round((i / gridLines) * maxMinutes);
+
+    ctx.beginPath();
+    ctx.moveTo(padding, y);
+    ctx.lineTo(padding + width, y);
+    ctx.stroke();
+
+    ctx.fillText(`${value}m`, padding - 5, y + 4);
+  }
+
+  // Draw X-axis
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(padding, padding + height);
+  ctx.lineTo(padding + width, padding + height);
+  ctx.stroke();
+
+  // Draw data line
+  ctx.strokeStyle = '#667eea';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+
+  const stepX = width / (daysToShow - 1);
+
+  dailyData.forEach((dataPoint, i) => {
+    const x = padding + i * stepX;
+    const y = padding + height - (dataPoint.minutes / maxMinutes) * height;
+
+    if (i === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  });
+
+  ctx.stroke();
+
+  // Draw data points
+  ctx.fillStyle = '#667eea';
+  dailyData.forEach((dataPoint, i) => {
+    const x = padding + i * stepX;
+    const y = padding + height - (dataPoint.minutes / maxMinutes) * height;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Highlight today
+    const isToday = getLocalDateKey(dataPoint.date) === getTodayKey();
+    if (isToday) {
+      ctx.strokeStyle = '#ff6b6b';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  });
+
+  // Draw X-axis labels (show every 7 days)
+  ctx.fillStyle = '#666';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  dailyData.forEach((dataPoint, i) => {
+    if (i % 7 === 0 || i === daysToShow - 1) {
+      const x = padding + i * stepX;
+      ctx.fillText(dataPoint.label, x, padding + height + 15);
+    }
+  });
+
+  // Draw title
+  ctx.fillStyle = '#333';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Daily Study Time (Past 8 Weeks)', padding, padding - 10);
+}
+
+/**
+ * Render monthly summary cards
+ */
+function renderMonthlySummaryCards() {
+  const container = document.getElementById('monthly-summary-cards');
+  if (!container) return;
+
+  const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+  const now = new Date();
+
+  // Calculate this month's hours
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const monthEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const thisMonthMinutes = getTotalStudyTimeInRange(monthStart, monthEnd);
+  const thisMonthHours = (thisMonthMinutes / 60).toFixed(1);
+
+  // Find best day of week
+  const dayMinutes = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+  Object.keys(stats).forEach(key => {
+    const date = new Date(key);
+    const dayOfWeek = date.getDay();
+    const minutes = stats[key].minutes || 0;
+    if (minutes > 0) {
+      dayMinutes[dayOfWeek].push(minutes);
+    }
+  });
+
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  let bestDay = 'N/A';
+  let bestAvg = 0;
+
+  Object.keys(dayMinutes).forEach(day => {
+    if (dayMinutes[day].length > 0) {
+      const avg = dayMinutes[day].reduce((a, b) => a + b, 0) / dayMinutes[day].length;
+      if (avg > bestAvg) {
+        bestAvg = avg;
+        bestDay = dayNames[day];
+      }
+    }
+  });
+
+  const bestDayHours = (bestAvg / 60).toFixed(1);
+
+  // Count completed projects this month
+  const completedThisMonth = projects.filter(p => {
+    if (!p.completed || !p.endDate) return false;
+    const endDate = new Date(p.endDate);
+    return endDate.getMonth() === now.getMonth() && endDate.getFullYear() === now.getFullYear();
+  }).length;
+
+  // Render cards
+  container.innerHTML = `
+    <div class="summary-card">
+      <div class="summary-card-label">This Month</div>
+      <div class="summary-card-value">${thisMonthHours}h</div>
+      <div class="summary-card-subtitle">Total study time</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-label">Best Day</div>
+      <div class="summary-card-value">${bestDay}</div>
+      <div class="summary-card-subtitle">${bestDayHours}h average</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-label">Projects Done</div>
+      <div class="summary-card-value">${completedThisMonth}</div>
+      <div class="summary-card-subtitle">Completed this month</div>
+    </div>
+  `;
+}
+
+/**
+ * Render personal records
+ */
+function renderPersonalRecords() {
+  const container = document.getElementById('personal-records');
+  if (!container) return;
+
+  const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+
+  // Longest streak ever
+  let longestStreak = 0;
+  let currentStreakCount = 0;
+  const allKeys = Object.keys(stats).sort();
+
+  for (let i = 0; i < allKeys.length; i++) {
+    const key = allKeys[i];
+    if (stats[key].minutes > 0) {
+      currentStreakCount++;
+      longestStreak = Math.max(longestStreak, currentStreakCount);
+    } else {
+      currentStreakCount = 0;
+    }
+  }
+
+  // Most productive day ever
+  let maxDay = { date: 'N/A', minutes: 0 };
+  Object.keys(stats).forEach(key => {
+    if (stats[key].minutes > maxDay.minutes) {
+      maxDay = { date: key, minutes: stats[key].minutes };
+    }
+  });
+  const maxDayFormatted = maxDay.date !== 'N/A' ? formatDate(new Date(maxDay.date).toISOString()) : 'N/A';
+  const maxDayHours = (maxDay.minutes / 60).toFixed(1);
+
+  // Most productive week (7-day rolling window)
+  let maxWeekMinutes = 0;
+  const today = new Date();
+  for (let i = 0; i < 365; i++) {
+    const weekEnd = new Date(today);
+    weekEnd.setDate(today.getDate() - i);
+    const weekStart = new Date(weekEnd);
+    weekStart.setDate(weekEnd.getDate() - 6);
+
+    const weekMinutes = getTotalStudyTimeInRange(weekStart, weekEnd);
+    maxWeekMinutes = Math.max(maxWeekMinutes, weekMinutes);
+  }
+  const maxWeekHours = (maxWeekMinutes / 60).toFixed(1);
+
+  // Most productive month
+  let maxMonthHours = 0;
+  let maxMonthName = 'N/A';
+  for (let monthOffset = 0; monthOffset < 12; monthOffset++) {
+    const checkDate = new Date(today.getFullYear(), today.getMonth() - monthOffset, 1);
+    const monthStart = new Date(checkDate.getFullYear(), checkDate.getMonth(), 1);
+    const monthEnd = new Date(checkDate.getFullYear(), checkDate.getMonth() + 1, 0);
+
+    const monthMinutes = getTotalStudyTimeInRange(monthStart, monthEnd);
+    const monthHours = monthMinutes / 60;
+
+    if (monthHours > maxMonthHours) {
+      maxMonthHours = monthHours;
+      maxMonthName = checkDate.toLocaleDateString('en', { month: 'short', year: 'numeric' });
+    }
+  }
+
+  // Render records
+  container.innerHTML = `
+    <div class="record-item">
+      <div class="record-icon">🔥</div>
+      <div class="record-content">
+        <div class="record-label">Longest Streak</div>
+        <div class="record-value">${longestStreak} day${longestStreak !== 1 ? 's' : ''}</div>
+      </div>
+    </div>
+    <div class="record-item">
+      <div class="record-icon">⭐</div>
+      <div class="record-content">
+        <div class="record-label">Most Productive Day</div>
+        <div class="record-value">${maxDayFormatted} (${maxDayHours}h)</div>
+      </div>
+    </div>
+    <div class="record-item">
+      <div class="record-icon">📈</div>
+      <div class="record-content">
+        <div class="record-label">Most Productive Week</div>
+        <div class="record-value">${maxWeekHours}h</div>
+      </div>
+    </div>
+    <div class="record-item">
+      <div class="record-icon">🏆</div>
+      <div class="record-content">
+        <div class="record-label">Most Productive Month</div>
+        <div class="record-value">${maxMonthName} (${maxMonthHours.toFixed(1)}h)</div>
+      </div>
+    </div>
+  `;
+}
+
 function openStatsModal(){
   renderHeatmap();
   renderCompletedProjects();
   renderProjectDistribution();
+  renderWeeklyTrendsChart();
+  renderMonthlySummaryCards();
+  renderPersonalRecords();
   statsModal.style.display="flex";
   statsModal.setAttribute("aria-hidden","false");
   closeStats.focus();
