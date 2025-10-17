@@ -15,6 +15,10 @@ let cyclesPerSet = 4;
 let totalStudySeconds = 0;
 let sessionAddedSeconds = 0;
 
+// Free Timer Mode variables
+let isFreeTimerMode = false;
+let freeTimerBreakTime = 5 * 60; // 5 minutes default
+
 
 // --------------------
 // Utility: Local date key
@@ -185,6 +189,11 @@ const configStudyInput = document.getElementById("config-study-time");
 const configShortBreakInput = document.getElementById("config-short-break");
 const configLongBreakInput = document.getElementById("config-long-break");
 const configCycleInput = document.getElementById("config-cycle-count");
+const configFreeTimerBreakInput = document.getElementById("config-free-timer-break");
+
+// Mode toggle buttons
+const pomoModeBtn = document.getElementById("pomo-mode-btn");
+const freeTimerModeBtn = document.getElementById("free-timer-mode-btn");
 
 // Project tracking elements
 const projectListEl = document.getElementById("project-list");
@@ -221,18 +230,40 @@ if (localStorage.getItem("pomodoroConfig")) {
   shortBreakTime = savedConfig.shortBreakTime;
   longBreakTime = savedConfig.longBreakTime;
   cyclesPerSet = savedConfig.cyclesPerSet;
+
+  // Load Free Timer mode settings
+  if (savedConfig.isFreeTimerMode !== undefined) {
+    isFreeTimerMode = savedConfig.isFreeTimerMode;
+  }
+  if (savedConfig.freeTimerBreakTime !== undefined) {
+    freeTimerBreakTime = savedConfig.freeTimerBreakTime;
+  }
+
   configStudyInput.value = Math.floor(pomodoroTime/60);
   configShortBreakInput.value = Math.floor(shortBreakTime/60);
   configLongBreakInput.value = Math.floor(longBreakTime/60);
   configCycleInput.value = cyclesPerSet;
+  configFreeTimerBreakInput.value = Math.floor(freeTimerBreakTime/60);
+
+  // Update mode toggle button states
+  updateModeToggleButtons();
 } else {
   configStudyInput.value = Math.floor(pomodoroTime/60);
   configShortBreakInput.value = Math.floor(shortBreakTime/60);
   configLongBreakInput.value = Math.floor(longBreakTime/60);
   configCycleInput.value = cyclesPerSet;
+  configFreeTimerBreakInput.value = Math.floor(freeTimerBreakTime/60);
+
+  // Update mode toggle button states
+  updateModeToggleButtons();
 }
 
-time = !isBreak && !isLongBreak ? pomodoroTime : isBreak ? shortBreakTime : longBreakTime;
+// Initialize time based on mode
+if (isFreeTimerMode && !isBreak && !isLongBreak) {
+  time = 0; // Start at 0 for Free Timer mode
+} else {
+  time = !isBreak && !isLongBreak ? pomodoroTime : isBreak ? shortBreakTime : longBreakTime;
+}
 
 // --------------------
 // Timer functions
@@ -241,22 +272,61 @@ function setPlayIcon() { startPauseBtn.querySelector("img").src="assets/play.svg
 function setPauseIcon() { startPauseBtn.querySelector("img").src="assets/pause.svg"; startPauseBtn.querySelector("img").alt="Pause"; }
 
 function updateModeLabel() {
-  if (isLongBreak) modeLabelEl.textContent="Long Break";
-  else if (isBreak) modeLabelEl.textContent="Break Time";
-  else modeLabelEl.textContent="Study Time";
+  // Check if we're in Free Timer mode
+  if (isFreeTimerMode && !isBreak && !isLongBreak) {
+    modeLabelEl.textContent = "Free Timer";
+    modeLabelEl.style.color = "#9b59b6"; // Light purple
+  } else {
+    // Regular Pomo mode labels
+    if (isLongBreak) modeLabelEl.textContent = "Long Break";
+    else if (isBreak) modeLabelEl.textContent = "Break Time";
+    else modeLabelEl.textContent = "Study Time";
 
-  // Update mode label color
-  modeLabelEl.style.color = isLongBreak ? "#27ae60" : isBreak ? "#2ecc71" : "#e74c3c";
+    // Update mode label color
+    modeLabelEl.style.color = isLongBreak ? "#27ae60" : isBreak ? "#2ecc71" : "#e74c3c";
+  }
 
   // Update app border color based on mode (only if enabled)
   const borderColorsEnabled = localStorage.getItem('borderColorsEnabled') !== 'false';
   const appContainer = document.getElementById("app");
   if (appContainer) {
     if (borderColorsEnabled) {
-      appContainer.style.borderColor = isLongBreak ? "#27ae60" : isBreak ? "#2ecc71" : "#e74c3c";
+      if (isFreeTimerMode && !isBreak && !isLongBreak) {
+        appContainer.style.borderColor = "#9b59b6"; // Purple for Free Timer mode
+      } else {
+        appContainer.style.borderColor = isLongBreak ? "#27ae60" : isBreak ? "#2ecc71" : "#e74c3c";
+      }
     } else {
       appContainer.style.borderColor = "#888"; // Neutral gray when disabled
     }
+  }
+}
+
+/**
+ * Update the active state of mode toggle buttons
+ */
+function updateModeToggleButtons() {
+  if (pomoModeBtn && freeTimerModeBtn) {
+    if (isFreeTimerMode) {
+      pomoModeBtn.classList.remove('active');
+      freeTimerModeBtn.classList.add('active');
+    } else {
+      pomoModeBtn.classList.add('active');
+      freeTimerModeBtn.classList.remove('active');
+    }
+  }
+}
+
+/**
+ * Update skip button text based on mode
+ */
+function updateSkipButtonText() {
+  if (isFreeTimerMode && !isBreak && !isLongBreak) {
+    skipBtn.textContent = "Finish Session";
+    skipBtn.title = "Ends the current session and starts a break. Time studied will be tracked.";
+  } else {
+    skipBtn.textContent = "Skip";
+    skipBtn.title = "Ends the current pomo/break early, time already studied will still count.";
   }
 }
 
@@ -810,7 +880,12 @@ if (trendsChartFilter) {
 function startTimer() {
   if (timerInterval) return;
   timerInterval = setInterval(() => {
-    time--;
+    // In Free Timer mode during study session, count UP instead of DOWN
+    if (isFreeTimerMode && !isBreak && !isLongBreak) {
+      time++; // Count up
+    } else {
+      time--; // Count down (normal Pomo mode or breaks)
+    }
 
     if (!isBreak && !isLongBreak) {
       totalStudySeconds++;
@@ -835,16 +910,22 @@ function startTimer() {
 
     updateDisplay();
 
-    if (time <= 0) {
+    // Only stop timer when reaching 0 if NOT in Free Timer mode during study
+    if (time <= 0 && !(isFreeTimerMode && !isBreak && !isLongBreak)) {
       clearInterval(timerInterval);
       timerInterval = null;
 
       if (!isBreak && !isLongBreak) {
         studyEndSound.play();
-        streak++; 
-        streakEl.textContent = streak;
-        cycle++; 
-        updateCycleDisplay();
+
+        // In Free Timer mode, DON'T count pomodoros or cycles (but this code won't run for Free Timer)
+        if (!isFreeTimerMode) {
+          streak++;
+          streakEl.textContent = streak;
+          cycle++;
+          updateCycleDisplay();
+        }
+
         saveDailyStats();
 
         if (cycle >= cyclesPerSet) {
@@ -860,22 +941,23 @@ function startTimer() {
       } else if (isBreak) {
         breakEndSound.play();
         isBreak = false;
-        time = pomodoroTime;
+        time = isFreeTimerMode ? 0 : pomodoroTime; // Start at 0 if Free Timer mode
         new Notification("Break over! ⏰", { body: "Time to start the next Pomodoro" });
       } else if (isLongBreak) {
         longBreakEndSound.play();
         isLongBreak = false;
         isBreak = false;
         cycle = 0;
-        totalCycles++; 
-        updateCycleDisplay(); 
+        totalCycles++;
+        updateCycleDisplay();
         updateTotalDisplay();
-        time = pomodoroTime;
+        time = isFreeTimerMode ? 0 : pomodoroTime; // Start at 0 if Free Timer mode
         new Notification("Long break over! 🔁", { body: "New cycle starting" });
       }
 
-      updateDisplay(); 
-      updateModeLabel(); 
+      updateDisplay();
+      updateModeLabel();
+      updateSkipButtonText();
       setPlayIcon();
     }
   }, 1000);
@@ -917,23 +999,67 @@ resetBtn.onclick = () => {
     renderProjectList();
 
     // Reset timer display
-    time = isLongBreak ? longBreakTime : isBreak ? shortBreakTime : pomodoroTime;
+    if (isFreeTimerMode && !isBreak && !isLongBreak) {
+      time = 0; // Start at 0 for Free Timer mode
+    } else {
+      time = isLongBreak ? longBreakTime : isBreak ? shortBreakTime : pomodoroTime;
+    }
     updateDisplay();
     updateModeLabel();
+    updateSkipButtonText();
     setPlayIcon();
 };
 
 skipBtn.onclick=()=>{
   skipSound.play(); pauseTimer();
   if(!isBreak&&!isLongBreak){
-    cycle++; streak++; updateCycleDisplay(); streakEl.textContent=streak;
+    // In Free Timer mode, DON'T count pomodoros or cycles
+    if (!isFreeTimerMode) {
+      cycle++;
+      streak++;
+      updateCycleDisplay();
+      streakEl.textContent = streak;
+    }
+
     saveDailyStats();
     sessionAddedSeconds = 0; // Reset session counter after saving
-    if(cycle>=cyclesPerSet){ isLongBreak=true; isBreak=false; time=longBreakTime; new Notification("Skipped to Long Break! 🌴",{body:"Take a long break!"}); }
-    else{ isBreak=true; time=shortBreakTime; new Notification("Skipped to Break! 🍵",{body:"Take a short break!"}); }
-  } else if(isBreak){ isBreak=false; time=pomodoroTime; new Notification("Skipped to Study Time! ⏰",{body:"Back to studying!"}); }
-  else if(isLongBreak){ isLongBreak=false; isBreak=false; cycle=0; totalCycles++; updateCycleDisplay(); updateTotalDisplay(); time=pomodoroTime; new Notification("Skipped Long Break! ⏰",{body:"Back to studying!"}); }
-  updateDisplay(); updateModeLabel(); setPlayIcon();
+
+    // In Free Timer mode, always go to configured Free Timer break
+    if (isFreeTimerMode) {
+      isBreak = true;
+      time = freeTimerBreakTime;
+      new Notification("Session finished! 🍵", {body: "Take a break!"});
+    } else {
+      // Normal Pomo mode behavior
+      if(cycle>=cyclesPerSet){
+        isLongBreak=true;
+        isBreak=false;
+        time=longBreakTime;
+        new Notification("Skipped to Long Break! 🌴",{body:"Take a long break!"});
+      } else {
+        isBreak=true;
+        time=shortBreakTime;
+        new Notification("Skipped to Break! 🍵",{body:"Take a short break!"});
+      }
+    }
+  } else if(isBreak){
+    isBreak=false;
+    time = isFreeTimerMode ? 0 : pomodoroTime; // Start at 0 for Free Timer mode
+    new Notification("Skipped to Study Time! ⏰",{body:"Back to studying!"});
+  } else if(isLongBreak){
+    isLongBreak=false;
+    isBreak=false;
+    cycle=0;
+    totalCycles++;
+    updateCycleDisplay();
+    updateTotalDisplay();
+    time = isFreeTimerMode ? 0 : pomodoroTime; // Start at 0 for Free Timer mode
+    new Notification("Skipped Long Break! ⏰",{body:"Back to studying!"});
+  }
+  updateDisplay();
+  updateModeLabel();
+  updateSkipButtonText();
+  setPlayIcon();
 };
 
 // --------------------
@@ -942,16 +1068,69 @@ skipBtn.onclick=()=>{
 configBtn.onclick=()=>configModal.style.display="block";
 closeConfig.onclick=()=>configModal.style.display="none";
 
+// Mode toggle buttons event listeners
+if (pomoModeBtn) {
+  pomoModeBtn.onclick = () => {
+    isFreeTimerMode = false;
+    updateModeToggleButtons();
+    updateModeLabel();
+    updateSkipButtonText();
+
+    // Reset timer to Pomo mode time if not in a break
+    if (!isBreak && !isLongBreak) {
+      time = pomodoroTime;
+      updateDisplay();
+    }
+  };
+}
+
+if (freeTimerModeBtn) {
+  freeTimerModeBtn.onclick = () => {
+    isFreeTimerMode = true;
+    updateModeToggleButtons();
+    updateModeLabel();
+    updateSkipButtonText();
+
+    // Reset timer to 0 for Free Timer mode if not in a break
+    if (!isBreak && !isLongBreak) {
+      time = 0;
+      updateDisplay();
+    }
+  };
+}
+
 configForm.onsubmit=(e)=>{
   e.preventDefault();
   pomodoroTime=parseInt(configStudyInput.value)*60;
   shortBreakTime=parseInt(configShortBreakInput.value)*60;
   longBreakTime=parseInt(configLongBreakInput.value)*60;
   cyclesPerSet=parseInt(configCycleInput.value);
-  localStorage.setItem("pomodoroConfig", JSON.stringify({pomodoroTime, shortBreakTime, longBreakTime, cyclesPerSet}));
-  time=!isBreak&&!isLongBreak?pomodoroTime:isBreak?shortBreakTime:longBreakTime;
-  updateDisplay(); updateCycleDisplay(); configModal.style.display="none";
-  saveProjectsToStorage(); renderProjectList();
+  freeTimerBreakTime=parseInt(configFreeTimerBreakInput.value)*60;
+
+  // Save all config including Free Timer mode settings
+  localStorage.setItem("pomodoroConfig", JSON.stringify({
+    pomodoroTime,
+    shortBreakTime,
+    longBreakTime,
+    cyclesPerSet,
+    isFreeTimerMode,
+    freeTimerBreakTime
+  }));
+
+  // Reset timer based on current mode
+  if (isFreeTimerMode && !isBreak && !isLongBreak) {
+    time = 0; // Free Timer mode starts at 0
+  } else {
+    time = !isBreak && !isLongBreak ? pomodoroTime : isBreak ? shortBreakTime : longBreakTime;
+  }
+
+  updateDisplay();
+  updateCycleDisplay();
+  updateModeLabel();
+  updateSkipButtonText();
+  configModal.style.display="none";
+  saveProjectsToStorage();
+  renderProjectList();
 };
 
 // --------------------
@@ -1925,16 +2104,17 @@ if (themeToggleBtn) {
 // --------------------
 // Initialize display
 // --------------------
-loadDailyStats(); 
-updateDisplay(); 
-updateCycleDisplay(); 
-updateTotalDisplay(); 
-updateModeLabel(); 
-updateStudyTimeDisplay(); 
-setPlayIcon(); 
-updateLastStudyDisplay(); 
-renderProjectList(); 
+loadDailyStats();
+updateDisplay();
+updateCycleDisplay();
+updateTotalDisplay();
+updateModeLabel();
+updateStudyTimeDisplay();
+setPlayIcon();
+updateLastStudyDisplay();
+renderProjectList();
 updateStreakDisplay(); // 🔥 This now properly calculates streak on load
+updateSkipButtonText(); // Update skip button text based on mode
 
 // Live project counter update every minute
 setInterval(() => {

@@ -677,6 +677,43 @@
         transition: all 0.3s;
       }
 
+      /* Timer Mode Toggle Buttons */
+      .mode-toggle-btn {
+        background: #f0f0f0;
+        color: #666;
+        border: 2px solid #ddd;
+      }
+
+      .mode-toggle-btn:hover {
+        background: #e0e0e0;
+        border-color: #ccc;
+      }
+
+      .mode-toggle-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      }
+
+      /* Dark mode for mode toggle buttons */
+      body.dark-mode .mode-toggle-btn {
+        background: #3d3d3d;
+        color: #999;
+        border-color: #555;
+      }
+
+      body.dark-mode .mode-toggle-btn:hover {
+        background: #4d4d4d;
+        border-color: #666;
+      }
+
+      body.dark-mode .mode-toggle-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+      }
+
     </style>
   </head>
 
@@ -685,7 +722,7 @@
       <div id="imgFront"><img src="img/appcover.jpeg" alt=""></div>
 
       <div id="MainApp">
-        <h2>Pomo Cunny ❤</h2>
+        <h2>Pomo Cunny ❤️</h2>
 
         <div id="mode-container"><div id="mode-label">Study Time</div></div>
         <div id="timer">25:00</div>
@@ -720,6 +757,17 @@
         <div class="modal-content">
           <span id="close-config" class="close">&times;</span>
           <h3>Configure Timers</h3>
+
+          <!-- Timer Mode Toggle -->
+          <div id="timer-mode-toggle" style="display: flex; gap: 8px; margin-bottom: 20px;">
+            <button type="button" id="pomo-mode-btn" class="mode-toggle-btn active" style="flex: 1; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 6px; transition: all 0.3s;">
+              Pomo Mode
+            </button>
+            <button type="button" id="free-timer-mode-btn" class="mode-toggle-btn" style="flex: 1; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 6px; transition: all 0.3s;">
+              Free Timer
+            </button>
+          </div>
+
           <form id="config-form">
             <label>
               Pomo Study Time (minutes):
@@ -739,6 +787,11 @@
             <label>
               Pomos per cycle:
               <input type="number" id="config-cycle-count" min="1" value="4">
+            </label>
+
+            <label>
+              Free Timer Mode Break (minutes):
+              <input type="number" id="config-free-timer-break" min="1" value="5">
             </label>
 
             <!-- Project Tracking -->
