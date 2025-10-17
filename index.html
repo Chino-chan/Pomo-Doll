@@ -219,15 +219,46 @@
       }
 
       /* Config Modal Styling */
+      #config-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1200;
+        overflow-y: auto;
+        padding: 40px 20px;
+      }
+
       #config-modal .modal-content {
         max-width: 500px;
         width: 90%;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        position: relative;
+        margin: 0 auto;
       }
 
       /* Discard Modal Styling */
+      #discard-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1200;
+        overflow-y: auto;
+        padding: 40px 20px;
+      }
+
       #discard-modal .modal-content {
         max-width: 450px;
         width: 90%;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        position: relative;
+        margin: 0 auto;
+        margin-top: 10vh;
       }
 
       #discard-modal .modal-buttons {
