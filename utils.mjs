@@ -408,3 +408,22 @@ export function countProjectsCompletedInMonth(projects, targetMonth) {
            endDate.getUTCFullYear() === targetMonth.getFullYear();
   }).length;
 }
+
+/**
+ * Get all years that have activity data
+ * @param {Object} stats - Daily stats object
+ * @returns {number[]} - Sorted array of years with activity
+ */
+export function getAvailableYears(stats) {
+  const years = new Set();
+
+  Object.keys(stats).forEach(dateKey => {
+    // Only include years that have actual activity (minutes > 0)
+    if (stats[dateKey] && stats[dateKey].minutes > 0) {
+      const year = new Date(dateKey).getFullYear();
+      years.add(year);
+    }
+  });
+
+  return Array.from(years).sort((a, b) => a - b);
+}

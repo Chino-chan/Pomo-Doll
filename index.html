@@ -411,8 +411,12 @@
 
           <!-- Heatmap Section -->
           <div class="heatmap-section">
-            <h4>Activity Heatmap — Past 365 Days</h4>
-            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
+              <button id="heatmap-prev-year" style="padding: 2px 8px; background: transparent; border: none; cursor: pointer; font-size: 18px; color: #666;" title="Previous year">&lt;</button>
+              <h4 id="heatmap-year-title" style="margin: 0;">Activity Heatmap — 2025</h4>
+              <button id="heatmap-next-year" style="padding: 2px 8px; background: transparent; border: none; cursor: pointer; font-size: 18px; color: #666;" title="Next year">&gt;</button>
+            </div>
+
             <div class="heatmap-wrap">
               <div class="weekday-labels" aria-hidden="true">
                 <div>Sun</div>

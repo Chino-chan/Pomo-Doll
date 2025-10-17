@@ -17,7 +17,8 @@ import {
   getMostProductiveWeek,
   getMostProductiveMonth,
   getMonthDateRange,
-  countProjectsCompletedInMonth
+  countProjectsCompletedInMonth,
+  getAvailableYears
 } from '../utils.mjs';
 
 describe('Date Utilities', () => {
@@ -794,6 +795,74 @@ describe('Statistics Functions', () => {
       const targetMonth = new Date(2024, 9, 1); // October 2024
 
       expect(countProjectsCompletedInMonth(projects, targetMonth)).toBe(2);
+    });
+  });
+
+  describe('getAvailableYears', () => {
+    it('should return empty array for empty stats', () => {
+      expect(getAvailableYears({})).toEqual([]);
+    });
+
+    it('should return single year with activity', () => {
+      const stats = {
+        '2024-03-01': { minutes: 30, pomos: 2 },
+        '2024-03-15': { minutes: 45, pomos: 3 }
+      };
+
+      expect(getAvailableYears(stats)).toEqual([2024]);
+    });
+
+    it('should return multiple years sorted in ascending order', () => {
+      const stats = {
+        '2023-12-15': { minutes: 30, pomos: 2 },
+        '2024-01-10': { minutes: 45, pomos: 3 },
+        '2022-06-05': { minutes: 20, pomos: 1 },
+        '2024-05-20': { minutes: 60, pomos: 4 }
+      };
+
+      expect(getAvailableYears(stats)).toEqual([2022, 2023, 2024]);
+    });
+
+    it('should ignore days with 0 minutes', () => {
+      const stats = {
+        '2023-03-01': { minutes: 0, pomos: 0 },
+        '2024-03-01': { minutes: 30, pomos: 2 },
+        '2025-03-01': { minutes: 0, pomos: 0 }
+      };
+
+      expect(getAvailableYears(stats)).toEqual([2024]);
+    });
+
+    it('should deduplicate years (multiple days in same year)', () => {
+      const stats = {
+        '2024-01-15': { minutes: 30, pomos: 2 },
+        '2024-06-15': { minutes: 45, pomos: 3 },
+        '2024-12-15': { minutes: 20, pomos: 1 }
+      };
+
+      expect(getAvailableYears(stats)).toEqual([2024]);
+    });
+
+    it('should handle years in non-sorted order in input', () => {
+      const stats = {
+        '2025-06-15': { minutes: 10, pomos: 1 },
+        '2020-06-15': { minutes: 20, pomos: 2 },
+        '2023-06-15': { minutes: 30, pomos: 3 },
+        '2021-06-15': { minutes: 40, pomos: 4 }
+      };
+
+      expect(getAvailableYears(stats)).toEqual([2020, 2021, 2023, 2025]);
+    });
+
+    it('should handle stats with invalid/missing minutes field', () => {
+      const stats = {
+        '2024-01-15': { minutes: 30, pomos: 2 },
+        '2024-02-15': { pomos: 1 }, // Missing minutes
+        '2024-03-15': { minutes: null, pomos: 0 }, // Null minutes
+        '2024-04-15': { minutes: 45, pomos: 3 }
+      };
+
+      expect(getAvailableYears(stats)).toEqual([2024]);
     });
   });
 });

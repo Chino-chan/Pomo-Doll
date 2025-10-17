@@ -906,6 +906,26 @@ confirmDiscard.onclick=()=>{
 // Heatmap / Stats modal
 // --------------------
 let currentHeatmapYear = new Date().getFullYear();
+
+/**
+ * Get all years that have activity data
+ * @param {Object} stats - Daily stats object
+ * @returns {number[]} - Sorted array of years with activity
+ */
+function getAvailableYears(stats) {
+  const years = new Set();
+
+  Object.keys(stats).forEach(dateKey => {
+    // Only include years that have actual activity (minutes > 0)
+    if (stats[dateKey] && stats[dateKey].minutes > 0) {
+      const year = new Date(dateKey).getFullYear();
+      years.add(year);
+    }
+  });
+
+  return Array.from(years).sort((a, b) => a - b);
+}
+
 function getYearDates(year){ const arr=[]; const start=new Date(year,0,1); const end=new Date(year,11,31); for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)) arr.push(new Date(d)); return arr; }
 function computeColorBucket(minutes, thresholds){ if(!minutes||minutes<=0) return 0; if(minutes<=thresholds[0]) return 1; if(minutes<=thresholds[1]) return 2; if(minutes<=thresholds[2]) return 3; return 4; }
 function buildThresholds(allMinutes){ if(allMinutes.length===0) return [5,15,30]; const max=Math.max(...allMinutes); if(max<=15) return [1,5,10]; if(max<=60) return [Math.ceil(max*0.15),Math.ceil(max*0.4),Math.ceil(max*0.75)]; return [Math.ceil(max*0.1),Math.ceil(max*0.33),Math.ceil(max*0.66)]; }
@@ -1442,6 +1462,7 @@ function renderHeatmapStats() {
 
 function openStatsModal(){
   renderHeatmap();
+  updateHeatmapYearDisplay();
   renderHeatmapStats();
   renderCompletedProjects();
   renderProjectDistribution();
@@ -1459,10 +1480,80 @@ statsModal.addEventListener("click",(e)=>{ if(e.target===statsModal) closeStatsM
 document.addEventListener("keydown",(e)=>{ if(e.key==="Escape"&&statsModal.style.display==="flex") closeStatsModal(); });
 
 // --------------------
-// Year toggle
+// Year navigation
 // --------------------
-const yearToggleBtn=document.getElementById("year-toggle");
-if(yearToggleBtn) yearToggleBtn.onclick=()=>{ const thisYear=new Date().getFullYear(); currentHeatmapYear=currentHeatmapYear===thisYear?thisYear-1:thisYear; renderHeatmap(currentHeatmapYear); };
+const heatmapYearTitle = document.getElementById("heatmap-year-title");
+const heatmapPrevYearBtn = document.getElementById("heatmap-prev-year");
+const heatmapNextYearBtn = document.getElementById("heatmap-next-year");
+
+/**
+ * Update heatmap year title and navigation button states
+ */
+function updateHeatmapYearDisplay() {
+  const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+  const availableYears = getAvailableYears(stats);
+  const currentYear = new Date().getFullYear();
+
+  // Update title
+  if (heatmapYearTitle) {
+    heatmapYearTitle.textContent = `Activity Heatmap — ${currentHeatmapYear}`;
+  }
+
+  // Update button states
+  if (heatmapPrevYearBtn && heatmapNextYearBtn) {
+    // Disable previous button if at earliest year with data (or no data at all)
+    const minYear = availableYears.length > 0 ? availableYears[0] : currentYear;
+    heatmapPrevYearBtn.disabled = currentHeatmapYear <= minYear;
+    heatmapPrevYearBtn.style.color = heatmapPrevYearBtn.disabled ? "#ddd" : "#666";
+    heatmapPrevYearBtn.style.cursor = heatmapPrevYearBtn.disabled ? "not-allowed" : "pointer";
+
+    // Disable next button if at current year (allow navigation up to current year even with no data)
+    heatmapNextYearBtn.disabled = currentHeatmapYear >= currentYear;
+    heatmapNextYearBtn.style.color = heatmapNextYearBtn.disabled ? "#ddd" : "#666";
+    heatmapNextYearBtn.style.cursor = heatmapNextYearBtn.disabled ? "not-allowed" : "pointer";
+  }
+}
+
+// Previous year button
+if (heatmapPrevYearBtn) {
+  heatmapPrevYearBtn.onclick = () => {
+    const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+    const availableYears = getAvailableYears(stats);
+
+    if (availableYears.length > 0) {
+      // Find the previous year with data
+      const olderYears = availableYears.filter(y => y < currentHeatmapYear);
+      if (olderYears.length > 0) {
+        currentHeatmapYear = olderYears[olderYears.length - 1]; // Get the most recent older year
+        renderHeatmap(currentHeatmapYear);
+        updateHeatmapYearDisplay();
+      }
+    }
+  };
+}
+
+// Next year button
+if (heatmapNextYearBtn) {
+  heatmapNextYearBtn.onclick = () => {
+    const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+    const availableYears = getAvailableYears(stats);
+    const currentYear = new Date().getFullYear();
+
+    // Allow navigation forward up to the current year (even if no data exists)
+    if (currentHeatmapYear < currentYear) {
+      // Find the next year with data, or go directly to current year
+      const newerYears = availableYears.filter(y => y > currentHeatmapYear && y <= currentYear);
+      if (newerYears.length > 0) {
+        currentHeatmapYear = newerYears[0]; // Get the oldest newer year with data
+      } else {
+        // No years with data between current and target, jump to current year
+        currentHeatmapYear = currentYear;
+      }
+      renderHeatmap(currentHeatmapYear);
+      updateHeatmapYearDisplay();
+    }
+  };
+}
 
 // --------------------
 // Initialize display
