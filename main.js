@@ -757,6 +757,12 @@ if (projectDistributionFilter) {
   projectDistributionFilter.addEventListener('change', renderProjectDistribution);
 }
 
+// Event listener for trends chart filter
+const trendsChartFilter = document.getElementById('trends-chart-filter');
+if (trendsChartFilter) {
+  trendsChartFilter.addEventListener('change', renderTrendsChart);
+}
+
 // --------------------
 // Timer logic with project hours
 // --------------------
@@ -1162,7 +1168,23 @@ function countProjectsCompletedInMonth(projects, targetMonth) {
 // --------------------
 
 /**
- * Draw weekly trends line chart
+ * Helper function to get canvas colors based on dark mode
+ */
+function getCanvasColors() {
+  const isDarkMode = statsModal.classList.contains('dark-mode');
+  return {
+    gridLines: isDarkMode ? '#3d3d3d' : '#e0e0e0',
+    gridText: isDarkMode ? '#999' : '#999',
+    axisLine: isDarkMode ? '#555' : '#ccc',
+    xAxisText: isDarkMode ? '#999' : '#666',
+    titleText: isDarkMode ? '#e0e0e0' : '#333',
+    barColor: isDarkMode ? '#667eea' : '#667eea',
+    lineColor: isDarkMode ? '#667eea' : '#667eea'
+  };
+}
+
+/**
+ * Draw weekly trends line chart (daily data for 8 weeks)
  */
 function renderWeeklyTrendsChart() {
   const canvas = document.getElementById('weekly-trends-chart');
@@ -1170,6 +1192,7 @@ function renderWeeklyTrendsChart() {
 
   const ctx = canvas.getContext('2d');
   const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+  const colors = getCanvasColors();
 
   // Get last 8 weeks of data
   const now = new Date();
@@ -1200,9 +1223,9 @@ function renderWeeklyTrendsChart() {
   const maxMinutes = Math.max(...dailyData.map(d => d.minutes), 60); // At least 60 min scale
 
   // Draw grid lines and Y-axis labels
-  ctx.strokeStyle = '#e0e0e0';
+  ctx.strokeStyle = colors.gridLines;
   ctx.lineWidth = 1;
-  ctx.fillStyle = '#999';
+  ctx.fillStyle = colors.gridText;
   ctx.font = '11px sans-serif';
   ctx.textAlign = 'right';
 
@@ -1220,7 +1243,7 @@ function renderWeeklyTrendsChart() {
   }
 
   // Draw X-axis
-  ctx.strokeStyle = '#ccc';
+  ctx.strokeStyle = colors.axisLine;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(padding, padding + height);
@@ -1228,7 +1251,7 @@ function renderWeeklyTrendsChart() {
   ctx.stroke();
 
   // Draw data line
-  ctx.strokeStyle = '#667eea';
+  ctx.strokeStyle = colors.lineColor;
   ctx.lineWidth = 3;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
@@ -1250,7 +1273,7 @@ function renderWeeklyTrendsChart() {
   ctx.stroke();
 
   // Draw data points
-  ctx.fillStyle = '#667eea';
+  ctx.fillStyle = colors.lineColor;
   dailyData.forEach((dataPoint, i) => {
     const x = padding + i * stepX;
     const y = padding + height - (dataPoint.minutes / maxMinutes) * height;
@@ -1269,7 +1292,7 @@ function renderWeeklyTrendsChart() {
   });
 
   // Draw X-axis labels (show every 7 days)
-  ctx.fillStyle = '#666';
+  ctx.fillStyle = colors.xAxisText;
   ctx.font = '10px sans-serif';
   ctx.textAlign = 'center';
   dailyData.forEach((dataPoint, i) => {
@@ -1278,12 +1301,230 @@ function renderWeeklyTrendsChart() {
       ctx.fillText(dataPoint.label, x, padding + height + 15);
     }
   });
+}
 
-  // Draw title
-  ctx.fillStyle = '#333';
-  ctx.font = 'bold 12px sans-serif';
-  ctx.textAlign = 'left';
-  ctx.fillText('Daily Study Time (Past 8 Weeks)', padding, padding - 10);
+/**
+ * Draw monthly trends bar chart (total hours per month for 6 months)
+ */
+function renderMonthlyTrendsChart() {
+  const canvas = document.getElementById('weekly-trends-chart');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+  const colors = getCanvasColors();
+
+  // Get last 6 months of data
+  const now = new Date();
+  const monthsData = [];
+
+  for (let monthOffset = 5; monthOffset >= 0; monthOffset--) {
+    const monthDate = new Date(now.getFullYear(), now.getMonth() - monthOffset, 1);
+    const monthStart = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+    const monthEnd = monthOffset === 0
+      ? new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      : new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
+
+    const monthMinutes = getTotalStudyTimeInRange(monthStart, monthEnd);
+    const monthHours = monthMinutes / 60;
+
+    monthsData.push({
+      label: monthDate.toLocaleDateString('en', { month: 'short' }),
+      hours: monthHours
+    });
+  }
+
+  // Canvas dimensions
+  const padding = 40;
+  const width = canvas.width - padding * 2;
+  const height = canvas.height - padding * 2;
+
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Find max value for scaling
+  const maxHours = Math.max(...monthsData.map(d => d.hours), 10); // At least 10 hours scale
+
+  // Draw grid lines and Y-axis labels
+  ctx.strokeStyle = colors.gridLines;
+  ctx.lineWidth = 1;
+  ctx.fillStyle = colors.gridText;
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'right';
+
+  const gridLines = 5;
+  for (let i = 0; i <= gridLines; i++) {
+    const y = padding + height - (i / gridLines) * height;
+    const value = Math.round((i / gridLines) * maxHours);
+
+    ctx.beginPath();
+    ctx.moveTo(padding, y);
+    ctx.lineTo(padding + width, y);
+    ctx.stroke();
+
+    ctx.fillText(`${value}h`, padding - 5, y + 4);
+  }
+
+  // Draw X-axis
+  ctx.strokeStyle = colors.axisLine;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(padding, padding + height);
+  ctx.lineTo(padding + width, padding + height);
+  ctx.stroke();
+
+  // Draw bars
+  const barWidth = width / monthsData.length * 0.7;
+  const barGap = width / monthsData.length * 0.3;
+  const barSpacing = width / monthsData.length;
+
+  ctx.fillStyle = colors.barColor;
+  monthsData.forEach((dataPoint, i) => {
+    const x = padding + i * barSpacing + barGap / 2;
+    const barHeight = (dataPoint.hours / maxHours) * height;
+    const y = padding + height - barHeight;
+
+    ctx.fillRect(x, y, barWidth, barHeight);
+
+    // Draw value on top of bar
+    if (dataPoint.hours > 0) {
+      ctx.fillStyle = colors.titleText;
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${dataPoint.hours.toFixed(1)}h`, x + barWidth / 2, y - 5);
+      ctx.fillStyle = colors.barColor;
+    }
+  });
+
+  // Draw X-axis labels
+  ctx.fillStyle = colors.xAxisText;
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  monthsData.forEach((dataPoint, i) => {
+    const x = padding + i * barSpacing + barSpacing / 2;
+    ctx.fillText(dataPoint.label, x, padding + height + 15);
+  });
+}
+
+/**
+ * Draw yearly trends bar chart (total hours per month for 12 months rolling)
+ */
+function renderYearlyTrendsChart() {
+  const canvas = document.getElementById('weekly-trends-chart');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const stats = JSON.parse(localStorage.getItem("pomodoroDailyStats")) || {};
+  const colors = getCanvasColors();
+
+  // Get last 12 months of data (365 days rolling)
+  const now = new Date();
+  const monthsData = [];
+
+  for (let monthOffset = 11; monthOffset >= 0; monthOffset--) {
+    const monthDate = new Date(now.getFullYear(), now.getMonth() - monthOffset, 1);
+    const monthStart = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+    const monthEnd = monthOffset === 0
+      ? new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      : new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0);
+
+    const monthMinutes = getTotalStudyTimeInRange(monthStart, monthEnd);
+    const monthHours = monthMinutes / 60;
+
+    monthsData.push({
+      label: monthDate.toLocaleDateString('en', { month: 'short' }),
+      fullLabel: monthDate.toLocaleDateString('en', { month: 'short', year: '2-digit' }),
+      hours: monthHours
+    });
+  }
+
+  // Canvas dimensions
+  const padding = 40;
+  const width = canvas.width - padding * 2;
+  const height = canvas.height - padding * 2;
+
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Find max value for scaling
+  const maxHours = Math.max(...monthsData.map(d => d.hours), 10); // At least 10 hours scale
+
+  // Draw grid lines and Y-axis labels
+  ctx.strokeStyle = colors.gridLines;
+  ctx.lineWidth = 1;
+  ctx.fillStyle = colors.gridText;
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'right';
+
+  const gridLines = 5;
+  for (let i = 0; i <= gridLines; i++) {
+    const y = padding + height - (i / gridLines) * height;
+    const value = Math.round((i / gridLines) * maxHours);
+
+    ctx.beginPath();
+    ctx.moveTo(padding, y);
+    ctx.lineTo(padding + width, y);
+    ctx.stroke();
+
+    ctx.fillText(`${value}h`, padding - 5, y + 4);
+  }
+
+  // Draw X-axis
+  ctx.strokeStyle = colors.axisLine;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(padding, padding + height);
+  ctx.lineTo(padding + width, padding + height);
+  ctx.stroke();
+
+  // Draw bars
+  const barWidth = width / monthsData.length * 0.7;
+  const barGap = width / monthsData.length * 0.3;
+  const barSpacing = width / monthsData.length;
+
+  ctx.fillStyle = colors.barColor;
+  monthsData.forEach((dataPoint, i) => {
+    const x = padding + i * barSpacing + barGap / 2;
+    const barHeight = (dataPoint.hours / maxHours) * height;
+    const y = padding + height - barHeight;
+
+    ctx.fillRect(x, y, barWidth, barHeight);
+  });
+
+  // Draw X-axis labels (show every other month for 12 months to avoid crowding)
+  ctx.fillStyle = colors.xAxisText;
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  monthsData.forEach((dataPoint, i) => {
+    if (i % 2 === 0 || i === monthsData.length - 1) {
+      const x = padding + i * barSpacing + barSpacing / 2;
+      ctx.fillText(dataPoint.label, x, padding + height + 15);
+    }
+  });
+}
+
+/**
+ * Main render function for trends chart (switches between weekly/monthly/yearly)
+ */
+function renderTrendsChart() {
+  const trendsFilter = document.getElementById('trends-chart-filter');
+  if (!trendsFilter) return;
+
+  const view = trendsFilter.value;
+
+  switch (view) {
+    case 'weekly':
+      renderWeeklyTrendsChart();
+      break;
+    case 'monthly':
+      renderMonthlyTrendsChart();
+      break;
+    case 'yearly':
+      renderYearlyTrendsChart();
+      break;
+    default:
+      renderWeeklyTrendsChart();
+  }
 }
 
 /**
@@ -1482,7 +1723,7 @@ function openStatsModal(){
   renderHeatmapStats();
   renderCompletedProjects();
   renderProjectDistribution();
-  renderWeeklyTrendsChart();
+  renderTrendsChart();
   renderMonthlySummaryCards();
   renderPersonalRecords();
 
@@ -1612,6 +1853,9 @@ function toggleTheme() {
   // Update both button icons
   updateThemeToggleIcon();
   updateAppThemeToggleIcon();
+
+  // Re-render trends chart with new colors
+  renderTrendsChart();
 }
 
 // Event listener for theme toggle button
@@ -1827,6 +2071,8 @@ function toggleAppTheme() {
       statsModal.classList.remove('dark-mode');
     }
     updateThemeToggleIcon();
+    // Re-render trends chart with new colors
+    renderTrendsChart();
   }
 }
 

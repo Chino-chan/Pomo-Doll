@@ -408,9 +408,12 @@
       }
 
       .stats-modal.dark-mode h3,
-      .stats-modal.dark-mode h4,
-      .stats-modal.dark-mode h5 {
+      .stats-modal.dark-mode h4 {
         color: #e0e0e0;
+      }
+
+      .stats-modal.dark-mode h5 {
+        color: #999 !important;
       }
 
       .stats-modal.dark-mode .close {
@@ -897,9 +900,16 @@
           <div class="charts-section">
             <h4>📊 General Statistics</h4>
 
-            <!-- Weekly Trends Chart (TOP) -->
+            <!-- Trends Chart (TOP) -->
             <div style="margin-bottom: 32px;">
-              <h5 style="margin: 0 0 12px 0; font-size: 0.95rem; color: #666;">📉 Weekly Trends</h5>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <h5 style="margin: 0; font-size: 0.95rem; color: #666;">📉 Study Trends</h5>
+                <select id="trends-chart-filter" style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;">
+                  <option value="weekly">Weekly Trend (8 weeks)</option>
+                  <option value="monthly">Monthly Trend (6 months)</option>
+                  <option value="yearly">Year Trend (12 months)</option>
+                </select>
+              </div>
               <canvas id="weekly-trends-chart" width="800" height="300"></canvas>
             </div>
 
