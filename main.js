@@ -425,25 +425,47 @@ function calculateDaysBetween(startISO, endISO) {
 function renderCompletedProjects() {
   const period = completedProjectsFilter.value;
   const filtered = filterCompletedProjects(period);
-  
+
   if (filtered.length === 0) {
     completedProjectsList.innerHTML = '<div class="chart-placeholder">No completed projects in this period</div>';
     return;
   }
-  
+
   completedProjectsList.innerHTML = filtered.map(p => {
     const hours = (p.endHours || 0).toFixed(2);
     const goalText = p.goal ? ` / ${p.goal}h` : '';
     const days = calculateDaysBetween(p.startDate, p.endDate);
     const startDate = formatDate(p.startDate);
     const endDate = formatDate(p.endDate);
-    
+
+    // Find original index in projects array
+    const originalIndex = projects.findIndex(proj =>
+      proj.name === p.name &&
+      proj.startDate === p.startDate &&
+      proj.completed
+    );
+
     return `
-      <div style="padding: 12px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px;">
-        <strong>${p.name}</strong> - ${hours}h${goalText} - ${days} days - ${startDate} - ${endDate}
+      <div style="padding: 12px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span><strong>${p.name}</strong> - ${hours}h${goalText} - ${days} days - ${startDate} - ${endDate}</span>
+        <button class="delete-completed-project-btn" data-index="${originalIndex}" style="background: none; border: none; cursor: pointer; font-size: 1.2rem; padding: 4px 8px;" title="Delete this completed project">🗑️</button>
       </div>
     `;
   }).join('');
+
+  // Add event listeners to delete buttons
+  document.querySelectorAll('.delete-completed-project-btn').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const index = parseInt(btn.dataset.index);
+      if (index >= 0 && confirm(`Delete "${projects[index].name}"? This will remove the project but keep your study time history.`)) {
+        projects.splice(index, 1);
+        saveProjectsToStorage();
+        renderCompletedProjects();
+        renderProjectDistribution(); // Update pie chart too
+      }
+    };
+  });
 }
 
 // Event listener for filter dropdown
