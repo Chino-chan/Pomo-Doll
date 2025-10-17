@@ -650,7 +650,7 @@ function drawPieChart(distribution) {
       label: 'No specific study',
       value: unattributedMinutes,
       percentage: (unattributedMinutes / totalStudyMinutes * 100).toFixed(1),
-      color: '#bdc3c7'
+      color: '#5DADE2'  // Light blue
     });
   }
 
