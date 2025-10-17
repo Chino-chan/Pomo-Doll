@@ -433,8 +433,14 @@
 
       .stats-modal.dark-mode #project-distribution-list > div,
       .stats-modal.dark-mode #completed-projects-list > div {
-        background: #2d2d2d;
-        border-color: #3d3d3d;
+        background: #d0d0d0 !important;
+        border-color: #b0b0b0 !important;
+        color: #1a1a1a !important;
+      }
+
+      .stats-modal.dark-mode #project-distribution-list > div strong,
+      .stats-modal.dark-mode #completed-projects-list > div strong {
+        color: #000 !important;
       }
 
       /* Buttons dark mode */
@@ -446,13 +452,15 @@
 
       .stats-modal.dark-mode #export-data-btn,
       .stats-modal.dark-mode #import-data-btn,
-      .stats-modal.dark-mode #toggle-border-colors-btn {
+      .stats-modal.dark-mode #toggle-border-colors-btn,
+      .stats-modal.dark-mode #toggle-streak-display-btn {
         background: #2d2d2d;
         color: #e0e0e0;
         border-color: #3d3d3d;
       }
 
-      .stats-modal.dark-mode #border-colors-status {
+      .stats-modal.dark-mode #border-colors-status,
+      .stats-modal.dark-mode #streak-display-status {
         color: #999;
       }
 
@@ -635,8 +643,8 @@
           </div>
           Today: <span id="streak-count">0</span> Pomos - <span id="minutes-count">0</span> Minutes ⏰
           <hr>
-          <div>Last time you studied: <span id="days-last-study">2 days ago</span></div>
-          <div>Current streak: <span id="streak-days">0 days 🔥</span></div>
+          <div id="last-study-container">Last time you studied: <span id="days-last-study">2 days ago</span></div>
+          <div id="current-streak-container">Current streak: <span id="streak-days">0 days 🔥</span></div>
           <div><span id="current-activity-tracking">Not tracking anything</span></div>
         </div>
 
@@ -857,11 +865,19 @@
             </div>
 
             <!-- Border Color Toggle -->
-            <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
               <button id="toggle-border-colors-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
                 🎨 Disable Border Colors
               </button>
               <span id="border-colors-status" style="font-size: 12px; color: #666;">Border colors are currently enabled</span>
+            </div>
+
+            <!-- Streak Display Toggle -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button id="toggle-streak-display-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                🔄 Swap to Current Streak
+              </button>
+              <span id="streak-display-status" style="font-size: 12px; color: #666;">Showing "Last time you studied"</span>
             </div>
 
             <!-- Hidden file input for import -->

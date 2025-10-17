@@ -130,14 +130,16 @@ button {
   align-items: center;
 }
 
-img{
-  max-width: 100%;
-  align-items: center;
-}
-
 #imgFront{
   max-width: 100%;
   align-items: center;
+  overflow: hidden;
+  border-radius: 1rem 1rem 0 0; /* Round top corners to match app container */
+}
+
+#imgFront img{
+  max-width: 100%;
+  display: block; /* Remove any extra space below image */
 }
 
 #MainApp{

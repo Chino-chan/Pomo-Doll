@@ -878,7 +878,10 @@ resetBtn.onclick = () => {
 
 skipBtn.onclick=()=>{
   skipSound.play(); pauseTimer();
-  if(!isBreak&&!isLongBreak){ cycle++; streak++; updateCycleDisplay(); streakEl.textContent=streak; saveDailyStats();
+  if(!isBreak&&!isLongBreak){
+    cycle++; streak++; updateCycleDisplay(); streakEl.textContent=streak;
+    saveDailyStats();
+    sessionAddedSeconds = 0; // Reset session counter after saving
     if(cycle>=cyclesPerSet){ isLongBreak=true; isBreak=false; time=longBreakTime; new Notification("Skipped to Long Break! 🌴",{body:"Take a long break!"}); }
     else{ isBreak=true; time=shortBreakTime; new Notification("Skipped to Break! 🍵",{body:"Take a short break!"}); }
   } else if(isBreak){ isBreak=false; time=pomodoroTime; new Notification("Skipped to Study Time! ⏰",{body:"Back to studying!"}); }
@@ -1887,3 +1890,61 @@ if (toggleBorderColorsBtn) {
 // Apply saved border colors preference on page load
 updateBorderColorsDisplay();
 updateModeLabel(); // Apply initial border color based on saved preference
+
+// --------------------
+// Streak Display Toggle
+// --------------------
+const toggleStreakDisplayBtn = document.getElementById("toggle-streak-display-btn");
+const streakDisplayStatus = document.getElementById("streak-display-status");
+const lastStudyContainer = document.getElementById("last-study-container");
+const currentStreakContainer = document.getElementById("current-streak-container");
+
+/**
+ * Update streak display toggle button and status text
+ */
+function updateStreakDisplayUI() {
+  const showLastStudy = localStorage.getItem('showLastStudy') !== 'false';
+
+  if (toggleStreakDisplayBtn) {
+    toggleStreakDisplayBtn.textContent = showLastStudy ? '🔄 Swap to Current Streak' : '🔄 Swap to Last Studied';
+  }
+
+  if (streakDisplayStatus) {
+    streakDisplayStatus.textContent = showLastStudy
+      ? 'Showing "Last time you studied"'
+      : 'Showing "Current streak"';
+  }
+
+  // Show/hide the appropriate container
+  if (lastStudyContainer && currentStreakContainer) {
+    if (showLastStudy) {
+      lastStudyContainer.style.display = 'block';
+      currentStreakContainer.style.display = 'none';
+    } else {
+      lastStudyContainer.style.display = 'none';
+      currentStreakContainer.style.display = 'block';
+    }
+  }
+}
+
+/**
+ * Toggle between showing "Last time you studied" and "Current streak"
+ */
+function toggleStreakDisplay() {
+  const currentlyShowingLastStudy = localStorage.getItem('showLastStudy') !== 'false';
+  const newValue = !currentlyShowingLastStudy;
+
+  // Save preference
+  localStorage.setItem('showLastStudy', newValue.toString());
+
+  // Update display
+  updateStreakDisplayUI();
+}
+
+// Event listener for streak display toggle button
+if (toggleStreakDisplayBtn) {
+  toggleStreakDisplayBtn.addEventListener('click', toggleStreakDisplay);
+}
+
+// Apply saved streak display preference on page load
+updateStreakDisplayUI();
