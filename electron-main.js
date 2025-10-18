@@ -9,6 +9,16 @@ function createWindow() {
     defaultHeight: 688
   });
 
+  // Determine icon path based on platform
+  let iconPath;
+  if (process.platform === 'win32') {
+    iconPath = path.join(__dirname, 'assets/app_icon.ico');
+  } else if (process.platform === 'darwin') {
+    iconPath = path.join(__dirname, 'assets/icon_512x512.png'); // macOS uses PNG
+  } else {
+    iconPath = path.join(__dirname, 'assets/icon_512x512.png'); // Linux uses PNG
+  }
+
   const win = new BrowserWindow({
     x: mainWindowState.x,
     y: mainWindowState.y,
@@ -19,7 +29,7 @@ function createWindow() {
       contextIsolation: true
     },
     autoHideMenuBar: true, // Hides the menu bar
-    icon: path.join(__dirname, 'img/icon.png') // Optional: add an icon
+    icon: iconPath
   });
 
   // Let electron-window-state manage and track window size/position changes

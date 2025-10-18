@@ -361,7 +361,7 @@ function updateSkipButtonText() {
     skipBtn.textContent = "Finish Session";
     skipBtn.title = "Ends the current session and starts a break. Time studied will be tracked.";
   } else {
-    skipBtn.textContent = "Skip";
+    skipBtn.textContent = "End Early*";
     skipBtn.title = "Ends the current pomo/break early, time already studied will still count.";
   }
 }
@@ -451,11 +451,11 @@ function renderProjectList() {
     div.innerHTML = `
       <strong>${p.name}</strong><br>
       — ${goalText}<br>
-      <span style="font-size: 0.85em; color: #888;">Last tracked: ${lastTrackedText}</span>
+      <span style="font-size: 0.85em; color: #888;">Last tracked: ${lastTrackedText}</span><br>
+      <button data-index="${i}" class="work-btn" style="margin-top: 8px; width: 100%;">${isActive ? "Stop Tracking" : "Track this!"}</button>
       <div class="project-buttons">
         <button data-index="${i}" class="complete-btn">✓</button>
         <button data-index="${i}" class="delete-btn">🗑️</button>
-        <button data-index="${i}" class="work-btn">${isActive ? "Stop Tracking" : "Track this!"}</button>
       </div>`;
 
     projectListEl.appendChild(div);
@@ -1153,14 +1153,17 @@ configForm.onsubmit=(e)=>{
     freeTimerBreakTime
   }));
 
-  // Reset timer based on current mode
-  if (isFreeTimerMode && !isBreak && !isLongBreak) {
-    time = 0; // Free Timer mode starts at 0
-  } else {
-    time = !isBreak && !isLongBreak ? pomodoroTime : isBreak ? shortBreakTime : longBreakTime;
+  // Only reset timer if it's NOT currently running
+  if (!timerInterval) {
+    // Reset timer based on current mode
+    if (isFreeTimerMode && !isBreak && !isLongBreak) {
+      time = 0; // Free Timer mode starts at 0
+    } else {
+      time = !isBreak && !isLongBreak ? pomodoroTime : isBreak ? shortBreakTime : longBreakTime;
+    }
+    updateDisplay();
   }
 
-  updateDisplay();
   updateCycleDisplay();
   updateModeLabel();
   updateSkipButtonText();
@@ -2608,6 +2611,9 @@ function handleCoverImageUpload(file) {
       // Update button text
       updateCoverImageButton();
 
+      // Re-apply fit mode to new image
+      applyImageFitMode();
+
       // Show success message
       alert('✓ Image changed successfully!');
     } catch (error) {
@@ -2638,6 +2644,9 @@ function restoreOriginalCover() {
 
   // Update button text
   updateCoverImageButton();
+
+  // Re-apply fit mode to restored image
+  applyImageFitMode();
 
   // Show success message
   alert('✓ Original cover restored!');
@@ -2676,3 +2685,66 @@ if (coverImageInput) {
 
 // Load custom cover image on page load
 loadCustomCoverImage();
+
+// --------------------
+// Image Fit Mode Toggle (Cover vs Contain)
+// --------------------
+const toggleImageFitBtn = document.getElementById("toggle-image-fit-btn");
+
+/**
+ * Update image fit button text based on current mode
+ */
+function updateImageFitButton() {
+  const fitMode = localStorage.getItem('coverImageFitMode') || 'cover';
+
+  if (toggleImageFitBtn) {
+    if (fitMode === 'cover') {
+      toggleImageFitBtn.textContent = '📐 Show Entire Image';
+    } else {
+      toggleImageFitBtn.textContent = '📐 Crop to Fill';
+    }
+  }
+}
+
+/**
+ * Apply image fit mode to the cover image element
+ */
+function applyImageFitMode() {
+  const fitMode = localStorage.getItem('coverImageFitMode') || 'cover';
+
+  if (coverImageElement) {
+    // Remove both classes first
+    coverImageElement.classList.remove('fit-cover', 'fit-contain');
+
+    // Add the appropriate class
+    if (fitMode === 'contain') {
+      coverImageElement.classList.add('fit-contain');
+    } else {
+      coverImageElement.classList.add('fit-cover');
+    }
+  }
+
+  updateImageFitButton();
+}
+
+/**
+ * Toggle between cover and contain modes
+ */
+function toggleImageFitMode() {
+  const currentMode = localStorage.getItem('coverImageFitMode') || 'cover';
+  const newMode = currentMode === 'cover' ? 'contain' : 'cover';
+
+  // Save preference
+  localStorage.setItem('coverImageFitMode', newMode);
+
+  // Apply the change immediately
+  applyImageFitMode();
+}
+
+// Event listener for image fit toggle button
+if (toggleImageFitBtn) {
+  toggleImageFitBtn.addEventListener('click', toggleImageFitMode);
+}
+
+// Apply saved image fit mode on page load
+applyImageFitMode();

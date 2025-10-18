@@ -14,6 +14,23 @@
   "author": "",
   "license": "ISC",
   "description": "Pomodoro Timer Desktop App",
+  "build": {
+    "appId": "com.pomodoro.app",
+    "productName": "Pomo Cunny",
+    "win": {
+      "icon": "assets/app_icon.ico",
+      "target": ["nsis", "portable"]
+    },
+    "mac": {
+      "icon": "assets/icon_512x512.png",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "icon": "assets/",
+      "target": ["AppImage", "deb"],
+      "category": "Utility"
+    }
+  },
   "devDependencies": {
     "@vitest/ui": "^3.2.4",
     "electron": "^38.3.0",
