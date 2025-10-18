@@ -20,14 +20,23 @@ You can either download the Desktop App **(Recommended)** or use it in the brows
 
 ## Screenshots & Features
 
-### Default Covers - You can upload your own as well.
+
+
 <div>
 <img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" style="max-width:50%;height:50%;">
   -
 <img src="https://i.imgur.com/R3qc18G.png" alt="Description of image" style="max-width:50%;height:50%;">
   -
 <img src="https://i.imgur.com/NO0kpKv.png" alt="Description of image" style="max-width:50%;height:50%;">
+  
+You can upload your own cover if you don't like these.
+</div>
 
+### Study HeatMap, Streak tracker, Cake chart
+
+<div>
+  <img src="https://i.imgur.com/oZQlXGP.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+  <img src="https://i.imgur.com/APkB3An.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 </div>
 
 ### Normal Pomodoro & Free Timer mode 
@@ -35,12 +44,21 @@ Pomodoro mode tracks a countdown from a determined period (25) meanwhile Free Ti
 
 <img src="https://i.imgur.com/OzThAQj.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
+
+
 ### Upload your own cover
 <img src="https://i.imgur.com/oNQAHxa.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
-### More personalization
+### More customization
 
 <img src="https://i.imgur.com/KfG9DFS.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+
+
+### You can backup your data & even import it later
+<img src="https://i.imgur.com/W4iHuZB.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+
 
 ## Download
 
