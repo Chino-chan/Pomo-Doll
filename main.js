@@ -374,7 +374,15 @@ function updateDisplay() {
 
 function updateCycleDisplay() { cycleEl.textContent = `${cycle}/${cyclesPerSet}`; }
 function updateTotalDisplay() { totalEl.textContent = totalCycles; }
-function updateStudyTimeDisplay() { minutesEl.textContent = Math.floor(totalStudySeconds/60); }
+function updateStudyTimeDisplay() {
+  const totalMinutes = Math.floor(totalStudySeconds / 60);
+  if (totalMinutes >= 60) {
+    const hours = (totalMinutes / 60).toFixed(1);
+    minutesEl.textContent = `${hours}h`;
+  } else {
+    minutesEl.textContent = `${totalMinutes} minutes`;
+  }
+}
 
 // --------------------
 // Project tracking
