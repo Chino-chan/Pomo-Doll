@@ -1,6 +1,6 @@
 # Pomo Doll 🌱
 
-A full fledged customizable Pomodoro App that includes project tracking features, detailed statistics, and a free time mode.
+A full fledged customizable Pomodoro App that includes project tracking features, detailed statistics, and a free timer mode.
 
 You can either download the Desktop App (Recommended) or use it in the browser. 
 
