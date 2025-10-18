@@ -1,6 +1,8 @@
-# Pomo Doll 🎀
+# Pomo Doll 🌱
 
-A minimalist Pomodoro timer desktop app with project tracking and detailed statistics.
+A full fledged customizable Pomodoro App that includes project tracking features, detailed statistics, and a free timer mode.
+
+You can either download the Desktop App **(Recommended)** or use it in the browser  
 
 ![Version](https://img.shields.io/badge/version-1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -16,27 +18,57 @@ A minimalist Pomodoro timer desktop app with project tracking and detailed stati
 - 💾 **Data Export/Import** - Backup and restore your data easily
 - 🔔 **Audio Alerts** - Sound notifications for completed sessions
 
-## Screenshots
+## Screenshots & Features
 
-*[Add screenshots of your app here]*
+
+
+<div>
+<img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" style="max-width:50%;height:50%;">
+  -
+<img src="https://i.imgur.com/R3qc18G.png" alt="Description of image" style="max-width:50%;height:50%;">
+  -
+<img src="https://i.imgur.com/NO0kpKv.png" alt="Description of image" style="max-width:50%;height:50%;">
+  
+You can upload your own cover if you don't like these.
+</div>
+
+### Study HeatMap, Streak tracker, Cake chart
+
+<div>
+  <img src="https://i.imgur.com/oZQlXGP.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+  <img src="https://i.imgur.com/APkB3An.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+</div>
+
+### Normal Pomodoro & Free Timer mode 
+Pomodoro mode tracks a countdown from a determined period (25) meanwhile Free Timer mode is... until you decide to take a break.
+
+<img src="https://i.imgur.com/OzThAQj.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+
+
+### Upload your own cover
+<img src="https://i.imgur.com/oNQAHxa.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+### More customization
+
+<img src="https://i.imgur.com/KfG9DFS.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+
+
+### You can backup your data & even import it later
+<img src="https://i.imgur.com/W4iHuZB.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+
 
 ## Download
 
 Download the latest release for your platform:
 
-- **Windows**: [Download .exe](https://github.com/your-username/pomo-doll/releases)
-- **macOS**: [Download .dmg](https://github.com/your-username/pomo-doll/releases)
-- **Linux**: [Download .AppImage](https://github.com/your-username/pomo-doll/releases)
+- **Windows**: [Download .exe](https://github.com/Chino-chan/Pomo-Doll/releases)
+- **macOS**: [Download .dmg](https://github.com/Chino-chan/Pomo-Doll/releases)
+- **Linux**: [Download .AppImage](https://github.com/Chino-chan/Pomo-Doll/releases)
 
-## Installation
-
-### From Release (Recommended)
-
-1. Download the installer for your OS from the [Releases page](https://github.com/your-username/pomo-doll/releases)
-2. Run the installer
-3. Launch Pomo Doll!
-
-### From Source
+## Installation for Developers
 
 Requirements:
 - Node.js 16+
@@ -77,14 +109,10 @@ npm run build
 - View project distribution pie charts
 - Check your personal records
 
-## Keyboard Shortcuts
 
-- `Space` - Start/Pause timer
-- `Esc` - Close modals
+## Data Management
 
-## Data Privacy
-
-All your data is stored **locally** on your computer. Nothing is sent to any servers. Your privacy is 100% protected.
+All your data is stored **locally** on your computer or browser if you run it there. 
 
 ## Development
 
@@ -105,21 +133,20 @@ npm run test:coverage
 npm run build
 ```
 
-## Tech Stack
+## Stack
 
 - **Electron** - Desktop app framework
-- **Vanilla JavaScript** - No frameworks, pure JS
+- **Vanilla JavaScript** - No frameworks, pure JS insanity
 - **HTML5 Canvas** - Charts and visualizations
 - **Vitest** - Testing framework
-- **localStorage** - Data persistence
+- **localStorage** - Data persistence (Both Desktop & Browser)
+- **Claude Code** - Documentation, Testing coverage, and more 
 
-## Contributing
-
-Contributions are welcome! Feel free to:
+## Please feel free to
 
 - Report bugs
 - Suggest new features
-- Submit pull requests
+- Give overall feedback
 
 ## License
 
@@ -127,13 +154,7 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ## Author
 
-Created by [Your Name](https://bit.ly/4hnt9le)
+Created by me, I hope you enjoy it. I created this because I saw most other Pomodoro/Study apps lacked something I wanted. 
 
-## Acknowledgments
 
-- Inspired by the Pomodoro Technique® by Francesco Cirillo
-- Icons and sounds from various open-source projects
 
----
-
-**⭐ If you find this app helpful, please consider giving it a star!**
