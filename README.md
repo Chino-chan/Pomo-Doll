@@ -18,7 +18,11 @@ A minimalist Pomodoro timer desktop app with project tracking and detailed stati
 
 ## Screenshots
 
-*[Add screenshots of your app here]*
+<div>
+<img src="https://i.imgur.com/Y3vs31U.jpg" alt="Description of image" style="max-width:50%;height:50%;">
+  
+<img src="https://i.imgur.com/7u014Qn.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+</div>
 
 ## Download
 
@@ -29,12 +33,6 @@ Download the latest release for your platform:
 - **Linux**: [Download .AppImage](https://github.com/your-username/pomo-doll/releases)
 
 ## Installation
-
-### From Release (Recommended)
-
-1. Download the installer for your OS from the [Releases page](https://github.com/your-username/pomo-doll/releases)
-2. Run the installer
-3. Launch Pomo Doll!
 
 ### From Source
 
