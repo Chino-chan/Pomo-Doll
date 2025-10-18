@@ -2419,7 +2419,7 @@ function clearAllData() {
 
       // Reset displays
       streakEl.textContent = 0;
-      minutesEl.textContent = 0;
+      updateStudyTimeDisplay(); // Use function to properly format minutes
       cycleEl.textContent = `0/${cyclesPerSet}`;
       totalEl.textContent = 0;
       currentActivityEl.textContent = "Not tracking anything";
