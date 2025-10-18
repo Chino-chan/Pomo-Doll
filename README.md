@@ -1,6 +1,6 @@
 # Pomo Doll ❤️
 
-A minimalist Pomodoro timer desktop app with project tracking and detailed statistics.
+A full fledged customizable Pomodoro Study app that includes project tracking features, detailed statistics, and a free time mode.
 
 ![Version](https://img.shields.io/badge/version-1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
