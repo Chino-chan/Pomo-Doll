@@ -24,6 +24,9 @@ You can either download the Desktop App (Recommended) or use it in the browser.
 <img src="https://i.imgur.com/Y3vs31U.jpg" alt="Description of image" style="max-width:50%;height:50%;">
   
 <img src="https://i.imgur.com/7u014Qn.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+<img src="https://i.imgur.com/65oTdg9.png" alt="Description of image" style="max-width:50%;height:50%;">
+
 </div>
 
 ## Download
