@@ -98,8 +98,6 @@ All your data is stored **locally** on your computer or browser if you run it th
 Download the latest release for your platform:
 
 - **Windows**: [Download .exe](https://github.com/Chino-chan/Pomo-Doll/releases)
-- **macOS**: [Download .dmg](https://github.com/Chino-chan/Pomo-Doll/releases)
-- **Linux**: [Download .AppImage](https://github.com/Chino-chan/Pomo-Doll/releases)
 
 ## Technical Info & Istallation for Developers
 
