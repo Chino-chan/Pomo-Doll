@@ -41,7 +41,7 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 <div>
   <img src="https://i.imgur.com/zcUuECR.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
   -
-  <img src="https://i.imgur.com/yy3F8RL.png" alt="Description of image" style="max-width:50%;height:50%;">
+  <img src="https://i.imgur.com/maisXUo.png" alt="Description of image" style="max-width:50%;height:50%;">
   
 </div>
 
