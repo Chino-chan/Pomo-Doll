@@ -80,9 +80,9 @@ npm run build
 - `Space` - Start/Pause timer
 - `Esc` - Close modals
 
-## Data Privacy
+## Data Management
 
-All your data is stored **locally** on your computer. Nothing is sent to any servers. Your privacy is 100% protected.
+All your data is stored **locally** on your computer or browser if you run it there. 
 
 ## Development
 
@@ -103,21 +103,19 @@ npm run test:coverage
 npm run build
 ```
 
-## Tech Stack
+## Stack
 
 - **Electron** - Desktop app framework
-- **Vanilla JavaScript** - No frameworks, pure JS
+- **Vanilla JavaScript** - No frameworks, pure JS insanity
 - **HTML5 Canvas** - Charts and visualizations
 - **Vitest** - Testing framework
-- **localStorage** - Data persistence
+- **localStorage** - Data persistence (Both Desktop & Browser)
 
-## Contributing
-
-Contributions are welcome! Feel free to:
+## Please feel free to
 
 - Report bugs
 - Suggest new features
-- Submit pull requests
+- Give overall feedback
 
 ## License
 
@@ -125,13 +123,7 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ## Author
 
-Created by [Your Name](https://bit.ly/4hnt9le)
+Created by me, I hope you enjoy it. I created this because I saw most other Pomodoro/Study apps lacked something I wanted. 
 
-## Acknowledgments
 
-- Inspired by the Pomodoro Technique® by Francesco Cirillo
-- Icons and sounds from various open-source projects
 
----
-
-**⭐ If you find this app helpful, please consider giving it a star!**
