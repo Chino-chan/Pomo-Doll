@@ -2510,3 +2510,169 @@ if (toggleStreakDisplayBtn) {
 
 // Apply saved streak display preference on page load
 updateStreakDisplayUI();
+
+// --------------------
+// Custom Cover Image
+// --------------------
+const coverImageInput = document.getElementById("cover-image-input");
+const coverImageBtn = document.getElementById("cover-image-btn");
+const coverImageElement = document.querySelector("#imgFront img");
+
+/**
+ * Update cover image button text based on whether custom image exists
+ */
+function updateCoverImageButton() {
+  const customCover = localStorage.getItem('customAppCover');
+
+  if (coverImageBtn) {
+    if (customCover) {
+      coverImageBtn.textContent = '🔄 Restore Original';
+    } else {
+      coverImageBtn.textContent = '🖼️ Upload Custom Cover';
+    }
+  }
+}
+
+/**
+ * Apply custom cover image from localStorage if it exists
+ */
+function loadCustomCoverImage() {
+  const customCover = localStorage.getItem('customAppCover');
+
+  if (customCover && coverImageElement) {
+    coverImageElement.src = customCover;
+  }
+
+  updateCoverImageButton();
+}
+
+/**
+ * Validate cover image file
+ * @param {File} file - The file to validate
+ * @returns {{ valid: boolean, error: string|null }}
+ */
+function validateCoverImageFile(file) {
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  const maxSizeMB = 2;
+  const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+  if (!file) {
+    return { valid: false, error: 'No file provided' };
+  }
+
+  // Validate file type
+  if (!validTypes.includes(file.type)) {
+    return {
+      valid: false,
+      error: 'Invalid file type. Please select a JPEG, JPG, PNG, or WebP image.'
+    };
+  }
+
+  // Validate file size
+  if (file.size > maxSizeBytes) {
+    return {
+      valid: false,
+      error: `Image too large. Please select an image smaller than ${maxSizeMB}MB.`
+    };
+  }
+
+  return { valid: true, error: null };
+}
+
+/**
+ * Handle custom cover image upload
+ */
+function handleCoverImageUpload(file) {
+  // Validate file
+  const validation = validateCoverImageFile(file);
+  if (!validation.valid) {
+    alert('❌ ' + validation.error);
+    return;
+  }
+
+  // Read file and convert to base64
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const base64Image = e.target.result;
+
+    // Save to localStorage
+    try {
+      localStorage.setItem('customAppCover', base64Image);
+
+      // Apply the new image
+      if (coverImageElement) {
+        coverImageElement.src = base64Image;
+      }
+
+      // Update button text
+      updateCoverImageButton();
+
+      // Show success message
+      alert('✓ Image changed successfully!');
+    } catch (error) {
+      // Handle localStorage quota exceeded error
+      alert('❌ Failed to save image. It might be too large for your browser storage. Try a smaller image.');
+      console.error('localStorage error:', error);
+    }
+  };
+
+  reader.onerror = function() {
+    alert('❌ Failed to read the image file. Please try again.');
+  };
+
+  reader.readAsDataURL(file);
+}
+
+/**
+ * Restore the original cover image
+ */
+function restoreOriginalCover() {
+  // Remove custom cover from localStorage
+  localStorage.removeItem('customAppCover');
+
+  // Restore original image
+  if (coverImageElement) {
+    coverImageElement.src = 'img/appcover.jpeg';
+  }
+
+  // Update button text
+  updateCoverImageButton();
+
+  // Show success message
+  alert('✓ Original cover restored!');
+}
+
+// Event listener for cover image button
+if (coverImageBtn) {
+  coverImageBtn.addEventListener('click', function() {
+    const customCover = localStorage.getItem('customAppCover');
+
+    if (customCover) {
+      // Custom cover exists - restore original
+      restoreOriginalCover();
+    } else {
+      // No custom cover - trigger file input
+      if (coverImageInput) {
+        coverImageInput.click();
+      }
+    }
+  });
+}
+
+// Event listener for file input
+if (coverImageInput) {
+  coverImageInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+
+    if (file) {
+      handleCoverImageUpload(file);
+    }
+
+    // Reset file input so the same file can be selected again
+    e.target.value = '';
+  });
+}
+
+// Load custom cover image on page load
+loadCustomCoverImage();

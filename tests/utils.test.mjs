@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   getLocalDateKey,
   getTodayKey,
@@ -20,7 +20,15 @@ import {
   countProjectsCompletedInMonth,
   getAvailableYears,
   getProjectLastTrackedDate,
-  formatLastTracked
+  formatLastTracked,
+  validateCoverImageType,
+  validateCoverImageSize,
+  validateCoverImage,
+  convertImageToBase64,
+  saveCoverImageToStorage,
+  loadCoverImageFromStorage,
+  removeCoverImageFromStorage,
+  hasCustomCoverImage
 } from '../utils.mjs';
 
 describe('Date Utilities', () => {
@@ -1002,6 +1010,434 @@ describe('Project Tracking', () => {
 
       // When called without reference date, it should recognize today
       expect(formatLastTracked(todayKey)).toBe('Today');
+    });
+  });
+});
+
+describe('Custom Cover Image Utilities', () => {
+  describe('validateCoverImageType', () => {
+    it('should return error for null file', () => {
+      const result = validateCoverImageType(null);
+      expect(result.valid).toBe(false);
+      expect(result.error).toBe('No file provided');
+    });
+
+    it('should return error for undefined file', () => {
+      const result = validateCoverImageType(undefined);
+      expect(result.valid).toBe(false);
+      expect(result.error).toBe('No file provided');
+    });
+
+    it('should accept valid JPEG file', () => {
+      const file = { type: 'image/jpeg', size: 1024 };
+      const result = validateCoverImageType(file);
+      expect(result.valid).toBe(true);
+      expect(result.error).toBe(null);
+    });
+
+    it('should accept valid JPG file', () => {
+      const file = { type: 'image/jpg', size: 1024 };
+      const result = validateCoverImageType(file);
+      expect(result.valid).toBe(true);
+      expect(result.error).toBe(null);
+    });
+
+    it('should accept valid PNG file', () => {
+      const file = { type: 'image/png', size: 1024 };
+      const result = validateCoverImageType(file);
+      expect(result.valid).toBe(true);
+      expect(result.error).toBe(null);
+    });
+
+    it('should accept valid WebP file', () => {
+      const file = { type: 'image/webp', size: 1024 };
+      const result = validateCoverImageType(file);
+      expect(result.valid).toBe(true);
+      expect(result.error).toBe(null);
+    });
+
+    it('should reject GIF files', () => {
+      const file = { type: 'image/gif', size: 1024 };
+      const result = validateCoverImageType(file);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Invalid file type');
+    });
+
+    it('should reject SVG files', () => {
+      const file = { type: 'image/svg+xml', size: 1024 };
+      const result = validateCoverImageType(file);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Invalid file type');
+    });
+
+    it('should reject non-image files', () => {
+      const file = { type: 'application/pdf', size: 1024 };
+      const result = validateCoverImageType(file);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Invalid file type');
+    });
+
+    it('should reject video files', () => {
+      const file = { type: 'video/mp4', size: 1024 };
+      const result = validateCoverImageType(file);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Invalid file type');
+    });
+  });
+
+  describe('validateCoverImageSize', () => {
+    it('should return error for null file', () => {
+      const result = validateCoverImageSize(null);
+      expect(result.valid).toBe(false);
+      expect(result.error).toBe('No file provided');
+      expect(result.sizeMB).toBe(0);
+    });
+
+    it('should return error for undefined file', () => {
+      const result = validateCoverImageSize(undefined);
+      expect(result.valid).toBe(false);
+      expect(result.error).toBe('No file provided');
+    });
+
+    it('should accept file smaller than 2MB (default)', () => {
+      const file = { size: 1 * 1024 * 1024 }; // 1MB
+      const result = validateCoverImageSize(file);
+      expect(result.valid).toBe(true);
+      expect(result.error).toBe(null);
+      expect(result.sizeMB).toBeCloseTo(1, 2);
+    });
+
+    it('should accept file exactly 2MB (default)', () => {
+      const file = { size: 2 * 1024 * 1024 }; // 2MB
+      const result = validateCoverImageSize(file);
+      expect(result.valid).toBe(true);
+      expect(result.error).toBe(null);
+      expect(result.sizeMB).toBe(2);
+    });
+
+    it('should reject file larger than 2MB (default)', () => {
+      const file = { size: 2.5 * 1024 * 1024 }; // 2.5MB
+      const result = validateCoverImageSize(file);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('too large');
+      expect(result.error).toContain('2MB');
+      expect(result.sizeMB).toBeCloseTo(2.5, 2);
+    });
+
+    it('should accept file within custom size limit', () => {
+      const file = { size: 4 * 1024 * 1024 }; // 4MB
+      const result = validateCoverImageSize(file, 5); // 5MB limit
+      expect(result.valid).toBe(true);
+      expect(result.error).toBe(null);
+    });
+
+    it('should reject file exceeding custom size limit', () => {
+      const file = { size: 6 * 1024 * 1024 }; // 6MB
+      const result = validateCoverImageSize(file, 5); // 5MB limit
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('5MB');
+    });
+
+    it('should accept very small files (1KB)', () => {
+      const file = { size: 1024 }; // 1KB
+      const result = validateCoverImageSize(file);
+      expect(result.valid).toBe(true);
+      expect(result.error).toBe(null);
+    });
+
+    it('should accept empty file (0 bytes)', () => {
+      const file = { size: 0 };
+      const result = validateCoverImageSize(file);
+      expect(result.valid).toBe(true);
+      expect(result.error).toBe(null);
+      expect(result.sizeMB).toBe(0);
+    });
+
+    it('should calculate size in MB correctly', () => {
+      const file = { size: 1536 * 1024 }; // 1.5MB
+      const result = validateCoverImageSize(file);
+      expect(result.sizeMB).toBeCloseTo(1.5, 2);
+    });
+  });
+
+  describe('validateCoverImage', () => {
+    it('should validate both type and size', () => {
+      const file = { type: 'image/jpeg', size: 1 * 1024 * 1024 }; // 1MB JPEG
+      const result = validateCoverImage(file);
+      expect(result.valid).toBe(true);
+      expect(result.error).toBe(null);
+    });
+
+    it('should reject invalid type even if size is valid', () => {
+      const file = { type: 'image/gif', size: 1 * 1024 * 1024 }; // 1MB GIF
+      const result = validateCoverImage(file);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Invalid file type');
+    });
+
+    it('should reject invalid size even if type is valid', () => {
+      const file = { type: 'image/jpeg', size: 3 * 1024 * 1024 }; // 3MB JPEG
+      const result = validateCoverImage(file);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('too large');
+    });
+
+    it('should reject file with invalid type and size', () => {
+      const file = { type: 'application/pdf', size: 5 * 1024 * 1024 };
+      const result = validateCoverImage(file);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Invalid file type');
+    });
+
+    it('should accept PNG file with valid size', () => {
+      const file = { type: 'image/png', size: 500 * 1024 }; // 500KB PNG
+      const result = validateCoverImage(file);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should accept WebP file with valid size', () => {
+      const file = { type: 'image/webp', size: 1.5 * 1024 * 1024 }; // 1.5MB WebP
+      const result = validateCoverImage(file);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should respect custom size limit', () => {
+      const file = { type: 'image/jpeg', size: 3 * 1024 * 1024 }; // 3MB
+      const result = validateCoverImage(file, 5); // 5MB limit
+      expect(result.valid).toBe(true);
+    });
+
+    it('should return sizeMB in result', () => {
+      const file = { type: 'image/jpeg', size: 1024 * 1024 }; // 1MB
+      const result = validateCoverImage(file);
+      expect(result.sizeMB).toBeCloseTo(1, 2);
+    });
+  });
+
+  describe('convertImageToBase64', () => {
+    it('should reject null file', async () => {
+      await expect(convertImageToBase64(null)).rejects.toThrow('No file provided');
+    });
+
+    it('should reject undefined file', async () => {
+      await expect(convertImageToBase64(undefined)).rejects.toThrow('No file provided');
+    });
+
+    // Note: Testing actual FileReader conversion requires mocking or browser environment
+    // These are basic tests for error handling
+  });
+
+  describe('saveCoverImageToStorage', () => {
+    beforeEach(() => {
+      // Clear localStorage before each test
+      localStorage.clear();
+    });
+
+    it('should save base64 string to localStorage', () => {
+      const base64 = 'data:image/jpeg;base64,/9j/4AAQSkZJRg==';
+      const result = saveCoverImageToStorage(base64);
+
+      expect(result.success).toBe(true);
+      expect(result.error).toBe(null);
+      expect(localStorage.getItem('customAppCover')).toBe(base64);
+    });
+
+    it('should return error for null base64 string', () => {
+      const result = saveCoverImageToStorage(null);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('No image data provided');
+    });
+
+    it('should return error for undefined base64 string', () => {
+      const result = saveCoverImageToStorage(undefined);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('No image data provided');
+    });
+
+    it('should return error for empty string', () => {
+      const result = saveCoverImageToStorage('');
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('No image data provided');
+    });
+
+    it('should save valid base64 string with PNG data', () => {
+      const base64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+      const result = saveCoverImageToStorage(base64);
+
+      expect(result.success).toBe(true);
+      expect(localStorage.getItem('customAppCover')).toBe(base64);
+    });
+
+    it('should overwrite existing cover image', () => {
+      const firstImage = 'data:image/jpeg;base64,first';
+      const secondImage = 'data:image/jpeg;base64,second';
+
+      saveCoverImageToStorage(firstImage);
+      expect(localStorage.getItem('customAppCover')).toBe(firstImage);
+
+      saveCoverImageToStorage(secondImage);
+      expect(localStorage.getItem('customAppCover')).toBe(secondImage);
+    });
+
+    it('should handle localStorage quota exceeded gracefully', () => {
+      // Mock localStorage.setItem to throw quota exceeded error
+      const originalSetItem = localStorage.setItem;
+      localStorage.setItem = vi.fn(() => {
+        throw new Error('QuotaExceededError');
+      });
+
+      const base64 = 'data:image/jpeg;base64,test';
+      const result = saveCoverImageToStorage(base64);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Failed to save image');
+
+      // Restore original method
+      localStorage.setItem = originalSetItem;
+    });
+  });
+
+  describe('loadCoverImageFromStorage', () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it('should return null when no image is stored', () => {
+      const result = loadCoverImageFromStorage();
+      expect(result).toBe(null);
+    });
+
+    it('should load base64 string from localStorage', () => {
+      const base64 = 'data:image/jpeg;base64,/9j/4AAQSkZJRg==';
+      localStorage.setItem('customAppCover', base64);
+
+      const result = loadCoverImageFromStorage();
+      expect(result).toBe(base64);
+    });
+
+    it('should return stored image after save', () => {
+      const base64 = 'data:image/png;base64,test123';
+      saveCoverImageToStorage(base64);
+
+      const result = loadCoverImageFromStorage();
+      expect(result).toBe(base64);
+    });
+
+    it('should return null after localStorage is cleared', () => {
+      const base64 = 'data:image/jpeg;base64,test';
+      localStorage.setItem('customAppCover', base64);
+
+      localStorage.clear();
+
+      const result = loadCoverImageFromStorage();
+      expect(result).toBe(null);
+    });
+  });
+
+  describe('removeCoverImageFromStorage', () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it('should remove image from localStorage', () => {
+      const base64 = 'data:image/jpeg;base64,test';
+      localStorage.setItem('customAppCover', base64);
+
+      const result = removeCoverImageFromStorage();
+
+      expect(result.success).toBe(true);
+      expect(result.error).toBe(null);
+      expect(localStorage.getItem('customAppCover')).toBe(null);
+    });
+
+    it('should succeed even if no image exists', () => {
+      const result = removeCoverImageFromStorage();
+
+      expect(result.success).toBe(true);
+      expect(result.error).toBe(null);
+    });
+
+    it('should remove previously saved image', () => {
+      const base64 = 'data:image/jpeg;base64,test';
+      saveCoverImageToStorage(base64);
+
+      expect(loadCoverImageFromStorage()).toBe(base64);
+
+      removeCoverImageFromStorage();
+
+      expect(loadCoverImageFromStorage()).toBe(null);
+    });
+
+    it('should handle localStorage errors gracefully', () => {
+      // Mock localStorage.removeItem to throw error
+      const originalRemoveItem = localStorage.removeItem;
+      localStorage.removeItem = vi.fn(() => {
+        throw new Error('Storage error');
+      });
+
+      const result = removeCoverImageFromStorage();
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Failed to remove');
+
+      // Restore original method
+      localStorage.removeItem = originalRemoveItem;
+    });
+  });
+
+  describe('hasCustomCoverImage', () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it('should return false when no image is stored', () => {
+      expect(hasCustomCoverImage()).toBe(false);
+    });
+
+    it('should return true when image is stored', () => {
+      const base64 = 'data:image/jpeg;base64,test';
+      localStorage.setItem('customAppCover', base64);
+
+      expect(hasCustomCoverImage()).toBe(true);
+    });
+
+    it('should return false for empty string', () => {
+      localStorage.setItem('customAppCover', '');
+
+      expect(hasCustomCoverImage()).toBe(false);
+    });
+
+    it('should return true after saving image', () => {
+      expect(hasCustomCoverImage()).toBe(false);
+
+      const base64 = 'data:image/png;base64,abc123';
+      saveCoverImageToStorage(base64);
+
+      expect(hasCustomCoverImage()).toBe(true);
+    });
+
+    it('should return false after removing image', () => {
+      const base64 = 'data:image/jpeg;base64,test';
+      saveCoverImageToStorage(base64);
+
+      expect(hasCustomCoverImage()).toBe(true);
+
+      removeCoverImageFromStorage();
+
+      expect(hasCustomCoverImage()).toBe(false);
+    });
+
+    it('should return false after clearing storage', () => {
+      const base64 = 'data:image/jpeg;base64,test';
+      saveCoverImageToStorage(base64);
+      expect(hasCustomCoverImage()).toBe(true);
+
+      localStorage.clear();
+
+      expect(hasCustomCoverImage()).toBe(false);
     });
   });
 });

@@ -464,3 +464,160 @@ export function formatLastTracked(lastDateKey, referenceDate = new Date()) {
   if (diffDays === 1) return "Yesterday";
   return `${diffDays} days ago`;
 }
+
+/**
+ * ============================================
+ * CUSTOM COVER IMAGE UTILITIES
+ * ============================================
+ */
+
+/**
+ * Validate cover image file type
+ * @param {File} file - The file to validate
+ * @returns {{ valid: boolean, error: string|null }}
+ */
+export function validateCoverImageType(file) {
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+  if (!file) {
+    return { valid: false, error: 'No file provided' };
+  }
+
+  if (!validTypes.includes(file.type)) {
+    return {
+      valid: false,
+      error: 'Invalid file type. Please select a JPEG, JPG, PNG, or WebP image.'
+    };
+  }
+
+  return { valid: true, error: null };
+}
+
+/**
+ * Validate cover image file size
+ * @param {File} file - The file to validate
+ * @param {number} maxSizeMB - Maximum size in megabytes (default: 2)
+ * @returns {{ valid: boolean, error: string|null, sizeMB: number }}
+ */
+export function validateCoverImageSize(file, maxSizeMB = 2) {
+  if (!file) {
+    return { valid: false, error: 'No file provided', sizeMB: 0 };
+  }
+
+  const maxSizeBytes = maxSizeMB * 1024 * 1024;
+  const sizeMB = file.size / (1024 * 1024);
+
+  if (file.size > maxSizeBytes) {
+    return {
+      valid: false,
+      error: `Image too large. Please select an image smaller than ${maxSizeMB}MB.`,
+      sizeMB: sizeMB
+    };
+  }
+
+  return { valid: true, error: null, sizeMB: sizeMB };
+}
+
+/**
+ * Validate cover image file (type and size)
+ * @param {File} file - The file to validate
+ * @param {number} maxSizeMB - Maximum size in megabytes (default: 2)
+ * @returns {{ valid: boolean, error: string|null, sizeMB: number }}
+ */
+export function validateCoverImage(file, maxSizeMB = 2) {
+  // Check type first
+  const typeValidation = validateCoverImageType(file);
+  if (!typeValidation.valid) {
+    return { valid: false, error: typeValidation.error, sizeMB: 0 };
+  }
+
+  // Then check size
+  const sizeValidation = validateCoverImageSize(file, maxSizeMB);
+  return sizeValidation;
+}
+
+/**
+ * Convert image file to base64 string
+ * @param {File} file - The image file to convert
+ * @returns {Promise<string>} - Promise that resolves to base64 string
+ */
+export function convertImageToBase64(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      reject(new Error('No file provided'));
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+      resolve(e.target.result);
+    };
+
+    reader.onerror = function() {
+      reject(new Error('Failed to read the image file'));
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Save cover image to localStorage
+ * @param {string} base64String - The base64 image string
+ * @returns {{ success: boolean, error: string|null }}
+ */
+export function saveCoverImageToStorage(base64String) {
+  if (!base64String) {
+    return { success: false, error: 'No image data provided' };
+  }
+
+  try {
+    localStorage.setItem('customAppCover', base64String);
+    return { success: true, error: null };
+  } catch (error) {
+    // Handle localStorage quota exceeded or other errors
+    return {
+      success: false,
+      error: 'Failed to save image. It might be too large for your browser storage.'
+    };
+  }
+}
+
+/**
+ * Load cover image from localStorage
+ * @returns {string|null} - Base64 string or null if not found
+ */
+export function loadCoverImageFromStorage() {
+  try {
+    return localStorage.getItem('customAppCover');
+  } catch (error) {
+    console.error('Error loading cover image from storage:', error);
+    return null;
+  }
+}
+
+/**
+ * Remove cover image from localStorage
+ * @returns {{ success: boolean, error: string|null }}
+ */
+export function removeCoverImageFromStorage() {
+  try {
+    localStorage.removeItem('customAppCover');
+    return { success: true, error: null };
+  } catch (error) {
+    return {
+      success: false,
+      error: 'Failed to remove image from storage'
+    };
+  }
+}
+
+/**
+ * Check if custom cover image exists in localStorage
+ * @returns {boolean}
+ */
+export function hasCustomCoverImage() {
+  const coverImage = loadCoverImageFromStorage();
+  return coverImage !== null && coverImage !== '';
+}
