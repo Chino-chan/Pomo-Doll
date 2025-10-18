@@ -75,10 +75,6 @@ npm run build
 - View project distribution pie charts
 - Check your personal records
 
-## Keyboard Shortcuts
-
-- `Space` - Start/Pause timer
-- `Esc` - Close modals
 
 ## Data Management
 
@@ -110,6 +106,7 @@ npm run build
 - **HTML5 Canvas** - Charts and visualizations
 - **Vitest** - Testing framework
 - **localStorage** - Data persistence (Both Desktop & Browser)
+- **Claude Code** - Documentation, Testing coverage, and more 
 
 ## Please feel free to
 
