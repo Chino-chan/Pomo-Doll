@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 
@@ -36,6 +36,20 @@ function createWindow() {
   mainWindowState.manage(win);
 
   win.loadFile('index.html');
+
+  // Open external links in default browser instead of Electron window
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
+  // Handle navigation to external links
+  win.webContents.on('will-navigate', (event, url) => {
+    if (url !== win.webContents.getURL()) {
+      event.preventDefault();
+      shell.openExternal(url);
+    }
+  });
 
   // Optional: Open DevTools for debugging
   // win.webContents.openDevTools();

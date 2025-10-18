@@ -576,6 +576,25 @@
         color: #999;
       }
 
+      /* Dark mode for About text and Github link */
+      .stats-modal.dark-mode .about-text {
+        color: #999;
+      }
+
+      .stats-modal.dark-mode .about-text strong {
+        color: #e0e0e0;
+      }
+
+      .stats-modal.dark-mode .github-link {
+        background: #2d2d2d !important;
+        color: #e0e0e0 !important;
+        border-color: #3d3d3d !important;
+      }
+
+      .stats-modal.dark-mode .github-link:hover {
+        background: #3d3d3d !important;
+      }
+
       /* Theme toggle button */
       #theme-toggle {
         padding: 4px 12px;
@@ -1063,19 +1082,28 @@
           <!-- Data Manipulation & Other Tools Section -->
           <div class="charts-section">
             <h4>🛠️ Data Manipulation & Other Tools</h4>
-            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px;">
-              <!-- Left side: Clear Database -->
-              <button id="clear-database-btn" style="padding: 8px 12px; background: #ffcccb; color: #c62828; border: 1px solid #ef9a9a; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
-                🗑️ Clear Database
-              </button>
+            <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 16px;">
+              <!-- Left side: Buttons -->
+              <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <button id="clear-database-btn" style="padding: 8px 12px; background: #ffcccb; color: #c62828; border: 1px solid #ef9a9a; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                  🗑️ Clear Database
+                </button>
 
-              <!-- Right side: Export/Import -->
-              <button id="export-data-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
-                📤 Export Data
-              </button>
-              <button id="import-data-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
-                📥 Import Data
-              </button>
+                <button id="export-data-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                  📤 Export Data
+                </button>
+                <button id="import-data-btn" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                  📥 Import Data
+                </button>
+              </div>
+
+              <!-- Right side: About & Github -->
+              <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <span class="about-text" style="font-size: 13px; color: #666;">About: <strong>Version 1.0</strong></span>
+                <a href="https://github.com/Chino-chan" target="_blank" rel="noopener noreferrer" class="github-link" style="padding: 8px 12px; background: #f9f9f9; color: #333; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; display: inline-block;">
+                  🔗 Go to Github
+                </a>
+              </div>
             </div>
 
             <!-- Hidden file input for import -->

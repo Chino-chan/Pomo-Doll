@@ -2381,8 +2381,8 @@ if (appThemeToggleBtn) {
   appThemeToggleBtn.addEventListener('click', toggleAppTheme);
 }
 
-// Apply saved theme preference on page load
-const savedAppTheme = localStorage.getItem('appTheme') || 'light';
+// Apply saved theme preference on page load (default to dark mode)
+const savedAppTheme = localStorage.getItem('appTheme') || 'dark';
 if (savedAppTheme === 'dark') {
   document.body.classList.add('dark-mode');
   updateAppThemeToggleIcon();
