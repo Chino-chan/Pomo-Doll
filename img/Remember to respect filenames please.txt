@@ -1,7 +1,0 @@
-If you want to change sounds the MP3 files need to have the following names
-
-study-end.mp3
-break-end.mp3
-long-break-end.mp3
-skip.mp3
-

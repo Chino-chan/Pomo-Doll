@@ -2769,7 +2769,16 @@ const toggleDefaultCoverBtn = document.getElementById("toggle-default-cover-btn"
 const defaultCovers = [
   'img/appcover.jpeg',
   'img/appcover2.jpeg',
-  'img/appcover3.jpeg'
+  'img/appcover3.jpeg',
+  'img/appcover4.jpeg',
+  'img/appcover5.jpg',
+  'img/appcover6.jpeg',
+  'img/appcover7.jpeg',
+  'img/appcover8.jpeg',
+  'img/appcover9.jpeg',
+  'img/appcover10.jpeg',
+  'img/appcover11.jpeg',
+  'img/appcover12.jpeg'
 ];
 
 /**
