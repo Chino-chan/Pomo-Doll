@@ -1,4 +1,4 @@
-# Pomo Doll 🎀
+# Pomo Doll ❤️
 
 A minimalist Pomodoro timer desktop app with project tracking and detailed statistics.
 
