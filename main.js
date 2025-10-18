@@ -1732,7 +1732,16 @@ function renderWeeklyTrendsChart() {
     ctx.lineTo(padding + width, y);
     ctx.stroke();
 
-    ctx.fillText(`${value}m`, padding - 5, y + 4);
+    // Format label: show hours if >= 60 minutes, otherwise minutes
+    let label;
+    if (value >= 60) {
+      const hours = (value / 60).toFixed(1);
+      label = `${hours}h`;
+    } else {
+      label = `${value}m`;
+    }
+
+    ctx.fillText(label, padding - 5, y + 4);
   }
 
   // Draw X-axis
