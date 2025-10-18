@@ -36,9 +36,12 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 <img src="https://i.imgur.com/R3qc18G.png" alt="Description of image" style="max-width:50%;height:50%;">
   -
 <img src="https://i.imgur.com/NO0kpKv.png" alt="Description of image" style="max-width:50%;height:50%;">
-  
+
 You can upload your own cover if you don't like these.
 </div>
+
+<img src="https://imgur.com/sbGTLxY" alt="Description of image" style="max-width:50%;height:50%;">
+
 
 ### Study HeatMap, Streak tracker, Cake chart
 
