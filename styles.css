@@ -132,7 +132,8 @@ button {
 
 #imgFront{
   max-width: 100%;
-  max-height: 380px; /* Prevent tall images from causing scroll */
+  min-height: 200px; /* Minimum height to ensure image is visible */
+  max-height: 50vh; /* Allow container to grow up to 50% of viewport height */
   align-items: center;
   overflow: hidden;
   border-radius: 1rem 1rem 0 0; /* Round top corners to match app container */
