@@ -20,6 +20,7 @@ You can either download the Desktop App **(Recommended)** or use it in the brows
 
 ## Screenshots & Features
 
+### Default Covers - You can upload your own as well.
 <div>
 <img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" style="max-width:50%;height:50%;">
   -
@@ -27,16 +28,27 @@ You can either download the Desktop App **(Recommended)** or use it in the brows
   -
 <img src="https://i.imgur.com/NO0kpKv.png" alt="Description of image" style="max-width:50%;height:50%;">
 
-
 </div>
+
+### Normal Pomodoro & Free Timer mode 
+Pomodoro mode tracks a countdown from a determined period (25) meanwhile Free Timer mode is... until you decide to take a break.
+
+<img src="https://i.imgur.com/OzThAQj.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+### Upload your own cover
+<img src="https://i.imgur.com/oNQAHxa.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+### More personalization
+
+<img src="https://i.imgur.com/KfG9DFS.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
 ## Download
 
 Download the latest release for your platform:
 
-- **Windows**: [Download .exe](https://github.com/your-username/pomo-doll/releases)
-- **macOS**: [Download .dmg](https://github.com/your-username/pomo-doll/releases)
-- **Linux**: [Download .AppImage](https://github.com/your-username/pomo-doll/releases)
+- **Windows**: [Download .exe](https://github.com/Chino-chan/Pomo-Doll/releases)
+- **macOS**: [Download .dmg](https://github.com/Chino-chan/Pomo-Doll/releases)
+- **Linux**: [Download .AppImage](https://github.com/Chino-chan/Pomo-Doll/releases)
 
 ## Installation for Developers
 
