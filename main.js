@@ -692,7 +692,7 @@ function getDateRangeForFilter(period) {
 function calculateProjectDistribution(period) {
   const { startDate, endDate } = getDateRangeForFilter(period);
 
-  // Get total study time from daily stats
+  // Get total study time from daily stats - this is the source of truth
   const totalStudyMinutes = getTotalStudyTimeInRange(startDate, endDate);
 
   // Calculate project times
@@ -700,48 +700,41 @@ function calculateProjectDistribution(period) {
   let totalProjectMinutes = 0;
 
   projects.forEach(project => {
-    const projectStartDate = new Date(project.startDate);
-    const projectEndDate = project.completed && project.endDate ? new Date(project.endDate) : new Date();
+    let projectMinutes = 0;
 
-    // Check if project overlaps with the selected period
-    if (projectStartDate <= endDate && projectEndDate >= startDate) {
-      // Calculate minutes for this project in the time range
-      // Note: We're using a simple approximation here
-      // In reality, we'd need daily project tracking to be 100% accurate
-
-      let projectMinutes = 0;
-
-      // If project has daily tracking data (we'll add this support)
-      if (project.dailySeconds) {
-        // Sum up daily seconds within the range
-        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-          const key = getLocalDateKey(d);
-          if (project.dailySeconds[key]) {
-            projectMinutes += Math.floor(project.dailySeconds[key] / 60);
-          }
+    // If project has daily tracking data
+    if (project.dailySeconds) {
+      // Sum up daily seconds within the range
+      const current = new Date(startDate);
+      while (current <= endDate) {
+        const key = getLocalDateKey(current);
+        if (project.dailySeconds[key]) {
+          projectMinutes += Math.floor(project.dailySeconds[key] / 60);
         }
-      } else {
-        // Fallback: Only show if project has any time and was active in period
-        // This is less accurate but works with current data structure
-        const projectTotalSeconds = project.currentSeconds || project.endSeconds || 0;
-
-        // Simple heuristic: if project started before period end and ended after period start
-        if (projectTotalSeconds > 0) {
-          projectMinutes = Math.floor(projectTotalSeconds / 60);
-        }
-      }
-
-      if (projectMinutes > 0) {
-        projectTimes.push({
-          name: project.name,
-          minutes: projectMinutes,
-          goal: project.goal || null,
-          completed: project.completed || false
-        });
-        totalProjectMinutes += projectMinutes;
+        current.setDate(current.getDate() + 1);
       }
     }
+
+    if (projectMinutes > 0) {
+      projectTimes.push({
+        name: project.name,
+        minutes: projectMinutes,
+        goal: project.goal || null,
+        completed: project.completed || false
+      });
+      totalProjectMinutes += projectMinutes;
+    }
   });
+
+  // If project times exceed actual study time, scale them down proportionally
+  // This happens when projects overlap (multiple projects tracked on same day)
+  if (totalProjectMinutes > totalStudyMinutes) {
+    const scaleFactor = totalStudyMinutes / totalProjectMinutes;
+    projectTimes.forEach(project => {
+      project.minutes = Math.round(project.minutes * scaleFactor);
+    });
+    totalProjectMinutes = projectTimes.reduce((sum, p) => sum + p.minutes, 0);
+  }
 
   // Calculate unattributed time
   const unattributedMinutes = Math.max(0, totalStudyMinutes - totalProjectMinutes);
@@ -810,7 +803,7 @@ function drawPieChart(distribution) {
       label: 'No specific study',
       value: unattributedMinutes,
       percentage: (unattributedMinutes / totalStudyMinutes * 100).toFixed(1),
-      color: '#5DADE2'  // Light blue
+      color: '#95a5a6'  // Gray - matches the list
     });
   }
 
@@ -871,17 +864,24 @@ function renderProjectDistribution() {
     return;
   }
 
+  // Color palette matching the pie chart
+  const colors = [
+    '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6',
+    '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#27ae60'
+  ];
+
   // Build list HTML
   let listHTML = '<div style="display: flex; flex-direction: column; gap: 10px;">';
 
-  projectTimes.forEach(project => {
+  projectTimes.forEach((project, index) => {
     const hours = (project.minutes / 60).toFixed(2);
     const goalText = project.goal ? ` — Goal: ${project.goal}h` : '';
     const statusBadge = project.completed ? ' ✓' : '';
+    const projectColor = colors[index % colors.length];
 
     listHTML += `
-      <div style="padding: 12px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px;">
-        <strong>${project.name}${statusBadge}</strong> — ${hours}h${goalText}
+      <div class="project-distribution-item" style="padding: 12px; border: 1px solid #ddd; border-radius: 6px;">
+        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: ${projectColor}; margin-right: 8px;"></span><strong>${project.name}${statusBadge}</strong> — ${hours}h${goalText}
       </div>
     `;
   });
@@ -889,8 +889,8 @@ function renderProjectDistribution() {
   if (unattributedMinutes > 0) {
     const hours = (unattributedMinutes / 60).toFixed(2);
     listHTML += `
-      <div style="padding: 12px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 6px;">
-        <strong>No specific study</strong> — ${hours}h
+      <div class="project-distribution-item" style="padding: 12px; border: 1px solid #ccc; border-radius: 6px;">
+        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #95a5a6; margin-right: 8px;"></span><strong>No specific study</strong> — ${hours}h
       </div>
     `;
   }

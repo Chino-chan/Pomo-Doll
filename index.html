@@ -218,6 +218,11 @@
         margin-bottom: 16px;
       }
 
+      /* Project distribution item light mode */
+      .project-distribution-item {
+        background: #f9f9f9;
+      }
+
       /* Config Modal Styling */
       #config-modal {
         position: fixed;
@@ -538,16 +543,16 @@
         border-color: #444;
       }
 
-      .stats-modal.dark-mode #project-distribution-list > div,
+      .stats-modal.dark-mode #project-distribution-list .project-distribution-item,
       .stats-modal.dark-mode #completed-projects-list > div {
-        background: #d0d0d0 !important;
-        border-color: #b0b0b0 !important;
-        color: #1a1a1a !important;
+        background: #2d2d2d !important;
+        border-color: #444 !important;
+        color: #e0e0e0 !important;
       }
 
-      .stats-modal.dark-mode #project-distribution-list > div strong,
+      .stats-modal.dark-mode #project-distribution-list .project-distribution-item strong,
       .stats-modal.dark-mode #completed-projects-list > div strong {
-        color: #000 !important;
+        color: #e0e0e0 !important;
       }
 
       /* Buttons dark mode */

@@ -1,29 +1,163 @@
 {
   "version": "1.0",
-  "exportDate": "2025-10-17T16:20:01.195Z",
+  "exportDate": "2025-10-18T00:00:00.000Z",
   "data": {
     "pomodoroDailyStats": {
+      "2025-10-07": {
+        "pomos": 8,
+        "minutes": 200
+      },
+      "2025-10-08": {
+        "pomos": 6,
+        "minutes": 150
+      },
+      "2025-10-09": {
+        "pomos": 10,
+        "minutes": 250
+      },
+      "2025-10-10": {
+        "pomos": 7,
+        "minutes": 175
+      },
+      "2025-10-11": {
+        "pomos": 9,
+        "minutes": 225
+      },
+      "2025-10-12": {
+        "pomos": 5,
+        "minutes": 125
+      },
+      "2025-10-13": {
+        "pomos": 11,
+        "minutes": 275
+      },
+      "2025-10-14": {
+        "pomos": 8,
+        "minutes": 200
+      },
+      "2025-10-15": {
+        "pomos": 6,
+        "minutes": 150
+      },
+      "2025-10-16": {
+        "pomos": 9,
+        "minutes": 225
+      },
       "2025-10-17": {
-        "pomos": 1,
-        "minutes": 1
+        "pomos": 7,
+        "minutes": 175
+      },
+      "2025-10-18": {
+        "pomos": 4,
+        "minutes": 45
       }
     },
     "pomodoroProjects": [
       {
-        "name": "biology",
-        "goal": 3,
-        "startDate": "2025-10-17T15:27:16.551Z",
+        "name": "Machine Learning Course",
+        "goal": 50,
+        "startDate": "2025-10-01T08:00:00.000Z",
         "currentSeconds": 0,
+        "endSeconds": 180000,
+        "completed": true,
+        "endDate": "2025-10-10T18:30:00.000Z",
+        "dailySeconds": {
+          "2025-10-01": 7200,
+          "2025-10-02": 5400,
+          "2025-10-03": 9000,
+          "2025-10-04": 6300,
+          "2025-10-05": 8100,
+          "2025-10-07": 7200,
+          "2025-10-08": 5400,
+          "2025-10-09": 10800,
+          "2025-10-10": 9000
+        }
+      },
+      {
+        "name": "Spanish A1 Certification",
+        "goal": 40,
+        "startDate": "2025-09-28T09:00:00.000Z",
+        "currentSeconds": 0,
+        "endSeconds": 144000,
+        "completed": true,
+        "endDate": "2025-10-08T20:15:00.000Z",
+        "dailySeconds": {
+          "2025-09-28": 5400,
+          "2025-09-29": 3600,
+          "2025-09-30": 7200,
+          "2025-10-01": 5400,
+          "2025-10-02": 6300,
+          "2025-10-03": 4500,
+          "2025-10-04": 8100,
+          "2025-10-05": 5400,
+          "2025-10-07": 6300,
+          "2025-10-08": 7200
+        }
+      },
+      {
+        "name": "Biology Book",
+        "goal": 60,
+        "startDate": "2025-10-05T10:00:00.000Z",
+        "currentSeconds": 0,
+        "endSeconds": 216000,
+        "completed": true,
+        "endDate": "2025-10-17T21:45:00.000Z",
+        "dailySeconds": {
+          "2025-10-05": 7200,
+          "2025-10-07": 9000,
+          "2025-10-08": 5400,
+          "2025-10-09": 10800,
+          "2025-10-10": 7200,
+          "2025-10-11": 12600,
+          "2025-10-12": 5400,
+          "2025-10-13": 14400,
+          "2025-10-14": 9000,
+          "2025-10-15": 7200,
+          "2025-10-16": 10800,
+          "2025-10-17": 8100
+        }
+      },
+      {
+        "name": "Data Structures & Algorithms",
+        "goal": 45,
+        "startDate": "2025-10-11T07:30:00.000Z",
+        "currentSeconds": 97200,
         "endSeconds": 0,
         "completed": false,
-        "endDate": null
+        "endDate": null,
+        "dailySeconds": {
+          "2025-10-11": 7200,
+          "2025-10-12": 5400,
+          "2025-10-13": 9000,
+          "2025-10-14": 7200,
+          "2025-10-15": 5400,
+          "2025-10-16": 10800,
+          "2025-10-17": 7200,
+          "2025-10-18": 5400
+        }
+      },
+      {
+        "name": "Japanese Kanji Study",
+        "goal": 25,
+        "startDate": "2025-10-16T08:00:00.000Z",
+        "currentSeconds": 16200,
+        "endSeconds": 0,
+        "completed": false,
+        "endDate": null,
+        "dailySeconds": {
+          "2025-10-16": 5400,
+          "2025-10-17": 7200,
+          "2025-10-18": 3600
+        }
       }
     ],
     "pomodoroConfig": {
-      "pomodoroTime": 60,
-      "shortBreakTime": 120,
-      "longBreakTime": 240,
-      "cyclesPerSet": 4
+      "pomodoroTime": 1500,
+      "shortBreakTime": 300,
+      "longBreakTime": 900,
+      "cyclesPerSet": 4,
+      "isFreeTimerMode": false,
+      "freeTimerBreakTime": 300
     }
   }
 }
