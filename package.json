@@ -16,7 +16,7 @@
   "description": "Pomodoro Timer Desktop App",
   "build": {
     "appId": "com.pomodoro.app",
-    "productName": "Pomo Cunny",
+    "productName": "Pomo Doll",
     "win": {
       "icon": "assets/app_icon.ico",
       "target": ["nsis", "portable"]

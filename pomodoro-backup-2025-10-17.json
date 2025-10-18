@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "exportDate": "2025-10-17T16:20:01.195Z",
+  "data": {
+    "pomodoroDailyStats": {
+      "2025-10-17": {
+        "pomos": 1,
+        "minutes": 1
+      }
+    },
+    "pomodoroProjects": [
+      {
+        "name": "biology",
+        "goal": 3,
+        "startDate": "2025-10-17T15:27:16.551Z",
+        "currentSeconds": 0,
+        "endSeconds": 0,
+        "completed": false,
+        "endDate": null
+      }
+    ],
+    "pomodoroConfig": {
+      "pomodoroTime": 60,
+      "shortBreakTime": 120,
+      "longBreakTime": 240,
+      "cyclesPerSet": 4
+    }
+  }
+}
