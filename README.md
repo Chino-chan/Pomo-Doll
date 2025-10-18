@@ -1,4 +1,4 @@
-# Pomo Doll ❤️
+<img width="265" height="734" alt="image" src="https://github.com/user-attachments/assets/5be7c398-9ae5-4f6b-a4eb-3ba18195524d" /><img width="265" height="734" alt="image" src="https://github.com/user-attachments/assets/5796b679-6c71-4d95-9799-815273d67662" /># Pomo Doll ❤️
 
 A full fledged customizable Pomodoro App that includes project tracking features, detailed statistics, and a free time mode.
 
@@ -18,14 +18,15 @@ You can either download the Desktop App (Recommended) or use it in the browser.
 - 💾 **Data Export/Import** - Backup and restore your data easily
 - 🔔 **Audio Alerts** - Sound notifications for completed sessions
 
-## Screenshots
+## Screenshots & Features
 
 <div>
-<img src="https://i.imgur.com/Y3vs31U.jpg" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" style="max-width:50%;height:50%;">
   
-<img src="https://i.imgur.com/7u014Qn.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/R3qc18G.png" alt="Description of image" style="max-width:50%;height:50%;">
 
-<img src="https://i.imgur.com/65oTdg9.png" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/NO0kpKv.png" alt="Description of image" style="max-width:50%;height:50%;">
+
 
 </div>
 
@@ -37,9 +38,7 @@ Download the latest release for your platform:
 - **macOS**: [Download .dmg](https://github.com/your-username/pomo-doll/releases)
 - **Linux**: [Download .AppImage](https://github.com/your-username/pomo-doll/releases)
 
-## Installation
-
-### From Source
+## Installation for Developers
 
 Requirements:
 - Node.js 16+
