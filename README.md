@@ -1,5 +1,3 @@
-<img width="265" height="734" alt="image" src="https://github.com/user-attachments/assets/5be7c398-9ae5-4f6b-a4eb-3ba18195524d" /><img width="265" height="734" alt="image" src="https://github.com/user-attachments/assets/5796b679-6c71-4d95-9799-815273d67662" /># Pomo Doll ❤️
-
 A full fledged customizable Pomodoro App that includes project tracking features, detailed statistics, and a free time mode.
 
 You can either download the Desktop App (Recommended) or use it in the browser. 
@@ -22,9 +20,9 @@ You can either download the Desktop App (Recommended) or use it in the browser.
 
 <div>
 <img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" style="max-width:50%;height:50%;">
-  
+  -
 <img src="https://i.imgur.com/R3qc18G.png" alt="Description of image" style="max-width:50%;height:50%;">
-
+  -
 <img src="https://i.imgur.com/NO0kpKv.png" alt="Description of image" style="max-width:50%;height:50%;">
 
 
