@@ -1,8 +1,8 @@
 # Pomo Doll 🌱
 
-A fully customizable Pomodoro App that includes project tracking features, detailed statistics, and a free timer mode 🌱🧀🐄
+This is a Pomodoro App that is fully customizable, includes project tracking features, detailed statistics, a free timer mode, and a collection of pictures from some of the cutest dolls on the internet 🌱🧀🐄
 
-You can either download the Desktop App **(Recommended)** or use it in the browser.
+You can either download the Desktop App **(Recommended)** or use it in the browser (not yet)
 
 I hope you find it useful. I created this because I saw most other Pomodoro/Study apps lacked something I wanted. 
 
@@ -31,14 +31,22 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 
 
 <div>
+
 <img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" style="max-width:50%;height:50%;">
   -
 <img src="https://i.imgur.com/NO0kpKv.png" alt="Description of image" style="max-width:50%;height:50%;">
   -
-<img src="https://i.imgur.com/R3qc18G.png" alt="Description of image" style="max-width:50%;height:50%;">
+</div>
+
+<div>
+  <img src="https://i.imgur.com/zcUuECR.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+  -
+  <img src="https://i.imgur.com/maisXUo.png" alt="Description of image" style="max-width:50%;height:50%;">
+  
+</div>
 
 You can upload your own cover if you don't like these.
-</div>
+
 
 <img src="https://i.imgur.com/sbGTLxY.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
