@@ -675,6 +675,16 @@ function getDateRangeForFilter(period) {
       startDate = new Date(endDate);
       startDate.setDate(startDate.getDate() - 29); // 30 days including today
       break;
+    case 'past-60':
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      startDate = new Date(endDate);
+      startDate.setDate(startDate.getDate() - 59); // 60 days including today
+      break;
+    case 'past-90':
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      startDate = new Date(endDate);
+      startDate.setDate(startDate.getDate() - 89); // 90 days including today
+      break;
     case 'this-month':
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
       endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
