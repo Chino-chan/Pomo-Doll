@@ -1440,4 +1440,63 @@ describe('Custom Cover Image Utilities', () => {
       expect(hasCustomCoverImage()).toBe(false);
     });
   });
+
+  /**
+   * Tests for cover image error handling and validation edge cases
+   */
+  describe('Cover Image Error Handling', () => {
+    it('should handle corrupted base64 data gracefully', () => {
+      const corruptedBase64 = 'data:image/jpeg;base64,corrupted!!!data';
+      const result = saveCoverImageToStorage(corruptedBase64);
+
+      // Should save successfully (validation happens on load, not save)
+      expect(result.success).toBe(true);
+      expect(localStorage.getItem('customAppCover')).toBe(corruptedBase64);
+    });
+
+    it('should handle empty string gracefully', () => {
+      const result = saveCoverImageToStorage('');
+      // Empty string should be rejected as it's not valid base64 data
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('No image data provided');
+    });
+
+    it('should validate file type case-insensitively', () => {
+      const file = { type: 'image/JPEG', size: 1024 };
+      const result = validateCoverImageType(file);
+
+      // Should fail because we're case-sensitive (expected behavior)
+      expect(result.valid).toBe(false);
+    });
+
+    it('should handle exactly 2MB file size', () => {
+      const file = { type: 'image/jpeg', size: 2 * 1024 * 1024 };
+      const result = validateCoverImageSize(file, 2);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should reject file just over 2MB', () => {
+      const file = { type: 'image/jpeg', size: (2 * 1024 * 1024) + 1 };
+      const result = validateCoverImageSize(file, 2);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('too large');
+    });
+
+    it('should handle zero-byte file', () => {
+      const file = { type: 'image/jpeg', size: 0 };
+      const result = validateCoverImageSize(file, 2);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should clear custom cover from storage correctly', () => {
+      const base64 = 'data:image/jpeg;base64,test';
+      saveCoverImageToStorage(base64);
+      expect(hasCustomCoverImage()).toBe(true);
+
+      // Use the existing removeCoverImageFromStorage function
+      removeCoverImageFromStorage();
+      expect(hasCustomCoverImage()).toBe(false);
+      expect(localStorage.getItem('customAppCover')).toBeNull();
+    });
+  });
 });

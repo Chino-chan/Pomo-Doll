@@ -673,6 +673,56 @@ function getTotalStudyTimeInRange(startDate, endDate) {
 /**
  * Get date range based on filter period
  */
+/**
+ * Calculate start and end dates for a given time period filter
+ *
+ * This function converts period strings into concrete date ranges for filtering data.
+ * All date ranges are INCLUSIVE of both start and end dates.
+ *
+ * @param {string} period - The period identifier
+ * @returns {Object} Object containing {startDate, endDate} as Date objects
+ *
+ * Supported periods:
+ *   - 'past-30': Last 30 days INCLUDING today (e.g., if today is March 15, range is Feb 14 - Mar 15)
+ *   - 'past-60': Last 60 days INCLUDING today
+ *   - 'past-90': Last 90 days INCLUDING today
+ *   - 'this-month': From 1st of current month to today
+ *   - 'last-month': Entire previous calendar month (1st to last day)
+ *   - default: Returns today as both start and end (single day)
+ *
+ * @example
+ * // If today is March 15, 2025:
+ * getDateRangeForFilter('past-30')
+ * // Returns: { startDate: Feb 14, 2025, endDate: Mar 15, 2025 }
+ *
+ * getDateRangeForFilter('this-month')
+ * // Returns: { startDate: Mar 1, 2025, endDate: Mar 15, 2025 }
+ *
+ * getDateRangeForFilter('last-month')
+ * // Returns: { startDate: Feb 1, 2025, endDate: Feb 28, 2025 }
+ *
+ * IMPLEMENTATION NOTES:
+ *
+ * 1. Date Construction:
+ *    - Uses new Date(year, month, date) for precise date creation
+ *    - Avoids time components (hours/minutes/seconds) by only setting date parts
+ *    - This ensures consistent comparison across timezone changes
+ *
+ * 2. "Past N days" Logic:
+ *    - Subtracts (N-1) days to make the range INCLUSIVE
+ *    - Example: "past-30" subtracts 29 days, giving 30 total days including today
+ *
+ * 3. Month Calculations:
+ *    - 'this-month': Always starts at day 1 of current month
+ *    - 'last-month': Uses month-1 for start, month 0 for end (gets last day automatically)
+ *      * JavaScript Date with day=0 gives last day of previous month
+ *      * Example: new Date(2025, 3, 0) = March 31, 2025
+ *
+ * 4. Edge Cases Handled:
+ *    - Year boundaries (Dec -> Jan)
+ *    - Month boundaries with different day counts (28, 29, 30, 31)
+ *    - Leap years (handled automatically by JavaScript Date)
+ */
 function getDateRangeForFilter(period) {
   const now = new Date();
   let startDate, endDate;
@@ -711,14 +761,68 @@ function getDateRangeForFilter(period) {
 
 /**
  * Calculate project time distribution for a given period
+ *
+ * This function computes how study time is distributed across different projects within a
+ * specified time period. It handles the complexity of overlapping project tracking and
+ * ensures the distribution accurately reflects actual study time.
+ *
+ * @param {string} period - The time period to analyze ('past-30', 'past-60', 'past-90', 'this-month', 'last-month')
+ * @returns {Object} Distribution data containing:
+ *   - projectTimes: Array of {name, minutes, goal, completed} for each project
+ *   - unattributedMinutes: Study time not assigned to any project
+ *   - totalStudyMinutes: Total actual study time from daily stats (source of truth)
+ *   - totalProjectMinutes: Sum of all project minutes (after scaling if needed)
+ *
+ * @example
+ * const distribution = calculateProjectDistribution('past-30');
+ * // Returns: {
+ * //   projectTimes: [{name: "Project A", minutes: 120, goal: 50, completed: false}, ...],
+ * //   unattributedMinutes: 30,
+ * //   totalStudyMinutes: 500,
+ * //   totalProjectMinutes: 470
+ * // }
+ *
+ * IMPORTANT IMPLEMENTATION DETAILS:
+ *
+ * 1. Source of Truth: pomodoroDailyStats is the authoritative source for actual study time.
+ *    Project dailySeconds may sum to MORE than actual study time due to overlapping tracking.
+ *
+ * 2. Why Scaling is Necessary:
+ *    - Users can track multiple projects on the same day
+ *    - Example: Day has 2 hours (120 min) of actual study time
+ *      * Project A tracked: 1.5 hours (90 min)
+ *      * Project B tracked: 1 hour (60 min)
+ *      * Sum: 2.5 hours (150 min) > 2 hours actual
+ *    - Without scaling, percentages would exceed 100%
+ *
+ * 3. Proportional Scaling Algorithm:
+ *    - If totalProjectMinutes > totalStudyMinutes:
+ *      * Calculate scaleFactor = totalStudyMinutes / totalProjectMinutes
+ *      * Multiply each project's minutes by scaleFactor
+ *      * Example: scaleFactor = 120/150 = 0.8
+ *        - Project A: 90 * 0.8 = 72 min
+ *        - Project B: 60 * 0.8 = 48 min
+ *        - New sum: 120 min = actual study time ✓
+ *
+ * 4. Date Range Filtering:
+ *    - Only counts project time within the specified date range
+ *    - Uses getLocalDateKey() for consistent date comparison
+ *    - Iterates day-by-day to accumulate project seconds
+ *
+ * 5. Unattributed Time:
+ *    - Represents study time NOT assigned to any specific project
+ *    - Calculated as: totalStudyMinutes - totalProjectMinutes
+ *    - Always >= 0 after scaling
+ *    - Shows up as "No specific study" in the pie chart
  */
 function calculateProjectDistribution(period) {
   const { startDate, endDate } = getDateRangeForFilter(period);
 
-  // Get total study time from daily stats - this is the source of truth
+  // STEP 1: Get total actual study time from daily stats (source of truth)
+  // This represents the real amount of time the user studied, regardless of project tracking
   const totalStudyMinutes = getTotalStudyTimeInRange(startDate, endDate);
 
-  // Calculate project times
+  // STEP 2: Calculate raw project times by summing dailySeconds within the date range
   const projectTimes = [];
   let totalProjectMinutes = 0;
 
@@ -727,17 +831,19 @@ function calculateProjectDistribution(period) {
 
     // If project has daily tracking data
     if (project.dailySeconds) {
-      // Sum up daily seconds within the range
+      // Iterate through each day in the range
       const current = new Date(startDate);
       while (current <= endDate) {
         const key = getLocalDateKey(current);
         if (project.dailySeconds[key]) {
+          // Convert seconds to minutes and accumulate
           projectMinutes += Math.floor(project.dailySeconds[key] / 60);
         }
         current.setDate(current.getDate() + 1);
       }
     }
 
+    // Only include projects that have time tracked in this period
     if (projectMinutes > 0) {
       projectTimes.push({
         name: project.name,
@@ -749,8 +855,8 @@ function calculateProjectDistribution(period) {
     }
   });
 
-  // If project times exceed actual study time, scale them down proportionally
-  // This happens when projects overlap (multiple projects tracked on same day)
+  // STEP 3: Apply proportional scaling if project times exceed actual study time
+  // This handles the case where multiple projects are tracked on the same days
   if (totalProjectMinutes > totalStudyMinutes) {
     const scaleFactor = totalStudyMinutes / totalProjectMinutes;
     projectTimes.forEach(project => {
@@ -1229,10 +1335,116 @@ function getAvailableYears(stats) {
   return Array.from(years).sort((a, b) => a - b);
 }
 
-function getYearDates(year){ const arr=[]; const start=new Date(year,0,1); const end=new Date(year,11,31); for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)) arr.push(new Date(d)); return arr; }
-function computeColorBucket(minutes, thresholds){ if(!minutes||minutes<=0) return 0; if(minutes<=thresholds[0]) return 1; if(minutes<=thresholds[1]) return 2; if(minutes<=thresholds[2]) return 3; return 4; }
-function buildThresholds(allMinutes){ if(allMinutes.length===0) return [5,15,30]; const max=Math.max(...allMinutes); if(max<=15) return [1,5,10]; if(max<=60) return [Math.ceil(max*0.15),Math.ceil(max*0.4),Math.ceil(max*0.75)]; return [Math.ceil(max*0.1),Math.ceil(max*0.33),Math.ceil(max*0.66)]; }
-function renderHeatmap(year=currentHeatmapYear){
+/**
+ * Generate an array of all dates in a given year
+ *
+ * @param {number} year - The year to generate dates for
+ * @returns {Date[]} Array of Date objects for every day of the year (Jan 1 - Dec 31)
+ *
+ * @example
+ * getYearDates(2025)
+ * // Returns: [Date(2025-01-01), Date(2025-01-02), ..., Date(2025-12-31)]
+ */
+function getYearDates(year) {
+  const arr = [];
+  const start = new Date(year, 0, 1);
+  const end = new Date(year, 11, 31);
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    arr.push(new Date(d));
+  }
+  return arr;
+}
+
+/**
+ * Determine color intensity bucket for heatmap cell based on minutes studied
+ *
+ * Uses thresholds to categorize activity levels into 5 buckets (0-4):
+ * - Bucket 0: No activity (0 minutes)
+ * - Bucket 1: Low activity (up to threshold[0])
+ * - Bucket 2: Medium-low activity (threshold[0] to threshold[1])
+ * - Bucket 3: Medium-high activity (threshold[1] to threshold[2])
+ * - Bucket 4: High activity (above threshold[2])
+ *
+ * @param {number} minutes - Minutes studied on this day
+ * @param {number[]} thresholds - Array of 3 threshold values [low, medium, high]
+ * @returns {number} Bucket number 0-4
+ *
+ * @example
+ * computeColorBucket(0, [5, 15, 30]) // Returns: 0 (no activity)
+ * computeColorBucket(3, [5, 15, 30]) // Returns: 1 (low)
+ * computeColorBucket(10, [5, 15, 30]) // Returns: 2 (medium-low)
+ * computeColorBucket(20, [5, 15, 30]) // Returns: 3 (medium-high)
+ * computeColorBucket(50, [5, 15, 30]) // Returns: 4 (high)
+ */
+function computeColorBucket(minutes, thresholds) {
+  if (!minutes || minutes <= 0) return 0;
+  if (minutes <= thresholds[0]) return 1;
+  if (minutes <= thresholds[1]) return 2;
+  if (minutes <= thresholds[2]) return 3;
+  return 4;
+}
+
+/**
+ * Calculate adaptive thresholds for heatmap color buckets based on actual data
+ *
+ * Dynamically adjusts threshold values based on the distribution of study time
+ * to ensure the heatmap is meaningful regardless of whether the user studies
+ * 10 minutes or 300 minutes per day.
+ *
+ * @param {number[]} allMinutes - Array of all non-zero minute values for the year
+ * @returns {number[]} Array of 3 threshold values [low, medium, high]
+ *
+ * Algorithm:
+ * 1. No data: Default thresholds [5, 15, 30]
+ * 2. Low activity (max ≤ 15 min): [1, 5, 10] - Fine-grained for small values
+ * 3. Medium activity (max ≤ 60 min): [15%, 40%, 75%] - Percentage-based
+ * 4. High activity (max > 60 min): [10%, 33%, 66%] - Wider distribution
+ *
+ * @example
+ * buildThresholds([]) // Returns: [5, 15, 30] (default)
+ * buildThresholds([5, 8, 10, 12]) // Returns: [1, 5, 10] (low activity mode)
+ * buildThresholds([20, 30, 45, 50]) // Returns: [8, 20, 38] (medium: 15%, 40%, 75% of 50)
+ * buildThresholds([100, 150, 200, 250]) // Returns: [25, 83, 165] (high: 10%, 33%, 66% of 250)
+ */
+function buildThresholds(allMinutes) {
+  if (allMinutes.length === 0) return [5, 15, 30];
+  const max = Math.max(...allMinutes);
+  if (max <= 15) return [1, 5, 10];
+  if (max <= 60) return [Math.ceil(max * 0.15), Math.ceil(max * 0.4), Math.ceil(max * 0.75)];
+  return [Math.ceil(max * 0.1), Math.ceil(max * 0.33), Math.ceil(max * 0.66)];
+}
+
+/**
+ * Render the activity heatmap for a given year
+ *
+ * Creates a GitHub-style contribution graph showing daily study activity.
+ * Each cell represents one day, colored based on minutes studied.
+ *
+ * Visual Structure:
+ * - Organized by month, with weeks as columns
+ * - Weekday labels on the left (Mon, Wed, Fri)
+ * - Month labels at the top
+ * - Cells are colored from light to dark based on activity level
+ * - Tooltip shows date, minutes, and pomodoro count on hover
+ *
+ * @param {number} year - The year to render (defaults to currentHeatmapYear)
+ *
+ * Data Flow:
+ * 1. Load pomodoroDailyStats from localStorage
+ * 2. Generate all dates for the year
+ * 3. Calculate adaptive thresholds based on actual data
+ * 4. Group dates into weeks, organized by month
+ * 5. Render month containers with week columns
+ * 6. Create cells for each day with appropriate styling
+ *
+ * Implementation Details:
+ * - Empty cells (before year starts) are hidden
+ * - Current day is highlighted with special CSS class
+ * - Color buckets (0-4) map to CSS classes (.day-0 through .day-4)
+ * - Handles edge cases like partial weeks at month boundaries
+ * - Responsive to both light and dark themes
+ */
+function renderHeatmap(year = currentHeatmapYear) {
   heatmapWeeks.innerHTML="";
   const stats=JSON.parse(localStorage.getItem("pomodoroDailyStats"))||{};
   const dates=getYearDates(year);
@@ -2542,6 +2754,71 @@ updateStreakDisplayUI();
 const coverImageInput = document.getElementById("cover-image-input");
 const coverImageBtn = document.getElementById("cover-image-btn");
 const coverImageElement = document.querySelector("#imgFront img");
+const toggleDefaultCoverBtn = document.getElementById("toggle-default-cover-btn");
+
+// Default cover images
+const defaultCovers = [
+  'img/appcover.jpeg',
+  'img/appcover2.jpeg',
+  'img/appcover3.jpeg'
+];
+
+/**
+ * Get current default cover index from localStorage
+ */
+function getCurrentDefaultCoverIndex() {
+  const index = parseInt(localStorage.getItem('defaultCoverIndex') || '0');
+  return index >= 0 && index < defaultCovers.length ? index : 0;
+}
+
+/**
+ * Update toggle button state and text
+ */
+function updateToggleDefaultCoverButton() {
+  const customCover = localStorage.getItem('customAppCover');
+
+  if (toggleDefaultCoverBtn) {
+    if (customCover) {
+      // Disable button when custom cover is uploaded
+      toggleDefaultCoverBtn.disabled = true;
+    } else {
+      // Enable button when using default covers
+      toggleDefaultCoverBtn.disabled = false;
+      const currentIndex = getCurrentDefaultCoverIndex();
+      toggleDefaultCoverBtn.textContent = `🔄 Toggle Cover ${currentIndex + 1}/${defaultCovers.length}`;
+    }
+  }
+}
+
+/**
+ * Toggle to next default cover
+ */
+function toggleDefaultCover() {
+  const customCover = localStorage.getItem('customAppCover');
+
+  // Don't toggle if custom cover is active
+  if (customCover) {
+    return;
+  }
+
+  // Get current index and move to next
+  let currentIndex = getCurrentDefaultCoverIndex();
+  currentIndex = (currentIndex + 1) % defaultCovers.length;
+
+  // Save new index
+  localStorage.setItem('defaultCoverIndex', currentIndex.toString());
+
+  // Apply new cover
+  if (coverImageElement) {
+    coverImageElement.src = defaultCovers[currentIndex];
+  }
+
+  // Update button text
+  updateToggleDefaultCoverButton();
+
+  // Re-apply fit mode
+  applyImageFitMode();
+}
 
 /**
  * Update cover image button text based on whether custom image exists
@@ -2556,16 +2833,53 @@ function updateCoverImageButton() {
       coverImageBtn.textContent = '🖼️ Upload Custom Cover';
     }
   }
+
+  // Also update toggle button
+  updateToggleDefaultCoverButton();
 }
 
 /**
- * Apply custom cover image from localStorage if it exists
+ * Handle image load error by falling back to first default cover
+ */
+function handleImageLoadError() {
+  console.warn('Failed to load cover image, falling back to default');
+
+  if (coverImageElement) {
+    // Remove custom cover from storage if it failed to load
+    const customCover = localStorage.getItem('customAppCover');
+    if (customCover) {
+      localStorage.removeItem('customAppCover');
+      console.warn('Removed corrupted custom cover from storage');
+    }
+
+    // Reset to first default cover
+    localStorage.setItem('defaultCoverIndex', '0');
+    coverImageElement.src = defaultCovers[0];
+
+    // Update buttons
+    updateCoverImageButton();
+  }
+}
+
+/**
+ * Apply custom cover image from localStorage if it exists, or load saved default cover
+ * Includes error handling to fallback to default cover if loading fails
  */
 function loadCustomCoverImage() {
   const customCover = localStorage.getItem('customAppCover');
 
-  if (customCover && coverImageElement) {
-    coverImageElement.src = customCover;
+  if (coverImageElement) {
+    // Set up error handler for image loading failures
+    coverImageElement.onerror = handleImageLoadError;
+
+    if (customCover) {
+      // Load custom uploaded cover
+      coverImageElement.src = customCover;
+    } else {
+      // Load the saved default cover (or first one if not set)
+      const currentIndex = getCurrentDefaultCoverIndex();
+      coverImageElement.src = defaultCovers[currentIndex];
+    }
   }
 
   updateCoverImageButton();
@@ -2659,12 +2973,13 @@ function restoreOriginalCover() {
   // Remove custom cover from localStorage
   localStorage.removeItem('customAppCover');
 
-  // Restore original image
+  // Restore to currently selected default cover
   if (coverImageElement) {
-    coverImageElement.src = 'img/appcover.jpeg';
+    const currentIndex = getCurrentDefaultCoverIndex();
+    coverImageElement.src = defaultCovers[currentIndex];
   }
 
-  // Update button text
+  // Update button text (this will also enable the toggle button)
   updateCoverImageButton();
 
   // Re-apply fit mode to restored image
@@ -2672,6 +2987,11 @@ function restoreOriginalCover() {
 
   // Show success message
   alert('✓ Original cover restored!');
+}
+
+// Event listener for toggle default cover button
+if (toggleDefaultCoverBtn) {
+  toggleDefaultCoverBtn.addEventListener('click', toggleDefaultCover);
 }
 
 // Event listener for cover image button
