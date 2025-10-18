@@ -2,7 +2,15 @@
 
 A full fledged customizable Pomodoro App that includes project tracking features, detailed statistics, and a free timer mode.
 
-You can either download the Desktop App **(Recommended)** or use it in the browser  
+You can either download the Desktop App **(Recommended)** or use it in the browser.
+
+I hope you find it useful. I created this because I saw most other Pomodoro/Study apps lacked something I wanted. 
+
+## Please feel free to
+
+- Report bugs
+- Suggest new features
+- Give overall feedback & Tell me if you liked it or is useful to you 🥰🌱
 
 ![Version](https://img.shields.io/badge/version-1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -37,13 +45,44 @@ You can upload your own cover if you don't like these.
 <div>
   <img src="https://i.imgur.com/oZQlXGP.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
   <img src="https://i.imgur.com/APkB3An.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+  <img src="https://i.imgur.com/oUOyZhU.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+  <img src="https://i.imgur.com/oUOyZhU.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+  <img src="https://i.imgur.com/KX1lqKk.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 </div>
 
-### Normal Pomodoro & Free Timer mode 
-Pomodoro mode tracks a countdown from a determined period (25) meanwhile Free Timer mode is... until you decide to take a break.
+### You can backup your data & even import it later
 
-<img src="https://i.imgur.com/OzThAQj.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+All your data is stored **locally** on your computer or browser if you run it there. 
 
+<img src="https://i.imgur.com/W4iHuZB.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+
+## Usage
+
+### Basic Timer 
+1. Click the **Play** button to start a Pomodoro session
+2. Work until the timer completes
+3. Take a break 
+4. After 4 pomos you complete a "Cycle", you can then enjoy a long break
+
+### Free Timer
+1. Click the **Play** button to start a Pomo
+2. There's no countdown... you decide when to stop.
+3. You can customize the break time between the "Infinite Time" sessions.
+   
+### Project Tracking
+<img src="https://i.imgur.com/upxFjqz.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+1. Go to **Config** tab
+2. Add a new project with a name and goal (the goal is optional & in hours)
+3. Click **Track this!** to start tracking time for that project
+4. Your study time will be automatically attributed to the active project
+
+### Statistics
+- Click **Full Stats** to view your detailed statistics
+- See your study streak, heatmap (inspired by Anki add-on), and trends over time
+- Detailed view of the spent time allocated to each project or just untracked time.
+- Check your personal records
 
 
 ### Upload your own cover
@@ -54,12 +93,6 @@ Pomodoro mode tracks a countdown from a determined period (25) meanwhile Free Ti
 <img src="https://i.imgur.com/KfG9DFS.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
 
-
-### You can backup your data & even import it later
-<img src="https://i.imgur.com/W4iHuZB.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-
-
-
 ## Download
 
 Download the latest release for your platform:
@@ -68,7 +101,18 @@ Download the latest release for your platform:
 - **macOS**: [Download .dmg](https://github.com/Chino-chan/Pomo-Doll/releases)
 - **Linux**: [Download .AppImage](https://github.com/Chino-chan/Pomo-Doll/releases)
 
-## Installation for Developers
+## Technical Info & Istallation for Developers
+
+## Stack
+
+- **Electron** - Desktop app framework
+- **Vanilla JavaScript** - No frameworks, pure JS insanity
+- **HTML5 Canvas** - Charts and visualizations
+- **Vitest** - Testing framework (152 Tests)
+- **localStorage** - Data persistence (Both Desktop & Browser)
+- **Claude Code 4.5** - Documentation, testing coverage, and more
+
+## Installation 
 
 Requirements:
 - Node.js 16+
@@ -89,30 +133,6 @@ npm start
 npm run build
 ```
 
-## Usage
-
-### Basic Timer
-1. Click the **Play** button to start a Pomodoro session
-2. Work until the timer completes
-3. Take a break when prompted
-4. After 4 cycles, enjoy a long break!
-
-### Project Tracking
-1. Go to **Config** tab
-2. Add a new project with a name and goal (in hours)
-3. Click **Track this!** to start tracking time for that project
-4. Your study time will be automatically attributed to the active project
-
-### Statistics
-- Click **Full Stats** to view your detailed statistics
-- See your study streak, heatmap, and trends over time
-- View project distribution pie charts
-- Check your personal records
-
-
-## Data Management
-
-All your data is stored **locally** on your computer or browser if you run it there. 
 
 ## Development
 
@@ -133,28 +153,11 @@ npm run test:coverage
 npm run build
 ```
 
-## Stack
 
-- **Electron** - Desktop app framework
-- **Vanilla JavaScript** - No frameworks, pure JS insanity
-- **HTML5 Canvas** - Charts and visualizations
-- **Vitest** - Testing framework
-- **localStorage** - Data persistence (Both Desktop & Browser)
-- **Claude Code** - Documentation, Testing coverage, and more 
-
-## Please feel free to
-
-- Report bugs
-- Suggest new features
-- Give overall feedback
 
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details
-
-## Author
-
-Created by me, I hope you enjoy it. I created this because I saw most other Pomodoro/Study apps lacked something I wanted. 
 
 
 
