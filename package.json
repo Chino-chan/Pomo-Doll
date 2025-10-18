@@ -20,21 +20,18 @@
     "win": {
       "icon": "assets/app_icon.ico",
       "target": [
-        "nsis",
-        "portable"
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
       ]
     },
-    "mac": {
-      "icon": "assets/icon_512x512.png",
-      "category": "public.app-category.productivity"
-    },
-    "linux": {
-      "icon": "assets/",
-      "target": [
-        "AppImage",
-        "deb"
-      ],
-      "category": "Utility"
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.exe"
     }
   },
   "devDependencies": {
