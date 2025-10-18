@@ -592,7 +592,12 @@ function renderCompletedProjects() {
   }
 
   completedProjectsList.innerHTML = filtered.map(p => {
-    const hours = (p.endHours || 0).toFixed(2);
+    // Calculate TOTAL LIFETIME hours from ALL dailySeconds (not filtered by period)
+    let totalSeconds = 0;
+    if (p.dailySeconds) {
+      totalSeconds = Object.values(p.dailySeconds).reduce((sum, seconds) => sum + seconds, 0);
+    }
+    const hours = (totalSeconds / 3600).toFixed(2);
     const goalText = p.goal ? ` / ${p.goal}h` : '';
     const days = calculateDaysBetween(p.startDate, p.endDate);
     const startDate = formatDate(p.startDate);
@@ -875,13 +880,12 @@ function renderProjectDistribution() {
 
   projectTimes.forEach((project, index) => {
     const hours = (project.minutes / 60).toFixed(2);
-    const goalText = project.goal ? ` — Goal: ${project.goal}h` : '';
     const statusBadge = project.completed ? ' ✓' : '';
     const projectColor = colors[index % colors.length];
 
     listHTML += `
       <div class="project-distribution-item" style="padding: 12px; border: 1px solid #ddd; border-radius: 6px;">
-        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: ${projectColor}; margin-right: 8px;"></span><strong>${project.name}${statusBadge}</strong> — ${hours}h${goalText}
+        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: ${projectColor}; margin-right: 8px;"></span><strong>${project.name}${statusBadge}</strong> — ${hours}h spent
       </div>
     `;
   });
