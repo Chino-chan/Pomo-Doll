@@ -19,7 +19,10 @@
     "productName": "Pomo Doll",
     "win": {
       "icon": "assets/app_icon.ico",
-      "target": ["nsis", "portable"]
+      "target": [
+        "nsis",
+        "portable"
+      ]
     },
     "mac": {
       "icon": "assets/icon_512x512.png",
@@ -27,13 +30,17 @@
     },
     "linux": {
       "icon": "assets/",
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "category": "Utility"
     }
   },
   "devDependencies": {
     "@vitest/ui": "^3.2.4",
     "electron": "^38.3.0",
+    "electron-builder": "^26.0.12",
     "happy-dom": "^20.0.4",
     "jsdom": "^27.0.0",
     "vitest": "^3.2.4"
