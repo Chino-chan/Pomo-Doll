@@ -39,6 +39,12 @@ You can either download the portable Desktop App **(Recommended)** or use it in 
 
 <img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" height="600">
   -
+
+[![Watch the video](https://img.youtube.com/vi/PgxaSWxPRFA/maxresdefault.jpg)](https://www.youtube.com/watch?v=PgxaSWxPRFA)
+
+https://www.youtube.com/watch?v=PgxaSWxPRFA
+
+  
 <img src="https://i.imgur.com/WVojpcR.jpeg" alt="Description of image" height="300">
 
 </div>
