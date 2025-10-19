@@ -33,6 +33,10 @@ You can either download the portable Desktop App **(Recommended)** or use it in 
 
 ## Screenshots & Features
 
+Full App Showcase video
+
+[![Watch the video](https://img.youtube.com/vi/PgxaSWxPRFA/maxresdefault.jpg)](https://www.youtube.com/watch?v=PgxaSWxPRFA)
+
 
 
 <div>
@@ -40,7 +44,7 @@ You can either download the portable Desktop App **(Recommended)** or use it in 
 <img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" height="600">
   -
 
-[![Watch the video](https://img.youtube.com/vi/PgxaSWxPRFA/maxresdefault.jpg)](https://www.youtube.com/watch?v=PgxaSWxPRFA)
+
 
 https://www.youtube.com/watch?v=PgxaSWxPRFA
 
