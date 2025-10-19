@@ -37,7 +37,7 @@ You can either download the portable Desktop App **(Recommended)** or use it in 
 
 <div>
 
-<img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" height="400">
+<img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" height="500">
   -
 <img src="https://i.imgur.com/WVojpcR.jpeg" alt="Description of image" height="400">
 
