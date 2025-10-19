@@ -35,8 +35,12 @@ You can either download the portable Desktop App **(Recommended)** or use it in 
 
 Full App Showcase video
 
-[![Watch the video](https://img.youtube.com/vi/PgxaSWxPRFA/maxresdefault.jpg)](https://www.youtube.com/watch?v=PgxaSWxPRFA)
 
+
+
+
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/PgxaSWxPRFA?si=WfJ8Mz2QmYDabdyX" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 <div>
@@ -75,7 +79,7 @@ All your data is stored **locally** on your computer or browser if you run it th
 
 
 ## Usage
-
+[![Watch the video](https://img.youtube.com/vi/PgxaSWxPRFA/maxresdefault.jpg)](https://www.youtube.com/watch?v=PgxaSWxPRFA)
 ### Basic Timer 
 1. Click the **Play** button to start a Pomodoro session
 2. Work until the timer completes
