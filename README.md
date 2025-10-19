@@ -35,40 +35,24 @@ You can either download the portable Desktop App **(Recommended)** or use it in 
 
 Full App Showcase video
 
-
-
-
-
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/PgxaSWxPRFA?si=WfJ8Mz2QmYDabdyX" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
+[![Youtube Video](https://github.com/user-attachments/assets/154a2eb3-8fa0-4621-8074-d48f1916ee55)](https://youtu.be/PgxaSWxPRFA?si=c3ESwmJhb8jYZ3ag)
 
 <div>
-
 <img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" height="600">
-  -
-
-
-
-https://www.youtube.com/watch?v=PgxaSWxPRFA
-
-  
-<img src="https://i.imgur.com/WVojpcR.jpeg" alt="Description of image" height="300">
-
+<img src="https://i.imgur.com/8TyU52c.png" alt="Description of image" height="600">
+<img src="https://i.imgur.com/dh5Nhla.jpeg" alt="Description of image" height="600">
 </div>
 
 You can upload your own cover if you don't like these.
 
 
-
-
 ### Study HeatMap, Streak tracker, Cake chart
 
 <div>
-  <img src="https://i.imgur.com/oZQlXGP.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-  <img src="https://i.imgur.com/APkB3An.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-  <img src="https://i.imgur.com/oUOyZhU.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-  <img src="https://i.imgur.com/KX1lqKk.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+  <img src="https://i.imgur.com/oZQlXGP.jpeg" alt="Description of image"  height="600">
+  <img src="https://i.imgur.com/APkB3An.jpeg" alt="Description of image"  height="600">
+  <img src="https://i.imgur.com/oUOyZhU.jpeg" alt="Description of image"  height="600">
+  <img src="https://i.imgur.com/KX1lqKk.jpeg" alt="Description of image"  height="600">
 </div>
 
 ### You can backup your data & even import it later
@@ -79,7 +63,7 @@ All your data is stored **locally** on your computer or browser if you run it th
 
 
 ## Usage
-[![Watch the video](https://img.youtube.com/vi/PgxaSWxPRFA/maxresdefault.jpg)](https://www.youtube.com/watch?v=PgxaSWxPRFA)
+
 ### Basic Timer 
 1. Click the **Play** button to start a Pomodoro session
 2. Work until the timer completes
