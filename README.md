@@ -41,7 +41,7 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 <div>
   <img src="https://i.imgur.com/zcUuECR.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
   -
-  <img src="https://i.imgur.com/maisXUo.png" alt="Description of image" style="max-width:50%;height:50%;">
+  <img src="https://i.imgur.com/QHtykrU.png" alt="Description of image" style="max-width:50%;height:50%;">
   
 </div>
 
@@ -50,13 +50,15 @@ You can upload your own cover if you don't like these.
 
 <img src="https://i.imgur.com/sbGTLxY.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
+<img src="https://i.imgur.com/WVojpcR.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+
+
 
 ### Study HeatMap, Streak tracker, Cake chart
 
 <div>
   <img src="https://i.imgur.com/oZQlXGP.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
   <img src="https://i.imgur.com/APkB3An.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-  <img src="https://i.imgur.com/oUOyZhU.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
   <img src="https://i.imgur.com/oUOyZhU.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
   <img src="https://i.imgur.com/KX1lqKk.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 </div>
