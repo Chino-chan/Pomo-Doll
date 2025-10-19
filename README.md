@@ -15,6 +15,10 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 ![Version](https://img.shields.io/badge/version-1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
+## Download
+
+- **Windows**: [Download .exe](https://github.com/Chino-chan/Pomo-Doll/releases)
+
 ## Features
 
 - 🍅 **Traditional Pomodoro Timer** - Customizable work/break intervals
@@ -105,12 +109,6 @@ All your data is stored **locally** on your computer or browser if you run it th
 
 <img src="https://i.imgur.com/KfG9DFS.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
-
-## Download
-
-Download the latest release for your platform:
-
-- **Windows**: [Download .exe](https://github.com/Chino-chan/Pomo-Doll/releases)
 
 ## Technical Info & Istallation for Developers
 
