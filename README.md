@@ -17,7 +17,7 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 
 ## Download
 
-- **Windows**: [Download .exe](https://github.com/Chino-chan/Pomo-Doll/releases)
+- **Windows**: [Pomo Doll-1.0.0-portable.exe](https://github.com/Chino-chan/Pomo-Doll/releases)
 
 ## Features
 
