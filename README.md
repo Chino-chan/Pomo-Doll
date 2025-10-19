@@ -38,14 +38,7 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 
 <img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" style="max-width:50%;height:50%;">
   -
-<img src="https://i.imgur.com/NO0kpKv.png" alt="Description of image" style="max-width:50%;height:50%;">
-  -
-</div>
-
-<div>
-  <img src="https://i.imgur.com/zcUuECR.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-  -
-  <img src="https://i.imgur.com/QHtykrU.png" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/QHtykrU.png" alt="Description of image" style="max-width:50%;height:50%;">
   
 </div>
 
