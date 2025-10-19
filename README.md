@@ -48,18 +48,18 @@ You can upload your own cover if you don't like these.
 
 ### Study HeatMap, Streak tracker, Cake chart
 
-<div>
-  <img src="https://i.imgur.com/oZQlXGP.jpeg" alt="Description of image"  height="600">
-  <img src="https://i.imgur.com/APkB3An.jpeg" alt="Description of image"  height="600">
-  <img src="https://i.imgur.com/oUOyZhU.jpeg" alt="Description of image"  height="600">
-  <img src="https://i.imgur.com/KX1lqKk.jpeg" alt="Description of image"  height="600">
-</div>
+
+<img src="https://i.imgur.com/UZ50mL6.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/ELKmp8R.png" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/z2IuNMF.png" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/lBxwglU.png" alt="Description of image" style="max-width:50%;height:50%;">
+
 
 ### You can backup your data & even import it later
 
 All your data is stored **locally** on your computer or browser if you run it there. 
 
-<img src="https://i.imgur.com/W4iHuZB.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/MnBUDub.png" alt="Description of image" style="max-width:50%;height:50%;">
 
 
 ## Usage
