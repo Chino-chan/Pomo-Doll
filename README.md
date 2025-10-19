@@ -2,7 +2,7 @@
 
 This is a Pomodoro App that is fully customizable, includes project tracking features, detailed statistics, a free timer mode, and a collection of pictures from some of the cutest dolls on the internet 🌱🧀🐄
 
-You can either download the Desktop App **(Recommended)** or use it in the browser (not yet)
+You can either download the Desktop App **(Recommended)** or use it [https://pomo-doll.xyz/](https://pomo-doll.xyz/)
 
 I hope you find it useful. I created this because I saw most other Pomodoro/Study apps lacked something I wanted. 
 
