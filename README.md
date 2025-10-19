@@ -2,8 +2,6 @@
 
 This is a Pomodoro App that is fully customizable, includes project tracking features, detailed statistics, a free timer mode, and a collection of pictures from some of the cutest dolls on the internet 🌱🧀🐄
 
-You can either download the Desktop App **(Recommended)** or use it in [https://pomo-doll.xyz/](https://pomo-doll.xyz/)
-
 I hope you find it useful. I created this because I saw most other Pomodoro/Study apps lacked something I wanted. 
 
 ## Please feel free to
@@ -17,7 +15,10 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 
 ## Download
 
+You can either download the portable Desktop App **(Recommended)** or use it in [https://pomo-doll.xyz/](https://pomo-doll.xyz/)
+
 - **Windows**: [Pomo Doll-1.0.0-portable.exe](https://github.com/Chino-chan/Pomo-Doll/releases)
+- **Android/Iphone**: Currently only Desktop, there's a bug in mobile browser. 
 
 ## Features
 
@@ -36,18 +37,14 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 
 <div>
 
-<img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" height="400">
   -
-<img src="https://i.imgur.com/QHtykrU.png" alt="Description of image" style="max-width:50%;height:50%;">
-  
+<img src="https://i.imgur.com/WVojpcR.jpeg" alt="Description of image" height="400">
+
 </div>
 
 You can upload your own cover if you don't like these.
 
-
-<img src="https://i.imgur.com/sbGTLxY.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-
-<img src="https://i.imgur.com/WVojpcR.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
 
 
