@@ -37,14 +37,8 @@ Full App Showcase video
 
 [![Youtube Video](https://github.com/user-attachments/assets/154a2eb3-8fa0-4621-8074-d48f1916ee55)](https://youtu.be/PgxaSWxPRFA?si=c3ESwmJhb8jYZ3ag)
 
-<div>
-<img src="https://i.imgur.com/7TuCq0G.png" alt="Description of image" height="600" width="auto">
-<img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" height="600" width="auto">
-<img src="https://i.imgur.com/P6Zhz77.png" alt="Description of image" height="600" width="auto">
-<img src="https://i.imgur.com/dh5Nhla.jpeg" alt="Description of image" height="600" width="auto">
-<img src="https://i.imgur.com/3fJBPke.png" alt="Description of image" height="600" width="auto">
-<img src="https://i.imgur.com/TJSuAC9.jpeg" alt="Description of image" height="600" width="auto">
-</div>
+<img src="https://i.imgur.com/xjhPgnT.png" alt="Description of image">
+
 
 You can upload your own cover if you don't like these.
 
