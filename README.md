@@ -37,7 +37,7 @@ Full App Showcase video
 
 [![Youtube Video](https://github.com/user-attachments/assets/154a2eb3-8fa0-4621-8074-d48f1916ee55)](https://youtu.be/PgxaSWxPRFA?si=c3ESwmJhb8jYZ3ag)
 
-<img src="https://i.imgur.com/xjhPgnT.png" alt="Description of image">
+<img src="https://i.imgur.com/zjOI3ng.png" alt="Description of image">
 
 
 You can upload your own cover if you don't like these.
