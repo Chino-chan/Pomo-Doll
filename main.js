@@ -2779,7 +2779,12 @@ const defaultCovers = [
   'img/appcover10.jpeg',
   'img/appcover11.jpeg',
   'img/appcover12.jpeg',
-  'img/appcover13.jpeg'
+  'img/appcover13.jpeg',
+  'img/appcover14.jpeg',
+  'img/appcover15.jpeg',
+  'img/appcover16.jpeg',
+  'img/appcover17.jpeg',
+  'img/appcover18.jpeg'
 ];
 
 /**

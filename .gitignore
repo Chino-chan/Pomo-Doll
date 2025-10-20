@@ -31,3 +31,6 @@ coverage/
 
 # AI tools
 .claude/
+
+#Showcase Data
+.dummy_data
