@@ -35,7 +35,9 @@ You can either download the portable Desktop App **(Recommended)** or use it in 
 
 Full App Showcase video
 
-[![Youtube Video](https://github.com/user-attachments/assets/154a2eb3-8fa0-4621-8074-d48f1916ee55)](https://youtu.be/PgxaSWxPRFA?si=c3ESwmJhb8jYZ3ag)
+<a href="https://youtu.be/PgxaSWxPRFA?si=c3ESwmJhb8jYZ3ag" target="_blank">
+  <img src="https://github.com/user-attachments/assets/154a2eb3-8fa0-4621-8074-d48f1916ee55" alt="YouTube Video">
+</a>
 
 <img src="https://i.imgur.com/zjOI3ng.png" alt="Description of image">
 
