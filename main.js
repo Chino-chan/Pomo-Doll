@@ -1991,6 +1991,15 @@ function renderYearlyTrendsChart() {
     const y = padding + height - barHeight;
 
     ctx.fillRect(x, y, barWidth, barHeight);
+
+    // Draw value on top of bar
+    if (dataPoint.hours > 0) {
+      ctx.fillStyle = colors.titleText;
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${dataPoint.hours.toFixed(1)}h`, x + barWidth / 2, y - 5);
+      ctx.fillStyle = colors.barColor;
+    }
   });
 
   // Draw X-axis labels (show every other month for 12 months to avoid crowding)
