@@ -8,7 +8,7 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 
 - Report bugs
 - Suggest new features
-- Give overall feedback & Tell me if you liked it or is useful to you 🥰🌱
+- Give overall feedback & tell me if you liked it or is useful to you 🥰🌱
 
 ![Version](https://img.shields.io/badge/version-1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -41,8 +41,11 @@ Full App Showcase video
 
 <img src="https://i.imgur.com/zjOI3ng.png" alt="Description of image">
 
+### App window size 
 
-You can upload your own cover if you don't like these.
+You can manually resize it and it will remember position on close
+
+<img src="https://i.imgur.com/ZJCMRmX.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
 
 ## Study HeatMap, Streak tracker, Cake chart
