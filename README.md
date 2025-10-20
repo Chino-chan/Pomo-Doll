@@ -2,22 +2,23 @@
 
 This is a Pomodoro App that is fully customizable, includes project tracking features, detailed statistics, a free timer mode, and a collection of pictures from some of the cutest dolls on the internet 🌱🧀🐄
 
-You can either download the Desktop App **(Recommended)** or use it in [https://pomo-doll.xyz/](https://pomo-doll.xyz/)
-
 I hope you find it useful. I created this because I saw most other Pomodoro/Study apps lacked something I wanted. 
 
 ## Please feel free to
 
 - Report bugs
 - Suggest new features
-- Give overall feedback & Tell me if you liked it or is useful to you 🥰🌱
+- Give overall feedback & tell me if you liked it or is useful to you 🥰🌱
 
 ![Version](https://img.shields.io/badge/version-1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## Download
 
+You can either download the portable Desktop App **(Recommended)** or use it in [https://pomo-doll.xyz/](https://pomo-doll.xyz/)
+
 - **Windows**: [Pomo Doll-1.0.0-portable.exe](https://github.com/Chino-chan/Pomo-Doll/releases)
+- **Android/Iphone**: Currently only Desktop, there's a bug in mobile browser. 
 
 ## Features
 
@@ -32,39 +33,35 @@ I hope you find it useful. I created this because I saw most other Pomodoro/Stud
 
 ## Screenshots & Features
 
+Full App Showcase video
+
+<a href="https://youtu.be/PgxaSWxPRFA?si=c3ESwmJhb8jYZ3ag" target="_blank">
+  <img src="https://github.com/user-attachments/assets/154a2eb3-8fa0-4621-8074-d48f1916ee55" alt="YouTube Video">
+</a>
+
+<img src="https://i.imgur.com/zjOI3ng.png" alt="Description of image">
+
+### App window size 
+
+You can manually resize it and it will remember position on close
+
+<img src="https://i.imgur.com/ZJCMRmX.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
 
-<div>
-
-<img src="https://i.imgur.com/xX40ISy.png" alt="Description of image" style="max-width:50%;height:50%;">
-  -
-<img src="https://i.imgur.com/QHtykrU.png" alt="Description of image" style="max-width:50%;height:50%;">
-  
-</div>
-
-You can upload your own cover if you don't like these.
+## Study HeatMap, Streak tracker, Cake chart
 
 
-<img src="https://i.imgur.com/sbGTLxY.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/UZ50mL6.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/ELKmp8R.png" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/z2IuNMF.png" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/lBxwglU.png" alt="Description of image" style="max-width:50%;height:50%;">
 
-<img src="https://i.imgur.com/WVojpcR.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-
-
-
-### Study HeatMap, Streak tracker, Cake chart
-
-<div>
-  <img src="https://i.imgur.com/oZQlXGP.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-  <img src="https://i.imgur.com/APkB3An.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-  <img src="https://i.imgur.com/oUOyZhU.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-  <img src="https://i.imgur.com/KX1lqKk.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-</div>
 
 ### You can backup your data & even import it later
 
 All your data is stored **locally** on your computer or browser if you run it there. 
 
-<img src="https://i.imgur.com/W4iHuZB.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/MnBUDub.png" alt="Description of image" style="max-width:50%;height:50%;">
 
 
 ## Usage
