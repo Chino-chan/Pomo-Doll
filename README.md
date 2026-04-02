@@ -1,4 +1,4 @@
-# Pomo Doll 🌱
+# Pomo Doll 🍄
 
 This is a Pomodoro App that includes project tracking features, detailed statistics, a free timer mode
 
