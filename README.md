@@ -6,16 +6,11 @@ This is a Pomodoro App that includes project tracking features, detailed statist
 
 - **Windows**: [Pomo Doll-1.0.0-portable.exe](https://github.com/Chino-chan/Pomo-Doll/releases)
 
-## Features
+## What makes it different:
 
-- 🍅 **Traditional Pomodoro Timer** - Customizable work/break intervals
 - ⏱️ **Free Timer Mode** - Flexible time tracking without fixed intervals
 - 📊 **Detailed Statistics** - GitHub-style heatmap and trend charts
 - 📁 **Project Tracking** - Track time spent on different projects with goals
-- 🌙 **Dark/Light Theme** - Easy on the eyes, day or night
-- 🖼️ **Customizable Covers** - Choose from 3 default covers or upload your own
-- 💾 **Data Export/Import** - Backup and restore your data easily
-- 🔔 **Audio Alerts** - Sound notifications for completed sessions
 
 ## Screenshots & Features
 
