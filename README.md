@@ -1,6 +1,6 @@
 # Pomo Doll 🍄
 
-This is a Pomodoro App that includes project tracking features, detailed statistics, a free timer mode
+This is a Pomodoro App that includes project tracking features & detailed statistics
 
 ## Download
 
@@ -8,7 +8,7 @@ This is a Pomodoro App that includes project tracking features, detailed statist
 
 ## What makes it different:
 
-- ⏱️ **Free Timer Mode** - Flexible time tracking without fixed intervals
+- ⏱️ **Optional Free Timer Mode** - Flexible time tracking without fixed intervals
 - 📊 **Detailed Statistics** - GitHub-style heatmap and trend charts
 - 📁 **Project Tracking** - Track time spent on different projects with goals
 
@@ -16,43 +16,8 @@ This is a Pomodoro App that includes project tracking features, detailed statist
 
 <img src="https://i.imgur.com/zjOI3ng.png" alt="Description of image">
 
-### App window size 
+## Project Tracking
 
-You can manually resize it and it will remember position on close
-
-<img src="https://i.imgur.com/ZJCMRmX.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-
-
-## Study HeatMap, Streak tracker, Cake chart
-
-
-<img src="https://i.imgur.com/UZ50mL6.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-<img src="https://i.imgur.com/ELKmp8R.png" alt="Description of image" style="max-width:50%;height:50%;">
-<img src="https://i.imgur.com/z2IuNMF.png" alt="Description of image" style="max-width:50%;height:50%;">
-<img src="https://i.imgur.com/lBxwglU.png" alt="Description of image" style="max-width:50%;height:50%;">
-
-
-### You can backup your data & even import it later
-
-All your data is stored **locally** on your computer or browser if you run it there. 
-
-<img src="https://i.imgur.com/MnBUDub.png" alt="Description of image" style="max-width:50%;height:50%;">
-
-
-## Usage
-
-### Basic Timer 
-1. Click the **Play** button to start a Pomodoro session
-2. Work until the timer completes
-3. Take a break 
-4. After 4 pomos you complete a "Cycle", you can then enjoy a long break
-
-### Free Timer
-1. Click the **Play** button to start a Pomo
-2. There's no countdown... you decide when to stop.
-3. You can customize the break time between the "Infinite Time" sessions.
-   
-### Project Tracking
 <img src="https://i.imgur.com/upxFjqz.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
 
 1. Go to **Config** tab
@@ -60,80 +25,10 @@ All your data is stored **locally** on your computer or browser if you run it th
 3. Click **Track this!** to start tracking time for that project
 4. Your study time will be automatically attributed to the active project
 
-### Statistics
-- Click **Full Stats** to view your detailed statistics
-- See your study streak, heatmap (inspired by Anki add-on), and trends over time
-- Detailed view of the spent time allocated to each project or just untracked time.
-- Check your personal records
+## Statistics
 
-
-### Upload your own cover
-<img src="https://i.imgur.com/oNQAHxa.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-
-### More customization
-
-<img src="https://i.imgur.com/KfG9DFS.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
-
-
-## Technical Info & Istallation for Developers
-
-## Stack
-
-- **Electron** - Desktop app framework
-- **Vanilla JavaScript** - No frameworks, pure JS insanity
-- **HTML5 Canvas** - Charts and visualizations
-- **Vitest** - Testing framework (152 Tests)
-- **localStorage** - Data persistence (Both Desktop & Browser)
-- **Claude Code 4.5** - Documentation, testing coverage, and more
-
-## Please feel free to
-
-- Report bugs
-- Suggest new features
-- Give overall feedback & tell me if you liked it or is useful to you 🥰🌱
-
-## Installation 
-
-Requirements:
-- Node.js 16+
-- npm
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/pomo-doll.git
-cd pomo-doll
-
-# Install dependencies
-npm install
-
-# Run the app
-npm start
-
-# Build for production
-npm run build
-```
-
-
-## Development
-
-```bash
-# Run in development mode
-npm start
-
-# Run tests
-npm test
-
-# Run tests with UI
-npm run test:ui
-
-# Run tests with coverage
-npm run test:coverage
-
-# Build for all platforms
-npm run build
-```
-
-
+<img src="https://i.imgur.com/UZ50mL6.jpeg" alt="Description of image" style="max-width:50%;height:50%;">
+<img src="https://i.imgur.com/ELKmp8R.png" alt="Description of image" style="max-width:50%;height:50%;">
 
 ## License
 
