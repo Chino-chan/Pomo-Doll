@@ -1,6 +1,7 @@
 # Pomo Doll 🍄
 
-This is a Pomodoro App that includes project tracking features & detailed statistics 
+This is a Pomodoro App that includes project tracking features & detailed statistics.
+
 It features 18 pictures of BJD dolls, for no reason other than I just like them.
 
 ## Download
