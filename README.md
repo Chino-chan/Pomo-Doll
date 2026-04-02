@@ -1,17 +1,6 @@
 # Pomo Doll 🌱
 
-This is a Pomodoro App that is fully customizable, includes project tracking features, detailed statistics, a free timer mode, and a collection of pictures from some of the cutest dolls on the internet 🌱🧀🐄
-
-I hope you find it useful. I created this because I saw most other Pomodoro/Study apps lacked something I wanted. 
-
-## Please feel free to
-
-- Report bugs
-- Suggest new features
-- Give overall feedback & tell me if you liked it or is useful to you 🥰🌱
-
-![Version](https://img.shields.io/badge/version-1.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+This is a Pomodoro App that includes project tracking features, detailed statistics, a free timer mode
 
 ## Download
 
@@ -111,6 +100,12 @@ All your data is stored **locally** on your computer or browser if you run it th
 - **localStorage** - Data persistence (Both Desktop & Browser)
 - **Claude Code 4.5** - Documentation, testing coverage, and more
 
+## Please feel free to
+
+- Report bugs
+- Suggest new features
+- Give overall feedback & tell me if you liked it or is useful to you 🥰🌱
+
 ## Installation 
 
 Requirements:
@@ -157,6 +152,7 @@ npm run build
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details
-
+![Version](https://img.shields.io/badge/version-1.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 
