@@ -4,10 +4,7 @@ This is a Pomodoro App that includes project tracking features, detailed statist
 
 ## Download
 
-You can either download the portable Desktop App **(Recommended)** or use it in [https://pomo-doll.xyz/](https://pomo-doll.xyz/)
-
 - **Windows**: [Pomo Doll-1.0.0-portable.exe](https://github.com/Chino-chan/Pomo-Doll/releases)
-- **Android/Iphone**: Currently only Desktop, there's a bug in mobile browser. 
 
 ## Features
 
