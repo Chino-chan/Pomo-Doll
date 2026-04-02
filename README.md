@@ -2,7 +2,7 @@
 
 This is a Pomodoro App that includes project tracking features & detailed statistics.
 
-It features 18 pictures of BJD dolls, for no reason other than I just like them.
+It features 18 pictures of BJD anime dolls, for no reason other than I just like them.
 
 ## Download
 
